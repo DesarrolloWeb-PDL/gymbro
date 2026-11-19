@@ -39,6 +39,7 @@ import { createMediaStore, mediaLimits, mediaConfig, MediaError, HASH_RE } from 
 import { effectiveRoutineId } from './queue.js';
 import { stampPut, highestStamp } from './sync-stamps.js';
 import { atomicWrite as durableWrite } from './durable.js';
+import { readJSON } from './storage.js';
 import { ipv6Groups, guardedLookup, pushEndpointError, MAX_PUSH_ENDPOINT, outboundLookup } from './net-guard.js';
 import { createIntegrations } from './integrations/index.js';
 import { integrationRoutes } from './integrations/routes.js';
@@ -171,23 +172,34 @@ const dbFile = path.join(DATA, 'db.json');
 // FIRST_USER_ADMIN the first visitor made admin. Now the damaged file is kept aside and the copy
 // saveDb keeps of each version it writes (db.json.bak) is used; with neither readable the server
 // refuses to start, saying why, rather than start as a new instance.
+// Read through the storage seam under a logical key, so a driver without a filesystem serves the
+// same document. NO_DB separates "nobody wrote db.json yet" (start empty) from a file that
+// parses to nothing at all (damage — the recovery below), which a null fallback would conflate.
+const NO_DB = Symbol('db.json absent');
 function loadDb() {
-  let raw;
-  try { raw = fs.readFileSync(dbFile, 'utf8'); }
-  catch (e) { if (e.code === 'ENOENT') return { users: [], creds: [], subs: [], invites: [] }; throw e; }
-  const parse = text => { const v = JSON.parse(text); if (!v || typeof v !== 'object' || Array.isArray(v)) throw new Error('not an object'); return v; };
-  try { return parse(raw); } catch (err) {
-    const aside = `${dbFile}.unreadable-${Date.now()}`;
-    try { fs.copyFileSync(dbFile, aside); } catch { /* the original stays where it is anyway */ }
-    console.error(`db.json cannot be read (${err.message}); kept a copy as ${path.basename(aside)}`);
-    try {
-      const bak = parse(fs.readFileSync(dbFile + '.bak', 'utf8'));
-      console.error('db.json: using db.json.bak, the copy of the last save');
-      return bak;
-    } catch {
-      console.error('db.json: no readable db.json.bak either. Refusing to start: restore db.json from a backup.');
-      process.exit(1);
-    }
+  let v;
+  try { v = readJSON('db.json', NO_DB); }
+  catch (err) { if (err instanceof SyntaxError) return recoverDb(err); throw err; }
+  if (v === NO_DB) return { users: [], creds: [], subs: [], invites: [] };
+  if (!v || typeof v !== 'object' || Array.isArray(v)) return recoverDb(new Error('not an object'));
+  return v;
+}
+// The recovery for a db.json that exists and does not parse (storage.readJSON throws SyntaxError
+// for it, exactly where JSON.parse used to): keep the damaged file aside for whoever repairs it,
+// then serve the copy saveDb wrote beside it — and with neither readable, refuse to start rather
+// than boot an empty instance. dbFile stays a path here only for that forensic copy.
+function recoverDb(err) {
+  const aside = `${dbFile}.unreadable-${Date.now()}`;
+  try { fs.copyFileSync(dbFile, aside); } catch { /* the original stays where it is anyway */ }
+  console.error(`db.json cannot be read (${err.message}); kept a copy as ${path.basename(aside)}`);
+  try {
+    const bak = readJSON('db.json.bak');
+    if (!bak || typeof bak !== 'object' || Array.isArray(bak)) throw new Error('not an object');
+    console.error('db.json: using db.json.bak, the copy of the last save');
+    return bak;
+  } catch {
+    console.error('db.json: no readable db.json.bak either. Refusing to start: restore db.json from a backup.');
+    process.exit(1);
   }
 }
 let db = loadDb();
@@ -241,10 +253,15 @@ function atomicWrite(file, content, mode) { durableWrite(file, content, mode); }
 // How many earlier write ids a document keeps (`_wids`, see PUT /api/data): a device that last
 // synced more writes ago than this merges on its next pull instead of taking the server's copy.
 const WID_KEEP = 50;
-const stateFile = uid => path.join(DATA, 'state-' + uid.replace(/[^a-zA-Z0-9_-]/g, '') + '.json');
+// The logical key the storage seam reads a document by, and the path the fs-only callers (an
+// unlink, a stat) still name. Both derive from the same sanitized uid, so they always meet at
+// one file: DATA and the seam's DATA_DIR are the same directory.
+const stateKey = uid => 'state-' + uid.replace(/[^a-zA-Z0-9_-]/g, '') + '.json';
+const stateFile = uid => path.join(DATA, stateKey(uid));
 // The watch relay's mailbox of a profile (watch-relay.js): the page's last snapshot and what its
 // Zepp OS watches sent. Small, rewritten whole like the state file.
-const watchFile = uid => path.join(DATA, 'watch-' + uid.replace(/[^a-zA-Z0-9_-]/g, '') + '.json');
+const watchKey = uid => 'watch-' + uid.replace(/[^a-zA-Z0-9_-]/g, '') + '.json';
+const watchFile = uid => path.join(DATA, watchKey(uid));
 // When a profile last fetched its document (GET /api/data). The document's own `_ts` moves only
 // on a push, so a device that only ever read — a second phone, a profile that trains elsewhere
 // and just looks — showed "last sync never" in the admin dashboard (QA 1.3.9). Kept on the user
@@ -257,18 +274,19 @@ function notePull(user, now = Date.now()) {
 }
 // The later of the last push and the last pull.
 const lastSyncOf = (u, S) => Math.max(S?._ts || 0, u?.lastPull || 0) || null;
+// Through the seam: a document nobody wrote is null (the profile has not synced yet), and any
+// other failure — bytes that do not parse, a read that fails — is null too, as it always was.
 function readState(uid) {
-  try { return JSON.parse(fs.readFileSync(stateFile(uid), 'utf8')); } catch { return null; }
+  try { return readJSON(stateKey(uid), null); } catch { return null; }
 }
 // GET and PUT /api/data tell a profile with no state yet from one whose file cannot be read: the
 // second answers 503 instead of an empty profile, which a device would adopt, or a write would
 // replace, losing what a restore could still bring back.
 const UNREADABLE = Symbol('unreadable');
 function readStateStrict(uid) {
-  let raw;
-  try { raw = fs.readFileSync(stateFile(uid), 'utf8'); }
-  catch (e) { return e.code === 'ENOENT' ? null : UNREADABLE; }
-  try { return JSON.parse(raw); } catch { return UNREADABLE; }
+  // readJSON returns its fallback only for a key nobody wrote and THROWS otherwise — a torn
+  // document (SyntaxError) or a read that failed — which is exactly this function's split.
+  try { return readJSON(stateKey(uid), null); } catch { return UNREADABLE; }
 }
 // A stored document as a client gets it: without the server's own notes `_unstamped` and `_prior`.
 function forClient(S) {
@@ -461,35 +479,42 @@ const hhmmToMin = v => {
 // Minutes since the reminder's time on the user's clock; negative before it, NaN when either
 // side does not parse. Same-day only — a 23:55 reminder is not owed at 00:05 the next day.
 const minutesLate = (time, now) => hhmmToMin(now.hhmm) - hhmmToMin(time);
-// The tick reads every subscribed user's state file every 10 s. Most of those files do not
-// change between ticks; a stat is far cheaper than a read and a parse of a state that can be
-// megabytes, and it keeps the tick short — a slow tick was one more way to miss the minute.
+// The tick reads every subscribed user's state every 10 s and GET /api/data/rev polls every half
+// minute; parsing a megabytes-long document for each of those is what this cache is for — a slow
+// tick was one more way to miss the minute.
 //
 // What it holds is a whole parsed state per user, and a state can be megabytes, so the two
 // bounds below are what keep it a cache rather than a leak on an instance with more than one
-// person on it: an entry nobody has touched for ten minutes is dropped, and the map never holds
-// more than STATE_CACHE_MAX users. Map iteration order is insertion order, so re-inserting on
-// every hit makes the first key the least recently hit one — which is the one to evict.
+// person on it: an entry nobody has touched for STATE_CACHE_TTL_MS is dropped, and the map never
+// holds more than STATE_CACHE_MAX users. Map iteration order is insertion order, so re-inserting
+// on every hit makes the first key the least recently hit one — which is the one to evict.
+//
+// The key is TIME, not the file's (mtime, size): a driver behind the seam has no stat to ask, so
+// a stat key would tie this cache to the filesystem. What keeps it honest instead is that every
+// write of a state document in this process (commitState, writeStateAs) evicts the entry it
+// replaces, so a poll right after a sync always sees that sync. The TTL only bounds a write
+// nobody here made (an out-of-band rewrite), and the reminder tick — which still stats each
+// file in stateSummary below — drops the entry for any profile whose file moved, so a
+// subscription never reads a stale document for longer than one tick.
 const STATE_CACHE_MAX = 64;
-// Ten minutes: far longer than the gap between a client's polls (30 s) or the reminder tick's
-// (10 s), so nobody who is actually using the instance is ever evicted by age; the tests shorten
-// it, as they do REMINDER_TICK_MS.
+// Ten minutes: far longer than the gap between a client's polls (30 s), so nobody who is
+// actually using the instance is ever evicted by age; the tests shorten it, as they do
+// REMINDER_TICK_MS.
 const STATE_CACHE_TTL_MS = Math.max(50, +(process.env.STATE_CACHE_TTL_MS || 600000) || 600000);
-const stateCache = new Map(); // uid -> { mtimeMs, size, hitAt, S }
+const stateCache = new Map(); // uid -> { hitAt, S }
 function readStateCached(uid) {
-  let st;
-  try { st = fs.statSync(stateFile(uid)); } catch { stateCache.delete(uid); return null; }
   const now = Date.now();
+  // Swept first, so an entry that is present is by construction one the TTL still holds.
   for (const [k, v] of stateCache) if (now - v.hitAt > STATE_CACHE_TTL_MS) stateCache.delete(k);
   const hit = stateCache.get(uid);
   stateCache.delete(uid);                       // re-inserted below, so the map stays in hit order
-  if (hit && hit.mtimeMs === st.mtimeMs && hit.size === st.size) {
+  if (hit) {
     hit.hitAt = now;
     stateCache.set(uid, hit);
     return hit.S;
   }
   const S = readState(uid);
-  stateCache.set(uid, { mtimeMs: st.mtimeMs, size: st.size, hitAt: now, S });
+  stateCache.set(uid, { hitAt: now, S });
   while (stateCache.size > STATE_CACHE_MAX) stateCache.delete(stateCache.keys().next().value);
   return S;
 }
@@ -612,6 +637,11 @@ function stateSummary(uid) {
   try { st = fs.statSync(stateFile(uid)); } catch { stateSummaries.delete(uid); return null; }
   const had = stateSummaries.get(uid);
   if (had && had.mtimeMs === st.mtimeMs && had.size === st.size) return had;
+  // The stat above just proved the file moved (or that no summary exists for it yet), while
+  // readStateCached's key is time and cannot see an out-of-band write at all — so drop the
+  // entry here before the read below takes the new bytes. The app's own writes evict for
+  // themselves (commitState, writeStateAs); this is the fs-side half of the same invalidation.
+  stateCache.delete(uid);
   const S = readStateCached(uid);
   const r = S?.reminder;
   const sum = {
@@ -955,7 +985,7 @@ setInterval(() => { for (const [k, v] of pairings) if (v.exp < Date.now()) pairi
 // Pairing codes for watches, in memory like the phone's: hashed, one per profile, ten minutes.
 const watchCodes = new Map();
 setInterval(() => { const now = Date.now(); for (const [k, v] of watchCodes) if (v.exp <= now) watchCodes.delete(k); }, 60000).unref();
-const readBox = uid => { try { return boxOf(JSON.parse(fs.readFileSync(watchFile(uid), 'utf8'))); } catch { return boxOf(null); } };
+const readBox = uid => { try { return boxOf(readJSON(watchKey(uid), null)); } catch { return boxOf(null); } };
 const writeBox = (uid, box) => durableWrite(watchFile(uid), JSON.stringify(box), 0o600);
 // The watch link a request carries (`Authorization: Bearer ogw_…`), or null. Never a session: an
 // account that may not sign in, or whose sessions were all ended since, has no live links either.
@@ -1589,6 +1619,7 @@ function removeAccount(u) {
   presence.delete(u.id);
   // The training history and any Coach credential of theirs, both outside db.json.
   try { fs.unlinkSync(stateFile(u.id)); } catch { /* already gone */ }
+  stateCache.delete(u.id);   // a deleted profile's document must not outlive them in the cache
   try { fs.unlinkSync(watchFile(u.id)); } catch { /* never had a watch */ }
   try { coachConfig.clearProfileAuth(u.id); } catch { /* nothing stored */ }
   // The Coach's own record of them: plans waiting for a yes, the job history, the cohort switch.
@@ -3141,9 +3172,10 @@ const routes = {
   // Just the revision: the client asks this every half minute while it is open and on every
   // return to the foreground, and fetches the document only when the number moved — a signed-in
   // device is meant to show what the server has, and this is what keeps that cheap.
-  // Cheap means the stat cache the reminder tick already uses: parsing a megabytes-long document
-  // to read one number off it cost 31 ms per poll on a 2.4 MB state, all of it on the event loop.
-  // Every write goes through atomicWrite's rename, so the cache can never hand out a stale rev.
+  // Cheap means the parsed-state cache the reminder tick already uses: parsing a megabytes-long
+  // document to read one number off it cost 31 ms per poll on a 2.4 MB state, all of it on the
+  // event loop. Every write of a state document evicts the entry (commitState, writeStateAs),
+  // so a poll right after a sync always sees the revision that sync returned.
   'GET /api/data/rev': async (req, res) => {
     const user = readSession(req);
     if (!user) return json(res, 401, { error: 'not signed in' });

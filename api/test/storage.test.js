@@ -120,3 +120,30 @@ test('durable.js hands every write through the seam, resolving its legacy full p
   assert.match(durable, /import \{ atomicWrite as storageWrite \} from '\.\/storage\.js';/);
   assert.match(durable, /export function atomicWrite\(file, content, mode\) \{ storageWrite\(path\.resolve\(file\), content, mode\); \}/);
 });
+
+/* T4b: the reads themselves go through the seam. A caller that still parses with fs cannot move
+   to another driver by swapping storage.js, so the three documents the server serves — the
+   per-user state, the watch mailbox and db.json — are read with readJSON over logical keys, and
+   the parsed-state cache is keyed by time: a stat key would tie it to the filesystem, because a
+   driver behind the seam has no stat to ask. */
+test('server.js reads state, watch and db.json through the seam, never with fs itself', () => {
+  const server = fs.readFileSync(path.join(API, 'server.js'), 'utf8');
+  assert.match(server, /import \{ readJSON \} from '\.\/storage\.js';/);
+  // Every reader names the logical key, the key shape a driver without a filesystem can answer.
+  assert.ok([...server.matchAll(/readJSON\(stateKey\(uid\), null\)/g)].length >= 2,
+    'readState and readStateStrict both read through the seam');
+  assert.match(server, /readJSON\(watchKey\(uid\), null\)/);
+  assert.match(server, /readJSON\('db\.json', NO_DB\)/);
+  assert.match(server, /readJSON\('db\.json\.bak'\)/);
+  // Not one fs read of those three documents is left anywhere in the file.
+  assert.doesNotMatch(server, /fs\.readFileSync\(stateFile\(/);
+  assert.doesNotMatch(server, /fs\.readFileSync\(watchFile\(/);
+  assert.doesNotMatch(server, /fs\.readFileSync\(dbFile/);
+  // The cache takes its document from the seam and expires by time, never by a file's stat.
+  const at = server.indexOf('function readStateCached(');
+  assert.notEqual(at, -1, 'readStateCached is the entry point the hot-path routes read through');
+  const body = server.slice(at, server.indexOf('\nfunction ', at + 1));
+  assert.match(body, /readState\(uid\)/, 'a miss reads through the seam reader');
+  assert.match(body, /STATE_CACHE_TTL_MS/, 'entries expire by time');
+  assert.doesNotMatch(body, /statSync/, 'a driver without a filesystem has no stat to key on');
+});
