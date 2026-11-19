@@ -1,0 +1,42 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "services": {
+    "frontend": {
+      "root": ".",
+      "framework": "vite",
+      "buildCommand": "npm --prefix frontend ci --ignore-scripts && npm --prefix frontend run build && node scripts/catalogue/stage-media.mjs frontend/dist",
+      "outputDirectory": "frontend/dist"
+    },
+    "api": {
+      "root": "api/",
+      "runtime": "container",
+      "entrypoint": "Dockerfile"
+    },
+    "mcp": {
+      "root": ".",
+      "runtime": "container",
+      "entrypoint": "mcp/Dockerfile",
+      "bindings": [
+        { "type": "service", "service": "api", "format": "url", "env": "OPENGYM_API_URL" }
+      ]
+    }
+  },
+  "rewrites": [
+    { "source": "/api/(.*)", "destination": { "service": "api" } },
+    { "source": "/.well-known/oauth-authorization-server", "destination": { "service": "api" } },
+    { "source": "/.well-known/oauth-protected-resource", "destination": { "service": "api" } },
+    { "source": "/.well-known/openid-configuration", "destination": { "service": "api" } },
+    { "source": "/mcp", "destination": { "service": "mcp" } },
+    { "source": "/(.*)", "destination": { "service": "frontend" } }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "X-Frame-Options", "value": "DENY" },
+        { "key": "X-Content-Type-Options", "value": "nosniff" },
+        { "key": "Referrer-Policy", "value": "same-origin" }
+      ]
+    }
+  ]
+}

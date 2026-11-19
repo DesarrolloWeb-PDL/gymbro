@@ -9,6 +9,7 @@
 // rename, and the directory after it. A few milliseconds per write.
 import fs from 'node:fs';
 import path from 'node:path';
+import { atomicWrite as storageWrite } from './storage.js';
 
 /** fsync of a directory, so a rename inside it is on disk. Best effort: some filesystems refuse. */
 export function syncDir(dir) {
@@ -24,15 +25,10 @@ export function syncFile(file) {
   try { fs.fsyncSync(fd); } finally { fs.closeSync(fd); }
 }
 
-/** `content` at `file`, durably: temporary file, fsync, rename, fsync of the directory. */
-export function atomicWrite(file, content, mode) {
-  const tmp = file + '.tmp';
-  const fd = fs.openSync(tmp, 'w', mode);
-  try {
-    fs.writeFileSync(fd, content);
-    fs.fsyncSync(fd);
-  } finally { fs.closeSync(fd); }
-  if (mode != null) { try { fs.chmodSync(tmp, mode); } catch { /* a host filesystem that refuses chmod */ } }
-  fs.renameSync(tmp, file);
-  syncDir(path.dirname(file));
-}
+/**
+ * `content` at `file`, durably: temporary file, fsync, rename, fsync of the directory.
+ * Every caller of this API passes a full path (it predates the storage seam), so the path is
+ * resolved against the current directory here and handed to storage.js as a legacy absolute
+ * path; the ordering itself now lives in the seam's fs driver and follows STORAGE_DRIVER.
+ */
+export function atomicWrite(file, content, mode) { storageWrite(path.resolve(file), content, mode); }
