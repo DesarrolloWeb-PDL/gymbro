@@ -1,15 +1,15 @@
-# openGym HTTP API: hand-written OpenAPI 3.1 spec.
+# gymbro HTTP API: hand-written OpenAPI 3.1 spec.
 # Source of truth: api/server.js (a single framework-free Node file). Every route the
 # server registers is documented here; if you add a route there, add it here too.
 # Browsable version: https://opengym.ch/api.html
 openapi: 3.1.0
 
 info:
-  title: openGym API
+  title: gymbro API
   version: 1.4.5
-  summary: Passkey (WebAuthn) auth + per-user state storage for openGym
+  summary: Passkey (WebAuthn) auth + per-user state storage for gymbro
   description: |
-    The backend of [openGym](https://opengym.ch), a free, open-source
+    The backend of [gymbro](https://opengym.ch), a free, open-source
     gym & body-weight tracker. A plain Node server, no framework, JSON-file storage,
     HMAC-signed session cookies.
 
@@ -135,12 +135,12 @@ info:
     name: AGPL-3.0-or-later
     identifier: AGPL-3.0-or-later
   contact:
-    name: openGym
+    name: gymbro
     url: https://gitlab.com/DuarteSantos8/opengym
 
 servers:
   - url: /
-    description: Same origin as the openGym web app (the normal deployment)
+    description: Same origin as the gymbro web app (the normal deployment)
   - url: https://opengym.example.com
     description: Your self-hosted instance
 
@@ -187,7 +187,7 @@ tags:
   - name: mcp
     description: >-
       The MCP connector's OAuth sign-in (docs/MCP_REMOTE.md), for Claude, ChatGPT and other
-      assistants that add openGym by URL. Only with `MCP=on`, otherwise 404. What it issues is an
+      assistants that add gymbro by URL. Only with `MCP=on`, otherwise 404. What it issues is an
       ordinary scoped API token, made when the person approves it on the consent screen.
   - name: trainers
     description: >-
@@ -960,7 +960,7 @@ paths:
       operationId: watchPair
       summary: A pairing code for a Zepp OS watch
       description: |
-        A signed-in device asks for a code that the Zepp app's settings page for openGym
+        A signed-in device asks for a code that the Zepp app's settings page for gymbro
         redeems (`POST /api/watch/redeem`). 12 characters typed as `XXXX-XXXX-XXXX`, one per
         profile (a new one replaces the last), good for ten minutes, held only as a hash.
       responses:
@@ -981,7 +981,7 @@ paths:
       operationId: watchRedeem
       summary: Redeem a watch pairing code for a watch token
       description: |
-        Called by the openGym watch app's Side Service inside the Zepp phone app. The code is
+        Called by the gymbro watch app's Side Service inside the Zepp phone app. The code is
         the credential (CSRF-exempt, throttled per address like a device link). The answer is a
         watch token (`ogw_…`) that opens `GET`/`POST /api/watch/box` and nothing else; it ends
         with "sign out everywhere", a new password, a disabled account, an unlink, or 90 days
@@ -4557,7 +4557,7 @@ paths:
       summary: 'MCP connector: the same metadata under its OpenID Connect discovery name'
       description: >-
         The MCP spec's clients look here after RFC 8414; under `BASE_PATH` this is the address below
-        the prefix (`<BASE_PATH>/.well-known/openid-configuration`). openGym issues no ID tokens.
+        the prefix (`<BASE_PATH>/.well-known/openid-configuration`). gymbro issues no ID tokens.
       responses:
         '200': { description: 'As `/.well-known/oauth-authorization-server`.' }
   /.well-known/oauth-protected-resource:
@@ -4582,7 +4582,7 @@ paths:
       summary: 'MCP connector: register an OAuth client (RFC 7591)'
       description: >-
         Only with `MCP=on`. Public clients (no secret), redirect URIs https or loopback only.
-        Used by Claude and ChatGPT when they add openGym as a custom connector (docs/MCP_REMOTE.md).
+        Used by Claude and ChatGPT when they add gymbro as a custom connector (docs/MCP_REMOTE.md).
       responses:
         '201': { description: 'The client: `client_id`, `redirect_uris`, `token_endpoint_auth_method: none`.' }
         '400': { description: 'Bad redirect URIs.' }
