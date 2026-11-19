@@ -334,10 +334,10 @@ main.api-main .lead { color: var(--fg-2); max-width: 58ch; margin: 14px 0 0; fon
 
   <section class="api-sec" id="overview">
     <h2>Overview</h2>
-    <p class="sub">Passkey (WebAuthn) auth + per-user state storage for openGym. One Node file, no framework, JSON-file
+    <p class="sub">Passkey (WebAuthn) auth + per-user state storage for gymbro. One Node file, no framework, JSON-file
        storage, HMAC-signed session cookies.</p>
     <div class="srv">
-  <div class="srv-row"><code>/</code><span>Same origin as the openGym web app (the normal deployment)</span></div>
+  <div class="srv-row"><code>/</code><span>Same origin as the gymbro web app (the normal deployment)</span></div>
   <div class="srv-row"><code>https://opengym.example.com</code><span>Your self-hosted instance</span></div>
     </div>
     <div class="ov-grid">
@@ -1025,7 +1025,7 @@ main.api-main .lead { color: var(--fg-2); max-width: 58ch; margin: 14px 0 0; fon
     <span class="ep-sum">A pairing code for a Zepp OS watch</span>
   </summary>
   <div class="ep-body">
-<p>A signed-in device asks for a code that the Zepp app's settings page for openGym redeems (<code>POST /api/watch/redeem</code>). 12 characters typed as <code>XXXX-XXXX-XXXX</code>, one per profile (a new one replaces the last), good for ten minutes, held only as a hash.</p>
+<p>A signed-in device asks for a code that the Zepp app's settings page for gymbro redeems (<code>POST /api/watch/redeem</code>). 12 characters typed as <code>XXXX-XXXX-XXXX</code>, one per profile (a new one replaces the last), good for ten minutes, held only as a hash.</p>
     <p class="ep-auth"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2.5"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg><span>Requires a session: the cookie set at sign-in, or <code>Authorization: Bearer &lt;token&gt;</code> from mobile-app pairing.</span></p>
 
 
@@ -1051,7 +1051,7 @@ main.api-main .lead { color: var(--fg-2); max-width: 58ch; margin: 14px 0 0; fon
     <span class="ep-sum">Redeem a watch pairing code for a watch token</span>
   </summary>
   <div class="ep-body">
-<p>Called by the openGym watch app's Side Service inside the Zepp phone app. The code is the credential (CSRF-exempt, throttled per address like a device link). The answer is a watch token (<code>ogw_…</code>) that opens <code>GET</code>/<code>POST /api/watch/box</code> and nothing else; it ends with &quot;sign out everywhere&quot;, a new password, a disabled account, an unlink, or 90 days without use.</p>
+<p>Called by the gymbro watch app's Side Service inside the Zepp phone app. The code is the credential (CSRF-exempt, throttled per address like a device link). The answer is a watch token (<code>ogw_…</code>) that opens <code>GET</code>/<code>POST /api/watch/box</code> and nothing else; it ends with &quot;sign out everywhere&quot;, a new password, a disabled account, an unlink, or 90 days without use.</p>
     <p class="ep-auth"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2.5"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg><span>Public: no authentication required.</span></p>
 
 <p class="ep-h">Request body <span class="p-hint">(JSON)</span></p><div class="ptab">
@@ -4072,7 +4072,7 @@ main.api-main .lead { color: var(--fg-2); max-width: 58ch; margin: 14px 0 0; fon
 
 <section class="api-sec" id="mcp">
   <h2>MCP connector</h2>
-  <p class="sub">The MCP connector's OAuth sign-in (docs/MCP_REMOTE.md), for Claude, ChatGPT and other assistants that add openGym by URL. Only with <code>MCP=on</code>, otherwise 404. What it issues is an ordinary scoped API token, made when the person approves it on the consent screen.</p>
+  <p class="sub">The MCP connector's OAuth sign-in (docs/MCP_REMOTE.md), for Claude, ChatGPT and other assistants that add gymbro by URL. Only with <code>MCP=on</code>, otherwise 404. What it issues is an ordinary scoped API token, made when the person approves it on the consent screen.</p>
   <div class="eps">
 
 <details class="ep" id="op-getOauthServerMetadata">
@@ -4105,7 +4105,7 @@ main.api-main .lead { color: var(--fg-2); max-width: 58ch; margin: 14px 0 0; fon
     <span class="ep-sum">MCP connector: the same metadata under its OpenID Connect discovery name</span>
   </summary>
   <div class="ep-body">
-<p>The MCP spec's clients look here after RFC 8414; under <code>BASE_PATH</code> this is the address below the prefix (<code>&lt;BASE_PATH&gt;/.well-known/openid-configuration</code>). openGym issues no ID tokens.</p>
+<p>The MCP spec's clients look here after RFC 8414; under <code>BASE_PATH</code> this is the address below the prefix (<code>&lt;BASE_PATH&gt;/.well-known/openid-configuration</code>). gymbro issues no ID tokens.</p>
     <p class="ep-auth"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2.5"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg><span>Requires a session: the cookie set at sign-in, or <code>Authorization: Bearer &lt;token&gt;</code> from mobile-app pairing.</span></p>
 
 
@@ -4171,7 +4171,7 @@ main.api-main .lead { color: var(--fg-2); max-width: 58ch; margin: 14px 0 0; fon
     <span class="ep-sum">MCP connector: register an OAuth client (RFC 7591)</span>
   </summary>
   <div class="ep-body">
-<p>Only with <code>MCP=on</code>. Public clients (no secret), redirect URIs https or loopback only. Used by Claude and ChatGPT when they add openGym as a custom connector (docs/MCP_REMOTE.md).</p>
+<p>Only with <code>MCP=on</code>. Public clients (no secret), redirect URIs https or loopback only. Used by Claude and ChatGPT when they add gymbro as a custom connector (docs/MCP_REMOTE.md).</p>
     <p class="ep-auth"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2.5"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg><span>Requires a session: the cookie set at sign-in, or <code>Authorization: Bearer &lt;token&gt;</code> from mobile-app pairing.</span></p>
 
 
