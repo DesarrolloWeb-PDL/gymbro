@@ -9,7 +9,7 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import crypto from 'node:crypto'
-import { fileURLToPath } from 'node:url'
+import { fileURLToPath, pathToFileURL } from 'node:url'
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..')
 const MEDIA = path.join(ROOT, 'catalogue/media')
@@ -33,7 +33,7 @@ export function catalogueHashes(dir = MEDIA) {
 
 const render = hashes => JSON.stringify({ v: 1, algo: 'sha256', count: hashes.length, hashes }) + '\n'
 
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   const hashes = catalogueHashes()
   const text = render(hashes)
   if (process.argv.includes('--check')) {
