@@ -1,4 +1,4 @@
-/* openGym on the Apple Watch, lt: Info.plist. Written by ios/ci/watch-strings.mjs. */
+/* gymbro on the Apple Watch, lt: Info.plist. Written by ios/ci/watch-strings.mjs. */
 
-"NSHealthShareUsageDescription" = "openGym rodo tavo pulsą treniruotės metu ir prie kiekvienos serijos, o pulso zonoms naudoja tavo gimimo datą.";
-"NSHealthUpdateUsageDescription" = "Jei įjungsite, „openGym“ išsaugos jūsų treniruotes „Apple Health“.";
+"NSHealthShareUsageDescription" = "gymbro rodo tavo pulsą treniruotės metu ir prie kiekvienos serijos, o pulso zonoms naudoja tavo gimimo datą.";
+"NSHealthUpdateUsageDescription" = "Jei įjungsite, „gymbro“ išsaugos jūsų treniruotes „Apple Health“.";
