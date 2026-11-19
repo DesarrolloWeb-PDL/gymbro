@@ -92,10 +92,14 @@ lowercase like English.
 
 1. **Write it yourself.** Don't copy names, descriptions or steps from other apps, websites, books
    or datasets, and don't paste machine translation unreviewed. Short, correct, plain beats long.
-2. **The media is not open.** The pictures and animations are licensed from Gym visual for openGym
-   only (see [media/NOTICE.md](media/NOTICE.md)). Don't add, edit or replace media files, don't copy
-   them elsewhere, and don't feed them to any AI tool. Fixes to what an exercise *shows* go in an
-   issue.
+2. **The media is mixed, and most of it is still not open.** 4,593 exercises keep pictures and
+   animations licensed from Gym visual for openGym only (see [media/NOTICE.md](media/NOTICE.md));
+   1,960 were replaced by the media cascade with material from other sources whose licences and
+   obligations are recorded in
+   [`scripts/media-cascade/ATTRIBUTION.md`](../scripts/media-cascade/ATTRIBUTION.md) — including
+   CC BY-SA files that must stay under CC BY-SA. Don't add, edit or replace media files by hand:
+   changes go through `scripts/media-cascade/`, don't copy any of them elsewhere, and don't feed
+   them to any AI tool. Fixes to what an exercise *shows* go in an issue.
 3. **No medical advice.** Describe the movement, not treatments.
 
 ## Checking your change
