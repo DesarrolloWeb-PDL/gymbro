@@ -7,6 +7,14 @@
  *   DATA_DIR/uploads/<uid>/.gc.json           { hash: unreferencedSinceMs }
  *   DATA_DIR/uploads/<uid>/.tmp/<random>      uploads in flight; never outlive their request
  *
+ * With MEDIA_BACKEND=blob (the Vercel deployment) only the third of those survives. The bytes go
+ * to Blob as `uploads/<uid>/<sha256>.<ext>` and the metadata — sizes, quota, and the grace marks
+ * .gc.json used to carry — becomes rows in the `media` table, read through the one query handle
+ * storage.js exports. The staging directory stays local either way: the hash check, the magic sniff
+ * and the MP4 box walk all need positioned reads on local bytes, and a bad hash has to be refused
+ * before anything durable is written. What Blob cannot answer — free disk space — is exactly why
+ * the 507 floor below is scoped to that staging directory and not to Blob.
+ *
  * What this module promises, and why each promise is shaped the way it is:
  *
  * - It never decodes media. The only bytes it interprets are the first 64 (magic numbers) and,
@@ -27,6 +35,16 @@ import crypto from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
 import { syncDir, syncFile } from './durable.js';
+import { query, queryAvailable } from './storage.js';
+import { MEDIA_BACKEND, blobPathname, createBlobBytes } from './storage-blob.js';
+
+// MEDIA_BACKEND=blob keeps upload metadata in the `media` table, so it needs the one query handle
+// storage.js exports — which only the postgres driver has. Refusing here is the same boot error an
+// unknown STORAGE_DRIVER gives: better not to start than to start believing the uploads are in
+// Blob while nothing can read them back. An unknown name already threw inside storage-blob.js.
+if (MEDIA_BACKEND === 'blob' && !queryAvailable) {
+  throw new Error('MEDIA_BACKEND=blob needs STORAGE_DRIVER=postgres: upload metadata lives in the media table, and the fs storage driver has no SQL query handle');
+}
 
 export const HASH_RE = /^[0-9a-f]{64}$/;
 const MB = 1024 * 1024;          // every *_MB setting means MiB; the client uses the same unit
@@ -443,7 +461,7 @@ function streamToFile(req, file, { max, maxMB, idleMs }) {
  * profile's stored state, or null when there is none or it does not parse — the store sweeps
  * nobody it gets null for. `now` is injectable so the tests can walk the clock.
  */
-export function createMediaStore({ dir, limits, now = Date.now, readState = () => null, idleMs = 60000, log = console } = {}) {
+export function createMediaStore({ dir, limits, now = Date.now, readState = () => null, idleMs = 60000, log = console, backend = MEDIA_BACKEND, bytes = null } = {}) {
   const L = { ...mediaLimits({}), ...(limits || {}) };
   const quotaBytes = L.quotaMB > 0 ? Math.round(L.quotaMB * MB) : 0;
   const capMB = kind => (kind === 'video' ? L.videoMB : kind === 'gif' ? L.gifMB : kind === 'audio' ? L.audioMB : L.imageMB);
@@ -451,6 +469,13 @@ export function createMediaStore({ dir, limits, now = Date.now, readState = () =
   const maxCap = Math.max(capOf('image'), capOf('gif'), capOf('video'), capOf('audio'));
   const users = new Map();          // safe uid -> { dir, bytes, count, reserved, inflight, hashes }
   const orphansLogged = new Set();
+  // Blob mode: the byte store (injected by the tests, the real one otherwise) and the deletes this
+  // process has already set in motion — keyed by file, so a sweep and a delete of the same file
+  // cannot race, and so an upload of a hash whose delete is still running can wait for it instead
+  // of racing it and leaving a row whose blob was just taken away.
+  const BLOB = backend === 'blob';
+  const B = BLOB ? (bytes || createBlobBytes()) : null;
+  const inflightDelete = new Map();
 
   // The same sanitising as server.js stateFile(). An id that sanitises to nothing would name
   // uploads/ itself, and removeUser() would then delete everybody's files.
@@ -467,12 +492,15 @@ export function createMediaStore({ dir, limits, now = Date.now, readState = () =
   }
 
   // Built once per profile from one readdir, then kept current by every write and delete, so
-  // a state push never lists a directory.
+  // a state push never lists a directory. Blob mode cannot cache: a file another instance
+  // uploaded a second ago has to be visible here too, and this in-memory list is exactly what
+  // does not survive two instances sharing one Blob — so it is re-read from the rows every time.
   function entry(uid) {
     const id = safe(uid);
     let e = users.get(id);
-    if (e) return e;
-    e = { id, dir: path.join(dir, id), bytes: 0, count: 0, reserved: 0, inflight: 0, hashes: new Map() };
+    if (e && !BLOB) return e;
+    if (!e) e = { id, dir: path.join(dir, id), bytes: 0, count: 0, reserved: 0, inflight: 0, hashes: new Map() };
+    if (BLOB) return loadRows(e);
     let names = [];
     try { names = fs.readdirSync(e.dir, { withFileTypes: true }); } catch { /* nothing uploaded yet */ }
     for (const d of names) {
@@ -491,9 +519,32 @@ export function createMediaStore({ dir, limits, now = Date.now, readState = () =
     users.set(id, e);
     return e;
   }
+  // Blob: the rows ARE the folder. `deleting` is filtered out because a file marked for deletion
+  // is already gone from the app's point of view, and the total comes from `sum(size)` — which
+  // Postgres returns as `numeric`, i.e. a STRING through the sync bridge (only `bigint` is parsed
+  // to a Number), so it is coerced here. Miss that and `e.bytes + need > quotaBytes` compares a
+  // concatenated string against a number and refuses or admits the wrong upload.
+  function loadRows(e) {
+    e.hashes = new Map();
+    for (const r of query('SELECT hash, ext, size FROM media WHERE uid=$1 AND NOT deleting', [e.id])) {
+      const size = Number(r.size);
+      if (!size) continue;                 // an empty file is not a file this profile has
+      e.hashes.set(r.hash, { ext: r.ext, size });
+    }
+    const total = query('SELECT coalesce(sum(size),0) AS bytes FROM media WHERE uid=$1 AND NOT deleting', [e.id]);
+    e.bytes = Number(total[0]?.bytes) || 0;
+    e.count = e.hashes.size;
+    users.set(e.id, e);
+    return e;
+  }
   // The cache entry of `hash` when its file is whole: on disk, not empty, the size the cache
   // knows and, given one, the size an upload of the same bytes has. null otherwise.
   function intact(e, hash, size) {
+    if (BLOB) {
+      const f = e.hashes.get(hash);
+      if (!f) return null;
+      return size != null && size !== f.size ? null : f;
+    }
     const f = e.hashes.get(hash);
     if (!f) return null;
     let st;
@@ -515,6 +566,16 @@ export function createMediaStore({ dir, limits, now = Date.now, readState = () =
      grace starts over, which can only ever keep a file longer. */
   const gcFile = e => path.join(e.dir, '.gc.json');
   function readMarks(e) {
+    if (BLOB) {
+      // `unreferenced_since` crosses the sync bridge as JSON, so a timestamptz arrives as an ISO
+      // string, not a Date: parse it back to the milliseconds the rest of this file works in.
+      const out = {};
+      for (const r of query('SELECT hash, unreferenced_since FROM media WHERE uid=$1 AND NOT deleting AND unreferenced_since IS NOT NULL', [e.id])) {
+        const t = Date.parse(r.unreferenced_since);
+        if (Number.isFinite(t)) out[r.hash] = t;
+      }
+      return out;
+    }
     try {
       const raw = JSON.parse(fs.readFileSync(gcFile(e), 'utf8'));
       if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return {};
@@ -524,6 +585,17 @@ export function createMediaStore({ dir, limits, now = Date.now, readState = () =
     } catch { return {}; }
   }
   function writeMarks(e, marks) {
+    if (BLOB) {
+      // Two statements, no file: clear the mark on every file this profile holds that is no
+      // longer marked, then write each mark that is. `AND NOT deleting` means a file already on
+      // its way out is never resurrected by a stale mark.
+      const clear = [...e.hashes.keys()].filter(h => !(h in marks));
+      if (clear.length) query('UPDATE media SET unreferenced_since = NULL WHERE uid=$1 AND hash = ANY($2) AND NOT deleting', [e.id, clear]);
+      for (const [h, t] of Object.entries(marks)) {
+        query('UPDATE media SET unreferenced_since = to_timestamp($3::double precision / 1000) WHERE uid=$1 AND hash=$2 AND NOT deleting', [e.id, h, Number(t)]);
+      }
+      return;
+    }
     const f = gcFile(e), tmp = f + '.tmp';
     try {
       const fd = fs.openSync(tmp, 'w', 0o600);
@@ -556,10 +628,21 @@ export function createMediaStore({ dir, limits, now = Date.now, readState = () =
   function noteState(uid, state) {
     const id = safe(uid);
     // Nothing to do for a profile that never uploaded — and that is the common case, so it
-    // costs one stat per profile per process, not a readdir per push.
+    // costs one stat per profile per process, not a readdir per push. On Blob the same early
+    // exit costs one indexed SELECT instead: there is no directory to stat, and skipping it
+    // would leave a file another instance uploaded marked forever (it would never be swept).
+    if (BLOB) {
+      const e = entry(uid);
+      if (!e.hashes.size) return false;
+      return reconcileMarks(e, state);
+    }
     if (!users.has(id) && !fs.existsSync(path.join(dir, id))) return false;
     const e = entry(uid);
     if (!e.hashes.size) return false;
+    return reconcileMarks(e, state);
+  }
+  /** Bring the grace marks in line with what the state now references (both backends). */
+  function reconcileMarks(e, state) {
     const marks = readMarks(e);
     const changed = reconcile(e, referencedHashes(state), marks, now());
     if (changed) writeMarks(e, marks);
@@ -567,6 +650,7 @@ export function createMediaStore({ dir, limits, now = Date.now, readState = () =
   }
 
   function sweep(uid, { graceMs = L.gcGraceDays * DAY } = {}) {
+    if (BLOB) return blobSweep(uid, graceMs);
     const e = entry(uid);
     const res = { removed: 0, freedBytes: 0, skipped: false };
     if (!e.hashes.size) return res;
@@ -589,6 +673,86 @@ export function createMediaStore({ dir, limits, now = Date.now, readState = () =
     }
     if (changed) {
       try { writeMarks(e, marks); } catch (err) { log.error('media: could not write .gc.json for', e.id, err.message); }
+    }
+    return res;
+  }
+
+  /* ---------- the Blob delete protocol ---------- */
+
+  // Blob is HTTP and every caller of delete/removeUser/sweep is synchronous (server.js, and
+  // library/moderation.js — neither is ours to make async), so a delete can never be awaited
+  // here. The row carries the truth instead, in two steps:
+  //
+  //   1. `deleting` flips (one synchronous UPDATE). Every read filters it out, so the file is
+  //      gone from the app at once — the same user-visible behaviour as the unlink on fs.
+  //   2. The blob goes, then the row goes.
+  //
+  // A failure at either step, or a process that dies in the middle, leaves the row `deleting`:
+  // invisible, uncounted, never served, and retried by the next sweep. The one thing that must
+  // never happen is bytes that stay in Blob billed forever with no row saying they must go.
+  function finishDelete(rows) {
+    const fresh = rows.filter(r => !inflightDelete.has(`${r.uid}/${r.hash}`));
+    if (!fresh.length) return;
+    const release = () => { for (const r of fresh) inflightDelete.delete(`${r.uid}/${r.hash}`); };
+    const work = B.del(fresh.map(r => blobPathname(r.uid, r.hash, r.ext))).then(() => {
+      try {
+        const byUid = new Map();
+        for (const r of fresh) {
+          if (!byUid.has(r.uid)) byUid.set(r.uid, []);
+          byUid.get(r.uid).push(r.hash);
+        }
+        for (const [uid, hashes] of byUid) query('DELETE FROM media WHERE uid=$1 AND hash = ANY($2)', [uid, hashes]);
+      } catch (err) {
+        // The blobs are gone; the rows are not. The next retry finds no blob (which counts as
+        // deleted) and removes them then, so this can never become a permanent state.
+        log.error('media: blob(s) deleted, rows left for the next sweep:', err.message);
+      } finally { release(); }
+    }, err => {
+      release();
+      log.error('media: could not delete blob(s); left marked deleting for the next sweep:', err.message);
+    });
+    // Registered AFTER the promise exists so an upload of these very bytes can await it: writing
+    // the blob while its delete is in flight would leave a live row over bytes that just went.
+    for (const r of fresh) inflightDelete.set(`${r.uid}/${r.hash}`, work);
+  }
+  /** Every delete this process left half-done — for one profile, or for all of them. */
+  function retryStranded(uid = null) {
+    const rows = uid == null
+      ? query('SELECT uid, hash, ext FROM media WHERE deleting')
+      : query('SELECT uid, hash, ext FROM media WHERE uid=$1 AND deleting', [uid]);
+    if (rows.length) finishDelete(rows);
+  }
+
+  /** The sweep on Blob: same grace, same "a state that cannot be read removes nothing", same
+   *  counters — only the removal is the two-step delete above. A stranded delete is retried first,
+   *  so one hourly pass is enough to heal whatever the previous one could not finish. */
+  function blobSweep(uid, graceMs) {
+    retryStranded(uid);
+    const e = entry(uid);
+    const res = { removed: 0, freedBytes: 0, skipped: false };
+    if (!e.hashes.size) return res;
+    const S = stateOf(uid);
+    if (!S) { res.skipped = true; return res; }   // never infer anything from a missing state
+    const refs = referencedHashes(S);
+    const marks = readMarks(e);
+    const t = now();
+    const changed = reconcile(e, refs, marks, t);
+    const doomed = [];
+    for (const [h, f] of [...e.hashes]) {
+      if (refs.has(h)) continue;
+      if (graceMs > 0 && !(t - marks[h] >= graceMs)) continue;
+      doomed.push([h, f]);
+    }
+    if (doomed.length) {
+      const rows = query('UPDATE media SET deleting = true WHERE uid=$1 AND hash = ANY($2) AND NOT deleting RETURNING hash, ext, size',
+        [e.id, doomed.map(([h]) => h)]);
+      for (const r of rows) { forget(e, r.hash); delete marks[r.hash]; }
+      res.removed = rows.length;
+      res.freedBytes = rows.reduce((n, r) => n + Number(r.size), 0);
+      if (rows.length) finishDelete(rows.map(r => ({ uid: e.id, hash: r.hash, ext: r.ext })));
+    }
+    if (changed) {
+      try { writeMarks(e, marks); } catch (err) { log.error('media: could not update unreferenced_since for', e.id, err.message); }
     }
     return res;
   }
@@ -713,6 +877,32 @@ export function createMediaStore({ dir, limits, now = Date.now, readState = () =
       // rename and the cache update below are synchronous, so this check cannot be overtaken.
       const now2 = intact(e, hash, got.size);
       if (now2) { touch(e, hash); return existed(hash, now2); }
+      if (BLOB) {
+        // A delete of these very bytes may still be running (the file aged out while this upload
+        // was on its way): let it finish first, or its row DELETE lands after our INSERT and takes
+        // the fresh row with it.
+        const pending = inflightDelete.get(`${e.id}/${hash}`);
+        if (pending) await pending;
+        // Bytes first, row second: a row promising a blob nobody wrote would be a 404 no sweep
+        // could ever heal. The staging file stays set, so the finally below removes it.
+        const damaged = e.hashes.get(hash);
+        if (damaged && damaged.ext !== sn.ext) {
+          B.del([blobPathname(e.id, hash, damaged.ext)])
+            .catch(err => log.error('media: could not delete the old blob of', e.id, hash, err.message));
+        }
+        await B.put(blobPathname(e.id, hash, sn.ext), tmp);
+        query(
+          'INSERT INTO media (uid, hash, ext, size, unreferenced_since) VALUES ($1, $2, $3, $4, NULL) ' +
+          'ON CONFLICT (uid, hash) DO UPDATE SET ext = EXCLUDED.ext, size = EXCLUDED.size, deleting = false, unreferenced_since = NULL',
+          [e.id, hash, sn.ext, got.size]);
+        // Re-read: another instance may have written this row while the bytes were in flight, and
+        // the in-memory counters must never count one row twice.
+        loadRows(e);
+        // Unreferenced until the state push that names it arrives; the mark is what lets the
+        // grace protect it until then, and what lets it go if that push never comes.
+        try { markIfUnreferenced(uid, e, hash); } catch (err) { log.error('media: could not mark', e.id, hash, err.message); }
+        return { status: 201, body: { ok: true, hash, mime: sn.mime, size: got.size, existed: false } };
+      }
       // The bytes are on disk before the name is, and the name before the answer (durable.js).
       syncFile(tmp);
       const damaged = e.hashes.get(hash);
@@ -752,8 +942,18 @@ export function createMediaStore({ dir, limits, now = Date.now, readState = () =
     usage: uid => usageOf(entry(uid)),
     has: (uid, hash) => entry(uid).hashes.has(hash),
     /** { path, ext, mime, size } of a stored file, or null. Checks the disk, so a file that
-     *  vanished from under the cache is forgotten rather than answered with a 500. */
+     *  vanished from under the cache is forgotten rather than answered with a 500. On Blob there
+     *  is no path and no stat: the row is the answer, and `stream` is how the bytes are reached —
+     *  still synchronous in shape, because server.js calls this without `await`. */
     file(uid, hash) {
+      if (BLOB) {
+        const id = safe(uid);
+        const rows = query('SELECT ext, size FROM media WHERE uid=$1 AND hash=$2 AND NOT deleting AND size > 0', [id, hash]);
+        if (!rows.length) return null;
+        const ext = rows[0].ext;
+        const size = Number(rows[0].size);
+        return { ext, mime: EXT_MIME[ext], size, stream: () => B.stream(blobPathname(id, hash, ext)) };
+      }
       const e = entry(uid);
       const f = e.hashes.get(hash);
       if (!f) return null;
@@ -764,6 +964,32 @@ export function createMediaStore({ dir, limits, now = Date.now, readState = () =
       if (!st.size) { forget(e, hash); return null; }   // not whole: missing, for a device to send again
       if (st.size !== f.size) { e.bytes += st.size - f.size; f.size = st.size; }
       return { path: p, ext: f.ext, mime: EXT_MIME[f.ext], size: st.size };
+    },
+    /** The bytes of an upload as a LOCAL file, for the one caller that has to read them: the
+     *  community library's metadata scrub (library/metadata.js) and its hard-link into shared/.
+     *  fs already holds the file — hand over its path, no copy, and a release() that does nothing.
+     *  Blob downloads into the profile's staging folder; release() takes that copy away again and
+     *  the caller runs it in a `finally`, so a refusal halfway through leaks no temp file. */
+    async materialize(uid, hash) {
+      const e = entry(uid);
+      const f = e.hashes.get(hash);
+      if (!f) throw new MediaError(404, 'media-missing');
+      if (!BLOB) {
+        // Checked like file() checks it: a path to nothing must come back as the same 404 the
+        // lookup would give, not as an ENOENT from the metadata scrub further down.
+        const p = path.join(e.dir, `${hash}.${f.ext}`);
+        let st;
+        try { st = fs.statSync(p); } catch { forget(e, hash); throw new MediaError(404, 'media-missing'); }
+        if (!st.isFile() || !st.size) throw new MediaError(404, 'media-missing');
+        return { path: p, release: () => {} };
+      }
+      ensureDir(dir);
+      ensureDir(e.dir);
+      ensureDir(path.join(e.dir, '.tmp'));
+      const tmp = path.join(e.dir, '.tmp', crypto.randomBytes(12).toString('hex'));
+      try { await B.download(blobPathname(e.id, hash, f.ext), tmp); }
+      catch (err) { try { fs.unlinkSync(tmp); } catch { /* never landed */ } throw err; }
+      return { path: tmp, release: () => { try { fs.unlinkSync(tmp); } catch { /* already gone */ } } };
     },
     receive,
     missing(uid, hashes) {
@@ -780,6 +1006,33 @@ export function createMediaStore({ dir, limits, now = Date.now, readState = () =
       const known = new Map();
       for (const u of uids) { try { known.set(safe(u), u); } catch { /* unusable id */ } }
       const out = { swept: 0, removed: 0, freedBytes: 0, skipped: 0, orphans: 0, tmp: 0 };
+      if (BLOB) {
+        // The local directories are only staging folders now: clean them, and warn once about one
+        // that belongs to nobody, exactly as on fs. The sweep itself walks the PROFILES rather
+        // than the directories, because a profile whose bytes all live in Blob may have no
+        // directory at all — and the stranded deletes of profiles that no longer exist have to
+        // be retried whether or not any profile is left to sweep.
+        for (const name of userDirs()) {
+          out.tmp += cleanTmpOf(path.join(dir, name), HOUR);
+          if (!known.has(name)) {
+            out.orphans++;
+            if (!orphansLogged.has(name)) {
+              orphansLogged.add(name);
+              log.warn(`media: uploads/${name} belongs to no profile in db.json — left alone`);
+            }
+          }
+        }
+        retryStranded();
+        for (const uid of known.values()) {
+          try {
+            const r = sweep(uid, graceMs === undefined ? {} : { graceMs });
+            if (r.skipped) out.skipped++; else out.swept++;
+            out.removed += r.removed;
+            out.freedBytes += r.freedBytes;
+          } catch (err) { log.error('media: sweep failed for', uid, err.message); }
+        }
+        return out;
+      }
       for (const name of userDirs()) {
         out.tmp += cleanTmpOf(path.join(dir, name), HOUR);
         const uid = known.get(name);
@@ -802,13 +1055,26 @@ export function createMediaStore({ dir, limits, now = Date.now, readState = () =
     },
     /** A file copied in from the shared library (an import): into the profile's own folder, against
      *  its quota, marked like a fresh upload until the state that names it arrives. A hash the
-     *  profile already has is left as it is. */
-    adopt(uid, hash, src, ext) {
+     *  profile already has is left as it is. Async on Blob, where "copying it in" is a PUT — the
+     *  library's copy is local, the profile's is not — so the one caller awaits it. */
+    async adopt(uid, hash, src, ext) {
       if (!HASH_RE.test(hash) || !EXT_MIME[ext]) throw new MediaError(400, 'bad-request');
       const e = entry(uid);
       if (intact(e, hash)) { touch(e, hash); return { existed: true }; }
       const size = fs.statSync(src).size;
       if (quotaBytes && e.bytes + e.reserved + size > quotaBytes) throw new MediaError(413, 'media-quota', { usage: usageOf(e) });
+      if (BLOB) {
+        const pending = inflightDelete.get(`${e.id}/${hash}`);
+        if (pending) await pending;
+        await B.put(blobPathname(e.id, hash, ext), src);
+        query(
+          'INSERT INTO media (uid, hash, ext, size, unreferenced_since) VALUES ($1, $2, $3, $4, NULL) ' +
+          'ON CONFLICT (uid, hash) DO UPDATE SET ext = EXCLUDED.ext, size = EXCLUDED.size, deleting = false, unreferenced_since = NULL',
+          [e.id, hash, ext, size]);
+        loadRows(e);
+        try { markIfUnreferenced(uid, e, hash); } catch (err) { log.error('media: could not mark', e.id, hash, err.message); }
+        return { existed: false, size };
+      }
       ensureDir(e.dir);
       const dst = path.join(e.dir, `${hash}.${ext}`);
       const tmp = dst + '.adopt';
@@ -824,11 +1090,19 @@ export function createMediaStore({ dir, limits, now = Date.now, readState = () =
       return { existed: false, size };
     },
     /** One file out of a profile's folder: only the library's admin removal asks, and only for a
-     *  file its import copied there. */
+     *  file its import copied there. Synchronous in both modes — library/moderation.js calls it
+     *  inside a loop and is not ours to make async — so on Blob it marks the row and lets the
+     *  bytes follow through the delete protocol above. */
     dropFile(uid, hash) {
       const e = entry(uid);
       const f = e.hashes.get(hash);
       if (!f) return false;
+      if (BLOB) {
+        const rows = query('UPDATE media SET deleting = true WHERE uid=$1 AND hash=$2 AND NOT deleting RETURNING hash, ext', [e.id, hash]);
+        forget(e, hash);
+        if (rows.length) finishDelete([{ uid: e.id, hash, ext: rows[0].ext }]);
+        return true;
+      }
       try { fs.unlinkSync(path.join(e.dir, `${hash}.${f.ext}`)); } catch (err) { if (err.code !== 'ENOENT') throw err; }
       forget(e, hash);
       return true;
@@ -837,6 +1111,11 @@ export function createMediaStore({ dir, limits, now = Date.now, readState = () =
     removeUser(uid) {
       const id = safe(uid);
       users.delete(id);
+      if (BLOB) {
+        const rows = query('UPDATE media SET deleting = true WHERE uid=$1 AND NOT deleting RETURNING hash, ext', [id]);
+        if (rows.length) finishDelete(rows.map(r => ({ uid: id, hash: r.hash, ext: r.ext })));
+        return;
+      }
       fs.rmSync(path.join(dir, id), { recursive: true, force: true });
     },
     /** Boot: nothing is in flight yet, so every temp file is a leftover. */

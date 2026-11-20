@@ -1,0 +1,17 @@
+-- T5 (gymbro vercel port): with MEDIA_BACKEND=blob the bytes of an upload live in Vercel Blob
+-- and the row in `media` is the truth. A delete that cannot finish — Blob refused it, the process
+-- died between the two halves — must never leave billed bytes behind a row the app still serves,
+-- so a delete runs in two steps:
+--
+--   1. `deleting` flips to true (one synchronous UPDATE). Every read filters that flag out, so
+--      the file is gone from the app at once: same user-visible behaviour as the unlink it
+--      replaces, and it costs no round trip to Blob.
+--   2. The blob is dropped, then the row is dropped.
+--
+-- If step 2 fails the row stays `deleting`, and the next sweep retries it. So the worst case for
+-- a stranded row is bytes that stay in Blob (and stay billed) until a sweep runs again — never
+-- bytes that are served, counted in a quota, or resurrected by a later upload of the same hash.
+--
+-- Added as 0002 rather than folded into 0001_init.sql: that file is re-applied inline by
+-- api/test/storage-postgres.test.js and has to stay idempotent as it is.
+ALTER TABLE media ADD COLUMN IF NOT EXISTS deleting boolean NOT NULL DEFAULT false;

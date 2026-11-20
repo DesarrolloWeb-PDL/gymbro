@@ -2264,10 +2264,20 @@ if (MEDIA_ON) {
 // keeps a copy out of the HTTP cache — the app's own media store is the only client cache, and
 // an HTTP-cache copy would outlive the sign-out purge. No Range and no ETag: nothing asks.
 async function sendMediaFile(res, f, hash) {
-  let fd;
-  try { fd = fs.openSync(f.path, 'r'); }
-  catch { throw new MediaError(404, 'media-missing'); }   // swept between the lookup and here
-  const size = fs.fstatSync(fd).size;
+  // Two sources for the same headers: a file on disk (opened here, size taken off the descriptor)
+  // or a Blob-backed one, which has no descriptor to open and hands over its own stream — the
+  // length comes from the row instead, which is the same stat the lookup just did. Either way the
+  // header block below is identical, byte for byte.
+  let src;
+  let size = f.size;
+  if (f.stream) src = f.stream();
+  else {
+    let fd;
+    try { fd = fs.openSync(f.path, 'r'); }
+    catch { throw new MediaError(404, 'media-missing'); }   // swept between the lookup and here
+    if (size == null) size = fs.fstatSync(fd).size;
+    src = fs.createReadStream(null, { fd });
+  }
   res.writeHead(200, {
     'Content-Type': f.mime,
     'Content-Length': String(size),
@@ -2281,7 +2291,7 @@ async function sendMediaFile(res, f, hash) {
     // CORS-safelisted already, this only spells it out for older WebViews.
     'Access-Control-Expose-Headers': 'Content-Length'
   });
-  try { await pipeline(fs.createReadStream(null, { fd }), res); }
+  try { await pipeline(src, res); }
   catch { res.destroy(); }   // the client went away mid-download; nothing left to answer
 }
 

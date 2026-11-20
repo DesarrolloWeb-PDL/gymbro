@@ -898,7 +898,9 @@ All of them share one quota and one set of limits. A set video filmed with **Kee
 phone only** on (or for a server from before v1.4.4, whose `/api/config` does not say
 `media.sets`) never reaches the server at all.
 The file is uploaded to this server and stored under
-`./data/uploads/<profile id>/`, named by its SHA-256. Only its owner can download it again — no
+`./data/uploads/<profile id>/`, named by its SHA-256 (with `MEDIA_BACKEND=blob`, below, the bytes
+end up in Vercel Blob under that same name and `./data/uploads/` keeps only the staging copy an
+upload streams through). Only its owner can download it again — no
 admin route, no Coach, no MCP tool (it is told how many sets were filmed, nothing more), no
 PDF or shared plan reads it, and a share card only shows a workout photo you picked for it
 yourself, drawn on your device. It is on by default, with these limits, all
@@ -917,9 +919,21 @@ set in `.env`:
 | `MEDIA_UPLOADS_PER_HOUR` | `600` | uploads per profile per hour; at most two run at once |
 | `MEDIA_MIN_FREE_MB` | `512` | uploads are refused while the disk under `./data` has less free; `0` = no floor |
 | `MEDIA_UPLOAD_MAX` | `112m` | the web container's body limit on `/api/media/` (nginx syntax); keep it above `MEDIA_VIDEO_MAX_MB` |
+| `MEDIA_BACKEND` | `fs` | where the uploaded bytes live: `fs` = files under `./data/uploads`, `blob` = Vercel Blob; `blob` needs `STORAGE_DRIVER=postgres` and `BLOB_READ_WRITE_TOKEN`, and any other value refuses to start |
 
 Every MB here is 1024 × 1024 bytes. The API reads the `MEDIA_*` caps; the app gets them from
 `/api/config` and refuses a file the server would refuse before uploading it.
+
+**`MEDIA_BACKEND=blob`** is what a Vercel deployment wants: uploads survive the instance scaling
+to zero, which files on the container's disk do not. Nothing else changes — same hash names, same
+caps, same quota, same grace period — but the bookkeeping moves with the bytes: who has which file
+and how much space it takes become rows in the `media` table (`psql "$DATABASE_URL" -f
+api/migrations/0001_init.sql`, then `0002_media_deleting.sql`), and a file nobody's state
+references for `MEDIA_GC_GRACE_DAYS` has its row dropped and its blob deleted after it. A delete
+that cannot finish leaves the row marked `deleting` — already invisible, already out of the quota
+— and the next sweep retries it, so bytes are never left in Blob billed with nothing to say they
+must go. `MEDIA_MIN_FREE_MB` keeps working, because it has always been about the local staging
+directory the upload streams through; Blob has no free-space reading to take its place.
 
 **Disk.** The worst case is `MEDIA_QUOTA_MB` times the number of profiles. On an instance with
 open signup, lower the quota. `MEDIA_MIN_FREE_MB` stops uploads before they fill the disk — a

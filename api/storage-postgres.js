@@ -240,6 +240,12 @@ export function createPostgresDriver({ url } = {}) {
   };
 
   const driver = {
+    /** The pool itself, for the one caller that needs SQL rather than a document: media.js keeps
+     *  upload metadata in the `media` table (T5) and must reuse THIS bridge, not open a second
+     *  connection pool beside it. Exported through api/storage.js, which is where every consumer
+     *  already imports from. */
+    query: q,
+
     atomicWrite(key, content, mode) {   // `mode` (0600) is fs's; rows have their own access control
       const t = classifyKey(key);
       if (t.table === 'audit') { replaceAudit(content); return; }

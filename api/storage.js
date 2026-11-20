@@ -174,3 +174,29 @@ export const appendLine = seam.appendLine;
 export const exists = seam.exists;
 export const stat = seam.stat;
 export const swapJSON = seam.swapJSON;
+
+/** Does the chosen driver speak SQL? Only the postgres one does: it is what keeps upload
+ *  metadata in the `media` table (MEDIA_BACKEND=blob, gymbro vercel port T5). The `fs` driver
+ *  keeps files and has no rows to ask. */
+export const queryAvailable = typeof driver.query === 'function';
+
+/**
+ * The one query handle, over the ONE pool the postgres driver already owns — deliberately not a
+ * second `createSyncBridge` or `Pool({max:1})` beside it. Callers that need SQL (media.js) get it
+ * here; on `fs` this throws a message that says which setting is missing, because MEDIA_BACKEND=blob
+ * cannot work without rows and must fail loudly instead of half working.
+ */
+export const query = (sql, params) => {
+  if (!queryAvailable) {
+    throw new Error(`MEDIA_BACKEND=blob needs STORAGE_DRIVER=postgres: upload metadata lives in the media table, and STORAGE_DRIVER="${process.env.STORAGE_DRIVER || 'fs'}" has no SQL query handle`);
+  }
+  return driver.query(sql, params);
+};
+
+/**
+ * Let the driver go. The postgres bridge runs `pg` on a worker thread, and a worker holds the
+ * event loop open — which is exactly what makes the synchronous query possible, and exactly why a
+ * test process that queried the pool has to close it or `node --test` never exits. The server
+ * never calls this: its listening socket is what keeps it alive.
+ */
+export const close = () => (typeof driver.close === 'function' ? driver.close() : Promise.resolve());

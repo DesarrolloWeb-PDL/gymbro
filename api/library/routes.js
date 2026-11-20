@@ -86,33 +86,44 @@ export function libraryRoutes(deps) {
     return it;
   };
 
+  /** Hand the temp copies back after store.put has hard-linked them into shared/. No-op on fs,
+   *  where materialize handed over the real file instead of a copy. */
+  const releaseAll = files => { for (const f of files) f.release(); };
+
   /* Every file the payload names: in the owner's uploads, a type this item may carry, within the
-     sharing caps, clean of metadata, not blocked. Returns the refs' hashes or answers itself. */
-  function checkMedia(res, user, type, payload) {
+     sharing caps, clean of metadata, not blocked. Returns the refs' hashes or answers itself.
+     A Blob-backed upload has no local path to scrub or to hard-link, so each file is materialized
+     into the profile's staging folder first; on fs materialize hands over the file itself and
+     copies nothing. The caller releases what it was given in a `finally`. */
+  async function checkMedia(res, user, type, payload) {
     const refs = refObjects(payload);
     const missing = [];
     const files = [];
-    for (const r of refs) {
-      if (store.blocked(r.hash)) {
-        throw new LibraryError(422, 'media-blocked', store.fromCatalogue(r.hash)
-          ? 'that is part of the built-in exercise library, which is licensed and can never be shared'
-          : 'that file cannot be shared on this server');
+    try {
+      for (const r of refs) {
+        if (store.blocked(r.hash)) {
+          throw new LibraryError(422, 'media-blocked', store.fromCatalogue(r.hash)
+            ? 'that is part of the built-in exercise library, which is licensed and can never be shared'
+            : 'that file cannot be shared on this server');
+        }
+        const f = media.file(user.id, r.hash);
+        if (!f) { if (!missing.includes(r.hash)) missing.push(r.hash); continue; }
+        const mime = EXT_MIME[f.ext];
+        const kind = KIND_OF[mime];
+        const sameFamily = r.mime === mime || (KIND_OF[r.mime] === 'video' && kind === 'video' && mime !== 'video/webm');
+        if (!sameFamily) throw new LibraryError(422, 'media-type', 'that file is not what the item says it is');
+        if (!r.poster && !(KINDS_FOR[type] || ['image', 'gif', 'video']).includes(kind)) throw new LibraryError(422, 'media-type', 'that kind of file does not go with this item');
+        const capMB = type === 'avatar' ? cfg.avatarKB / 1024 : kind === 'video' ? cfg.videoMB : kind === 'gif' ? cfg.gifMB : kind === 'audio' ? cfg.soundMB : cfg.imageMB;
+        if (f.size > capMB * MB) throw new LibraryError(413, 'media-too-large', 'that file is too big to share', { maxMB: capMB });
+        const local = await media.materialize(user.id, r.hash);
+        try { checkShareable(local.path, mime, f.size, cfg); }
+        catch (e) { local.release(); throw e; }
+        r.size = f.size;       // the stored file is the truth, whatever the device said
+        files.push({ hash: r.hash, path: local.path, ext: f.ext, size: f.size, release: local.release });
       }
-      const f = media.file(user.id, r.hash);
-      if (!f) { if (!missing.includes(r.hash)) missing.push(r.hash); continue; }
-      const mime = EXT_MIME[f.ext];
-      const kind = KIND_OF[mime];
-      const sameFamily = r.mime === mime || (KIND_OF[r.mime] === 'video' && kind === 'video' && mime !== 'video/webm');
-      if (!sameFamily) throw new LibraryError(422, 'media-type', 'that file is not what the item says it is');
-      if (!r.poster && !(KINDS_FOR[type] || ['image', 'gif', 'video']).includes(kind)) throw new LibraryError(422, 'media-type', 'that kind of file does not go with this item');
-      const capMB = type === 'avatar' ? cfg.avatarKB / 1024 : kind === 'video' ? cfg.videoMB : kind === 'gif' ? cfg.gifMB : kind === 'audio' ? cfg.soundMB : cfg.imageMB;
-      if (f.size > capMB * MB) throw new LibraryError(413, 'media-too-large', 'that file is too big to share', { maxMB: capMB });
-      checkShareable(f.path, mime, f.size, cfg);
-      r.size = f.size;       // the stored file is the truth, whatever the device said
-      files.push({ hash: r.hash, path: f.path, ext: f.ext, size: f.size });
-    }
-    if (missing.length) { json(res, 409, { error: 'upload these files first', code: 'media-missing', missing }); return null; }
-    return files;
+      if (missing.length) { releaseAll(files); json(res, 409, { error: 'upload these files first', code: 'media-missing', missing }); return null; }
+      return files;
+    } catch (e) { releaseAll(files); throw e; }
   }
   function quotaOk(user, files, except = null) {
     if (!cfg.quotaMB) return true;
@@ -172,9 +183,11 @@ export function libraryRoutes(deps) {
       const payload = cleanPayload(type, body.payload);
       const mine = store.all().filter(it => it.owner === user.id && it.type === type && (it.status === 'live' || it.status === 'pending' || it.status === 'hidden'));
       if (type !== 'avatar' && mine.length >= cfg.perType) return json(res, 409, { error: 'you shared the most this server takes of these', code: 'too-many', max: cfg.perType });
-      const files = checkMedia(res, user, type, payload); if (!files) return;
-      if (!quotaOk(user, files)) return json(res, 413, { error: 'your space for shared things is full', code: 'quota', quotaMB: cfg.quotaMB });
-      for (const f of files) store.put(f.hash, f.path, f.ext);
+      const files = await checkMedia(res, user, type, payload); if (!files) return;
+      try {
+        if (!quotaOk(user, files)) return json(res, 413, { error: 'your space for shared things is full', code: 'quota', quotaMB: cfg.quotaMB });
+        for (const f of files) store.put(f.hash, f.path, f.ext);
+      } finally { releaseAll(files); }
       const t = Date.now();
       const id = newItemId();
       const title = cleanText(body.title, TEXT.title) || cleanText(payload.name || payload.ex?.n || payload.exName || '', TEXT.title) || 'Untitled';
@@ -202,9 +215,11 @@ export function libraryRoutes(deps) {
       let next = null, files = [];
       if (body.payload !== undefined) {
         next = cleanPayload(it.type, body.payload);
-        files = checkMedia(res, user, it.type, next); if (!files) return;
-        if (!quotaOk(user, files, it.id)) return json(res, 413, { error: 'your space for shared things is full', code: 'quota', quotaMB: cfg.quotaMB });
-        for (const f of files) store.put(f.hash, f.path, f.ext);
+        files = await checkMedia(res, user, it.type, next); if (!files) return;
+        try {
+          if (!quotaOk(user, files, it.id)) return json(res, 413, { error: 'your space for shared things is full', code: 'quota', quotaMB: cfg.quotaMB });
+          for (const f of files) store.put(f.hash, f.path, f.ext);
+        } finally { releaseAll(files); }
       }
       const t = Date.now();
       store.update(it.id, x => {
@@ -246,7 +261,7 @@ export function libraryRoutes(deps) {
         if (store.blocked(h)) continue;
         const f = store.file(h);
         if (!f) continue;
-        try { media.adopt(user.id, h, f.path, f.ext); copied.push(h); }
+        try { await media.adopt(user.id, h, f.path, f.ext); copied.push(h); }
         catch (e) { if (e instanceof MediaError) return json(res, e.status, { error: e.message, code: e.code, ...e.extra }); throw e; }
       }
       if (it.owner !== user.id && !(it.importers || []).includes(user.id)) {
@@ -268,7 +283,7 @@ export function libraryRoutes(deps) {
         && (it.status === 'live' || it.owner === user.id || isAdmin(user)));
       const f = seen ? store.file(h) : null;
       if (!f) return json(res, 404, { error: 'no such file', code: 'media-missing' });
-      await sendFile(res, { path: f.path, ext: f.ext, mime: EXT_MIME[f.ext] }, h);
+      await sendFile(res, { path: f.path, ext: f.ext, mime: EXT_MIME[f.ext], size: f.size }, h);
     }),
 
     'POST /api/shared/{id}/report': guard('library.report', async (req, res, user) => {
