@@ -266,6 +266,80 @@ jobs:
           retention-days: 30
           if-no-files-found: ignore
 
+  # T4c's proof that 0001_init.sql and the Postgres driver hold up against a REAL database:
+  # the dev machines have no Docker and no guaranteed Postgres, so the third layer of
+  # test/storage-postgres.test.js (round trip, CAS conflict, audit rows, the secret race) can
+  # only run here. Parallel to the api job, not behind it — it needs nothing but api/ and the
+  # service container — and gated by the same `changes` output, so a change that does not touch
+  # api/ pays nothing for it.
+  api-postgres:
+    needs: changes
+    if: needs.changes.outputs.api == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      # One throwaway service, two names on purpose. The migration script (like the driver and
+      # .env.example) reads DATABASE_URL, what production uses. The test reads
+      # STORAGE_TEST_DATABASE_URL, a name nothing but CI sets — so a developer with a real
+      # DATABASE_URL exported can never make `npm test` dial their production database.
+      DATABASE_URL: postgres://postgres:postgres@localhost:5432/gymbro_test
+      STORAGE_TEST_DATABASE_URL: postgres://postgres:postgres@localhost:5432/gymbro_test
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          # Credentials in the open on purpose, not secrets to keep: this container lives only
+          # for this job's minutes, listens on the runner's loopback, and these values grant
+          # nothing anywhere else.
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: gymbro_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d gymbro_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: api/package-lock.json
+      - run: npm ci --omit=optional --no-audit --no-fund
+        working-directory: api
+      # The schema first, through the same command an operator runs. 0001_init.sql is
+      # idempotent, so the test's own pass over the same file is the same opinion, twice.
+      - name: Apply migrations
+        working-directory: api
+        run: node scripts/apply-migrations.mjs
+      # Only this file: the full api suite runs next door WITHOUT the variable, where the
+      # real-database test skips by name. With the variable set, that test runs — five layers
+      # proving classifyKey's mapping, the CAS, the audit rows and the secret race for real.
+      - name: Storage integration tests against real postgres
+        working-directory: api
+        run: >
+          node --test
+          --test-reporter=spec --test-reporter-destination=stdout
+          --test-reporter=../scripts/ci/node-test-reporter.mjs --test-reporter-destination=test-results.jsonl
+          test/storage-postgres.test.js
+      - name: Stats
+        if: always()
+        run: >
+          node scripts/ci/test-report.mjs --label "API (postgres)" --root api
+          --node api/test-results.jsonl --out stats/api-postgres.json
+      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        if: always()
+        with:
+          name: stats-api-postgres
+          path: stats/api-postgres.json
+          retention-days: 30
+          if-no-files-found: ignore
+
   mcp:
     needs: changes
     if: needs.changes.outputs.mcp == 'true'
@@ -564,7 +638,7 @@ jobs:
 
   # One summary of the numbers of every suite that ran.
   report:
-    needs: [frontend, api, mcp]
+    needs: [frontend, api, api-postgres, mcp]
     if: always() && !cancelled()
     runs-on: ubuntu-latest
     timeout-minutes: 5
@@ -593,7 +667,7 @@ jobs:
   # The single required check. Green when every job that ran passed and the others were
   # skipped because nothing they check changed.
   tests-ok:
-    needs: [changes, frontend, api, mcp, catalogue, routines, images, android]
+    needs: [changes, frontend, api, api-postgres, mcp, catalogue, routines, images, android]
     if: always()
     runs-on: ubuntu-latest
     timeout-minutes: 2
