@@ -28,10 +28,17 @@ function withDataDir(t, dir) {
   t.after(() => { if (prev === undefined) delete process.env.DATA_DIR; else process.env.DATA_DIR = prev; });
 }
 
-test('the seam is driver-shaped: domain operations, no paths', () => {
+test('the seam is driver-shaped: domain operations, no paths', async () => {
   const driver = storage.selectDriver('fs');
-  for (const op of ['atomicWrite', 'readJSON', 'writeJSON', 'appendLine', 'exists', 'stat']) {
+  const ops = ['atomicWrite', 'readJSON', 'writeJSON', 'appendLine', 'exists', 'stat', 'swapJSON'];
+  for (const op of ops) {
     assert.equal(typeof driver[op], 'function', `the seam exposes ${op}`);
+  }
+  // The fake every unit test stands on implements exactly the same contract.
+  const { createFakeDriver } = await import('../storage-fake.js');
+  const fake = createFakeDriver();
+  for (const op of ops) {
+    assert.equal(typeof fake[op], 'function', `the fake driver implements ${op}`);
   }
 });
 
@@ -104,7 +111,7 @@ test('exists and stat: a present key is reported, an absent one is not, and stat
 });
 
 test('an unknown STORAGE_DRIVER refuses to boot instead of falling back to the filesystem', () => {
-  assert.throws(() => storage.selectDriver('postgres'), /STORAGE_DRIVER "postgres"/, 'the name is rejected, loudly');
+  assert.throws(() => storage.selectDriver('redis'), /STORAGE_DRIVER "redis"/, 'the name is rejected, loudly');
   const url = pathToFileURL(path.join(API, 'storage.js')).href;
   const boot = ["process.env.STORAGE_DRIVER = 'blob';", `await import(${JSON.stringify(url)});`].join('\n');
   let stderr = '';
@@ -113,6 +120,101 @@ test('an unknown STORAGE_DRIVER refuses to boot instead of falling back to the f
     assert.fail('the process should have refused to start');
   } catch (e) { stderr = String(e.stderr || ''); }
   assert.match(stderr, /Unknown STORAGE_DRIVER "blob"/, 'the boot error names the variable and the value');
+});
+
+/* T4c: `postgres` is a KNOWN driver now, and it refuses to boot for the same reason an unknown
+   name does — without DATABASE_URL an instance would start writing files where its operator
+   expects rows, the exact silent fallback the seam exists to prevent. Construction opens no
+   connection (the bridge starts on the first query), so selecting it here never dials anything. */
+test('STORAGE_DRIVER=postgres is known and demands DATABASE_URL, and the fake answers CAS like Postgres', async () => {
+  const prev = process.env.DATABASE_URL;
+  delete process.env.DATABASE_URL;
+  try {
+    assert.throws(() => storage.selectDriver('postgres'), /DATABASE_URL/, 'no connection string, no boot');
+  } finally {
+    if (prev === undefined) delete process.env.DATABASE_URL; else process.env.DATABASE_URL = prev;
+  }
+  process.env.DATABASE_URL = 'postgres://user:pass@example.invalid:5432/gym';
+  try {
+    const driver = storage.selectDriver('postgres');
+    for (const op of ['atomicWrite', 'readJSON', 'writeJSON', 'appendLine', 'exists', 'stat', 'swapJSON']) {
+      assert.equal(typeof driver[op], 'function', `the postgres driver implements ${op}`);
+    }
+    await driver.close();
+  } finally {
+    if (prev === undefined) delete process.env.DATABASE_URL; else process.env.DATABASE_URL = prev;
+  }
+});
+
+/* T4c — swapJSON, the compare-and-swap the sync contract needs (server.js PUT /api/data does
+   read-compare-write today and can only say "atomic for this process"). The fake below is the
+   contract every driver answers: 0 rows on a stale base revision, never a silent overwrite. */
+test('swapJSON: the write with the current base revision lands and reports the new revision', async () => {
+  const { createFakeDriver } = await import('../storage-fake.js');
+  const seam = storage.createSeam(createFakeDriver());
+  seam.writeJSON('state-u1.json', { _rev: 1, workouts: [] }, 0o600);
+  const out = seam.swapJSON('state-u1.json', { _rev: 2, workouts: [{ d: '2026-11-19' }] }, 1);
+  assert.deepEqual(out, { rev: 2 }, 'the caller gets the revision the document moved to');
+  assert.equal(seam.readJSON('state-u1.json').workouts[0].d, '2026-11-19');
+});
+
+test('swapJSON: a stale base revision loses the race — refused, and the winner keeps the document', async () => {
+  const { createFakeDriver } = await import('../storage-fake.js');
+  // Two drivers over one store: two instances of the API, the case a file cannot express.
+  const winner = createFakeDriver();
+  const loser = createFakeDriver(winner.store);
+  const seamA = storage.createSeam(winner), seamB = storage.createSeam(loser);
+  seamA.writeJSON('state-u2.json', { _rev: 1, from: 'nobody' }, 0o600);
+  assert.deepEqual(seamA.swapJSON('state-u2.json', { _rev: 2, from: 'A' }, 1), { rev: 2 });
+  assert.equal(seamB.swapJSON('state-u2.json', { _rev: 2, from: 'B' }, 1), null,
+    'the second instance sees 0 rows and must not write');
+  assert.equal(seamA.readJSON('state-u2.json').from, 'A', 'the losing write did not overwrite the winner');
+  assert.deepEqual(seamB.swapJSON('state-u2.json', { _rev: 3, from: 'B' }, 2), { rev: 3 },
+    'after merging against what the 409 carried, the same writer succeeds');
+});
+
+test('legacy paths are normalised at the seam, so both drivers see one key space', async (t) => {
+  const { createFakeDriver } = await import('../storage-fake.js');
+  const fake = createFakeDriver();
+  const seam = storage.createSeam(fake);
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'storage-norm-'));
+  t.after(() => fs.rmSync(dir, { recursive: true, force: true }));
+  withDataDir(t, dir);
+  // durable.js hands every write over as a full path (path.resolve of its caller's file).
+  seam.atomicWrite(path.join(dir, 'db.json'), '{"users":[{"id":"u1"}]}', 0o600);
+  assert.ok(fake.store.has('db.json'), 'the driver received the logical key, not the path');
+  assert.equal([...fake.store.keys()].some(k => path.isAbsolute(k)), false, 'no absolute key ever reaches a driver');
+  // The same key written the logical way lands in the same row — one key space, both spellings.
+  seam.atomicWrite('db.json', '{"users":[{"id":"u2"}]}', 0o600);
+  assert.equal(seam.readJSON('db.json').users[0].id, 'u2');
+  seam.atomicWrite(path.join(dir, 'state-u9.json'), '{"_rev":3}', 0o600);
+  assert.deepEqual(seam.readJSON(path.join(dir, 'state-u9.json')), { _rev: 3 }, 'reads normalise the same way');
+  assert.deepEqual(seam.readJSON('state-u9.json'), { _rev: 3 });
+});
+
+test('audit.log: appendLine adds rows and a rewrite keeps only the lines it was given', async () => {
+  const { createFakeDriver } = await import('../storage-fake.js');
+  const fake = createFakeDriver();
+  const seam = storage.createSeam(fake);
+  seam.appendLine('audit.log', JSON.stringify({ id: 1, ev: 'signin', uid: 'u1' }));
+  seam.appendLine('audit.log', JSON.stringify({ id: 2, ev: 'signout' }));
+  const rows = () => fake.raw('audit.log').split('\n').filter(Boolean).map(l => JSON.parse(l));
+  assert.deepEqual(rows().map(r => r.ev), ['signin', 'signout'], 'one entry per row, in order');
+  assert.equal(rows()[0].uid, 'u1', 'the uid column comes off the entry itself');
+  seam.atomicWrite('audit.log', JSON.stringify({ id: 2, ev: 'signout' }) + '\n');   // compactAudit's prune
+  assert.deepEqual(rows().map(r => r.id), [2], 'the rewrite keeps the retention the caller chose');
+});
+
+test('secret: two instances racing to create it keep exactly one value', async () => {
+  const { createFakeDriver } = await import('../storage-fake.js');
+  const first = createFakeDriver();
+  const second = createFakeDriver(first.store);
+  const seamA = storage.createSeam(first), seamB = storage.createSeam(second);
+  seamA.atomicWrite('secret', 'aaaaaaaa', 0o600);
+  seamB.atomicWrite('secret', 'bbbb', 0o600);   // the loser's random bytes are discarded, not written
+  assert.equal(first.raw('secret'), 'aaaaaaaa', 'the first creator won');
+  assert.equal(second.raw('secret'), 'aaaaaaaa', 'the second instance reads the first one back');
+  assert.equal(seamB.stat('secret').size, 8, 'one row, one value, both instances agree');
 });
 
 test('durable.js hands every write through the seam, resolving its legacy full paths first', () => {

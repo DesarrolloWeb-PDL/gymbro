@@ -6,6 +6,19 @@
 // a silent fallback: an instance that believes it is on Postgres while its bytes land in files
 // would lose them on the first container restart.
 //
+// TWO THINGS HAPPEN HERE, BEFORE ANY DRIVER SEES A KEY, so `fs` and `postgres` receive
+// identical inputs (T4c):
+//   1. Legacy paths become logical keys: durable.js hands every write over as a full path
+//      (path.resolve of its caller's file). A path under DATA_DIR is re-rooted to its key
+//      ("DATA_DIR/db.json" → "db.json") exactly once, at this boundary — not in each driver.
+//      A path OUTSIDE DATA_DIR is a legacy absolute path the fs driver still honours as given
+//      (its contract, tested); a driver without a filesystem refuses it in classifyKey.
+//   2. swapJSON is the compare-and-swap the sync contract needs: server.js PUT /api/data does
+//      read-compare-write and could only say "atomic for this process". On `postgres` the CAS
+//      is a single UPDATE … WHERE rev = $n RETURNING rev (0 rows = conflict → the existing
+//      409-with-the-current-document path); on `fs` it is today's in-process comparison, no
+//      worse than before. The client contract (baseRev, `_rev` inside the document) unchanged.
+//
 // The `fs` driver keeps the semantics durable.js had, byte for byte: temporary file, fsync,
 // rename, fsync of the directory (that ordering is the contract — see durable.js), the caller's
 // mode (0600 on `secret` and db.json) and the `db.json.bak` copy written the same way beside the
@@ -14,10 +27,25 @@
 // used exactly as given — a driver without a filesystem simply never receives one.
 import fs from 'node:fs';
 import path from 'node:path';
+import { createPostgresDriver } from './storage-postgres.js';
 
 /** Where the fs driver keeps its keys. Read per call, so a test can point it at a temp dir first. */
 const dataDir = () => process.env.DATA_DIR || '/data';
 const resolve = key => (path.isAbsolute(key) ? key : path.join(dataDir(), key));
+
+/**
+ * A legacy full path into the key space: a path under DATA_DIR becomes its logical key
+ * (forward slashes on every platform, so the row a write lands in is the row a read asks for),
+ * and anything else — a logical key as given, a full path outside DATA_DIR — comes back
+ * untouched. Normalised HERE, once, before dispatch; the drivers never see a path they did not
+ * agree on.
+ */
+export function normalizeKey(key) {
+  if (typeof key !== 'string' || !path.isAbsolute(key)) return key;
+  const rel = path.relative(path.resolve(dataDir()), path.resolve(key));
+  if (!rel || rel.startsWith('..') || path.isAbsolute(rel)) return key;
+  return rel.split(path.sep).join('/');
+}
 
 /** fsync of a directory, so a rename inside it is on disk. Best effort: some filesystems refuse. */
 function syncDir(dir) {
@@ -26,6 +54,9 @@ function syncDir(dir) {
   catch { /* a filesystem that cannot fsync a directory */ }
   finally { if (fd != null) try { fs.closeSync(fd); } catch { /* closed */ } }
 }
+
+/** The `_rev` a document carries as a revision, else 0 — the number `rev` columns mirror. */
+const revOf = doc => (doc && typeof doc === 'object' && Number.isFinite(doc._rev) ? doc._rev : 0);
 
 const fsDriver = {
   /** `content` at `key`, durably: temporary file, fsync, rename, fsync of the directory. */
@@ -70,26 +101,76 @@ const fsDriver = {
 
   /** Size and mtimes of `key`; THROWS with ENOENT when nobody wrote it. */
   stat(key) { return fs.statSync(resolve(key)); },
+
+  /**
+   * Compare-and-swap: write `value` only if the document at `key` still reads `baseRev`.
+   * Returns `{ rev }` on success and `null` when the base is stale — the signal the caller
+   * turns into the 409 with the current document. On a filesystem this is the read-compare-
+   * write server.js always did: atomic FOR THIS PROCESS only. Cross-instance safety is what
+   * STORAGE_DRIVER=postgres buys (see storage-postgres.js); the contract the seam exposes is
+   * the same on both. A key that exists but does not parse THROWS instead of comparing as
+   * absent: damage is not "nobody wrote it".
+   */
+  swapJSON(key, value, baseRev) {
+    const cur = fsDriver.readJSON(key, null);
+    if (revOf(cur) !== baseRev) return null;
+    fsDriver.atomicWrite(key, JSON.stringify(value));
+    return { rev: revOf(value) };
+  },
 };
 
 /**
  * The driver behind the seam. Everything except a known name is a boot error:
- * STORAGE_DRIVER=postgres must not start up writing files where its operator expects rows.
+ * STORAGE_DRIVER=postgres must not start up writing files where its operator expects rows —
+ * and it must not start without DATABASE_URL either, which createPostgresDriver enforces.
  */
 export function selectDriver(name = process.env.STORAGE_DRIVER || 'fs') {
   switch (name) {
     case 'fs': return fsDriver;
-    default: throw new Error(`Unknown STORAGE_DRIVER "${name}": no such storage driver (known: fs)`);
+    case 'postgres': return createPostgresDriver({ url: process.env.DATABASE_URL });
+    default: throw new Error(`Unknown STORAGE_DRIVER "${name}": no such storage driver (known: fs, postgres)`);
   }
+}
+
+/**
+ * A driver plus the seam's two boundaries: legacy paths normalised to logical keys (once,
+ * here — never inside a driver) and every operation dispatched by name, with `swapJSON` taking
+ * the same validated base revision to every implementation. Built once for the process below;
+ * tests build their own over a fake to prove the contract without a database.
+ */
+export function createSeam(driver) {
+  const OPS = ['atomicWrite', 'readJSON', 'writeJSON', 'appendLine', 'exists', 'stat', 'swapJSON'];
+  for (const op of OPS) {
+    if (typeof driver?.[op] !== 'function') throw new Error(`storage driver does not implement ${op}()`);
+  }
+  const call = (op, key, ...args) => driver[op](normalizeKey(key), ...args);
+  return {
+    atomicWrite: (key, content, mode) => call('atomicWrite', key, content, mode),
+    readJSON: (key, fallback) => call('readJSON', key, fallback),
+    writeJSON: (key, value, mode, space) => call('writeJSON', key, value, mode, space),
+    appendLine: (key, line) => call('appendLine', key, line),
+    exists: key => call('exists', key),
+    stat: key => call('stat', key),
+    swapJSON: (key, value, baseRev) => {
+      const base = Number(baseRev);
+      if (!Number.isInteger(base) || base < 0) {
+        throw new TypeError(`swapJSON: baseRev must be a non-negative integer, got ${JSON.stringify(baseRev)}`);
+      }
+      if (!value || typeof value !== 'object') throw new TypeError('swapJSON: value must be a document');
+      return call('swapJSON', key, value, base);
+    },
+  };
 }
 
 // Chosen at load: an unknown value fails the boot (server.js imports durable.js, which imports
 // this module) instead of surfacing on the first write after a deploy.
 const driver = selectDriver();
+const seam = createSeam(driver);
 
-export const atomicWrite = (key, content, mode) => driver.atomicWrite(key, content, mode);
-export const readJSON = (key, fallback) => driver.readJSON(key, fallback);
-export const writeJSON = (key, value, mode, space) => driver.writeJSON(key, value, mode, space);
-export const appendLine = (key, line) => driver.appendLine(key, line);
-export const exists = key => driver.exists(key);
-export const stat = key => driver.stat(key);
+export const atomicWrite = seam.atomicWrite;
+export const readJSON = seam.readJSON;
+export const writeJSON = seam.writeJSON;
+export const appendLine = seam.appendLine;
+export const exists = seam.exists;
+export const stat = seam.stat;
+export const swapJSON = seam.swapJSON;
