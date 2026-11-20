@@ -4,6 +4,7 @@ import http from 'node:http';
 import crypto from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
+import os from 'node:os';
 import https from 'node:https';
 import { pipeline } from 'node:stream/promises';
 import {
@@ -67,7 +68,27 @@ import { createProvider } from './oidc/provider.js';
 import { oidcRoutes } from './oidc/routes.js';
 
 const PORT = +(process.env.PORT || 3000);
-const DATA = process.env.DATA_DIR || '/data';
+// The default is the compose bind mount (./data:/data). On a host whose root is read-only and has
+// no such mount - a serverless container, a minimal image - creating it is impossible, and the
+// process used to die at import with ENOENT before it ever listened. Falling back to a temporary
+// directory keeps it alive: with STORAGE_DRIVER=postgres the durable state lives in the database,
+// and what remains on disk here is upload staging and the health probe, both of which are
+// temporary by nature anyway. A DATA_DIR the operator DID set still throws: a path they named and
+// cannot create is their error to see, not something to paper over.
+const DATA = (() => {
+  const configured = process.env.DATA_DIR;
+  const dir = configured || '/data';
+  try {
+    fs.mkdirSync(dir, { recursive: true });
+    return dir;
+  } catch (e) {
+    if (configured) throw e;
+    const fallback = path.join(os.tmpdir(), 'gymbro-data');
+    fs.mkdirSync(fallback, { recursive: true });
+    console.warn(`DATA_DIR is not set and ${JSON.stringify(dir)} cannot be created (${e.code}); using ${fallback}. Files written there are lost when the process ends.`);
+    return fallback;
+  }
+})();
 const RP_ID = process.env.RP_ID || 'localhost';
 const ORIGIN = process.env.ORIGIN || 'http://localhost:8080';
 const RP_NAME = process.env.RP_NAME || 'gymbro';
