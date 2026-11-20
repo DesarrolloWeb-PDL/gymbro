@@ -2,10 +2,9 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "services": {
     "frontend": {
-      "root": ".",
-      "framework": "vite",
-      "buildCommand": "npm --prefix frontend ci --ignore-scripts && npm --prefix frontend run build && node scripts/catalogue/stage-media.mjs frontend/dist",
-      "outputDirectory": "frontend/dist"
+      "root": "frontend/",
+      "buildCommand": "npm ci --ignore-scripts && npm run build && node ../scripts/catalogue/stage-media.mjs dist",
+      "outputDirectory": "dist"
     },
     "api": {
       "root": "api/",
