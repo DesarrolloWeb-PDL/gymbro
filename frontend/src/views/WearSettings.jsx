@@ -15,7 +15,7 @@ import { fmtAgo } from '../lib/format.js'
 
 const lineOf = key => ({
   checking: t('Checking…'),
-  build: t('Wear OS watches talk to the phone through Google Play services, which F-Droid apps leave out. The APK from opengym.ch and the Google Play app have the watch link.'),
+  build: t('Wear OS watches talk to the phone through Google Play services, which F-Droid apps leave out. The APK from GitHub and the Google Play app have the watch link.'),
   'no-watch': t('No Wear OS watch is connected to this phone. Pair one in its own app (Galaxy Wearable, Pixel Watch), then come back here.'),
   'get-app-play': t('Your watch is here, gymbro isn’t on it yet. On the watch, open the Play Store and install gymbro from “Apps on your phone”.'),
   'get-app-apk': t('Your watch is here, gymbro isn’t on it yet. This phone runs the gymbro APK, so the watch needs the Wear OS APK of the same release. One from Google Play won’t pair with it.'),

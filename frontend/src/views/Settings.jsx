@@ -1291,12 +1291,12 @@ export default function Settings({ page = null, find = null, via = null, entryKe
               accessory="chevron"
               onClick={() => (updateInfo?.hasUpdate ? onUpdateRowClick() : checkNow())} />
           : <Row icon="download" iconTint="var(--green)" title={t('Get the Android app')}
-              subtitle={t('Download the APK from opengym.ch')} accessory="chevron"
-              onClick={() => window.open('https://opengym.ch/#download', '_blank', 'noopener')} />}
+              subtitle={t('Download the APK from GitHub')} accessory="chevron"
+              onClick={() => window.open('https://github.com/DesarrolloWeb-PDL/gymbro/releases', '_blank', 'noopener')} />}
       </Section>
       {/* The F-Droid build has no Wear OS link (it would need Google Play services, which F-Droid
           leaves out): said here rather than having a watch that silently never connects. */}
-      {fdroid && <Section footer={t('Wear OS watches talk to the phone through Google Play services, which F-Droid apps leave out. The APK from opengym.ch and the Google Play app have the watch link.')}>
+      {fdroid && <Section footer={t('Wear OS watches talk to the phone through Google Play services, which F-Droid apps leave out. The APK from GitHub and the Google Play app have the watch link.')}>
         <Row icon="watch" iconTint="var(--grey)" title={t('Wear OS watch')} value={t('Not in this build')} />
       </Section>}
       {/* What this copy of the app sent where since it started (lib/net-log.js), phone app only. */}

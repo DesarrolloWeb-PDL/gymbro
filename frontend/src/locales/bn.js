@@ -1744,7 +1744,7 @@ export default {
   'You have the latest version.': 'আপনার কাছে সর্বশেষ সংস্করণ আছে।',
   'Couldn’t check for updates. Are you online?': 'আপডেট দেখা যায়নি। আপনি কি অনলাইনে আছেন?',
   'Get the Android app': 'Android অ্যাপ নিন',
-  'Download the APK from opengym.ch': 'opengym.ch থেকে APK ডাউনলোড করুন',
+  'Download the APK from GitHub': 'GitHub থেকে APK ডাউনলোড করুন',
   'Releases are checked on GitHub. The download is verified against its checksum before the installer opens.': 'রিলিজগুলো GitHub-এ দেখা হয়। ইনস্টলার খোলার আগে ডাউনলোডটি তার চেকসামের সাথে মিলিয়ে দেখা হয়।',
   'The web app updates together with your server. The Android app installs its own updates from here.': 'ওয়েব অ্যাপ আপনার সার্ভারের সাথে একসাথে আপডেট হয়। Android অ্যাপ এখান থেকে নিজের আপডেট ইনস্টল করে।',
   'Starting download…': 'ডাউনলোড শুরু হচ্ছে…',
@@ -4011,7 +4011,7 @@ export default {
   "F-Droid installs the updates for this build.": "এই বিল্ডের আপডেট F-Droid ইনস্টল করে।",
   "Wear OS watch": "Wear OS ঘড়ি",
   "Not in this build": "এই বিল্ডে নেই",
-  "Wear OS watches talk to the phone through Google Play services, which F-Droid apps leave out. The APK from opengym.ch and the Google Play app have the watch link.": "Wear OS ঘড়ি Google Play সার্ভিসের মাধ্যমে ফোনের সাথে যোগাযোগ করে, যা F-Droid অ্যাপে থাকে না। opengym.ch-এর APK আর Google Play অ্যাপে ঘড়ির সংযোগ আছে।",
+  "Wear OS watches talk to the phone through Google Play services, which F-Droid apps leave out. The APK from GitHub and the Google Play app have the watch link.": "Wear OS ঘড়ি Google Play সার্ভিসের মাধ্যমে ফোনের সাথে যোগাযোগ করে, যা F-Droid অ্যাপে থাকে না। GitHub-এর APK আর Google Play অ্যাপে ঘড়ির সংযোগ আছে।",
   // Stats redesign
   "Muscles": "পেশি",
   "Chart": "চার্ট",

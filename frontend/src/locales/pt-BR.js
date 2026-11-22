@@ -3301,7 +3301,7 @@ export const PT_BR_OVERRIDES = {
   "Paired watches": "Relógios pareados",
   "Couldn’t reach your server. Try again in a moment.": "Não foi possível acessar seu servidor. Tente de novo daqui a pouco.",
   // --- the F-Droid build ---
-  "Wear OS watches talk to the phone through Google Play services, which F-Droid apps leave out. The APK from opengym.ch and the Google Play app have the watch link.": "Os relógios Wear OS falam com o celular através dos serviços do Google Play, que os aplicativos do F-Droid deixam de fora. O APK de opengym.ch e o aplicativo do Google Play têm a conexão com o relógio.",
+  "Wear OS watches talk to the phone through Google Play services, which F-Droid apps leave out. The APK from GitHub and the Google Play app have the watch link.": "Os relógios Wear OS falam com o celular através dos serviços do Google Play, que os aplicativos do F-Droid deixam de fora. O APK de GitHub e o aplicativo do Google Play têm a conexão com o relógio.",
   // --- Settings → Modules (1.4.4) ---
   "Beginner to Elite for your main lifts, measured against your body weight.": "De Iniciante a Elite nos seus exercícios principais, medido em relação ao seu peso corporal.",
   "Change it anytime in Settings → Modules.": "Mude quando quiser em Configurações → Módulos.",
@@ -4211,7 +4211,7 @@ export const PT_BR_OVERRIDES = {
   'You have v{0}': 'Você está na v{0}',
   'You have the latest version.': 'Você está na versão mais recente.',
   'Get the Android app': 'Baixar o app Android',
-  'Download the APK from opengym.ch': 'Baixe o APK em opengym.ch',
+  'Download the APK from GitHub': 'Baixe o APK em GitHub',
   'The web app updates together with your server. The Android app installs its own updates from here.': 'O app web é atualizado junto com o seu servidor. O app Android instala as próprias atualizações por aqui.',
   'Checksum not available, so not installing': 'Checksum indisponível, por isso não instalamos',
   'Back online and synced with the server.': 'Online de novo e sincronizado com o servidor.',

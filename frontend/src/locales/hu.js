@@ -1688,7 +1688,7 @@ export default {
   'You have the latest version.': 'A legújabb verziód van.',
   'Couldn’t check for updates. Are you online?': 'Nem sikerült frissítéseket keresni. Online vagy?',
   'Get the Android app': 'Android-alkalmazás letöltése',
-  'Download the APK from opengym.ch': 'Töltsd le az APK-t az opengym.ch oldalról',
+  'Download the APK from GitHub': 'Töltsd le az APK-t a GitHub oldalról',
   'Releases are checked on GitHub. The download is verified against its checksum before the installer opens.': 'A kiadásokat a GitHub-on ellenőrizzük. A letöltést a telepítő megnyitása előtt az ellenőrzőösszeggel vetjük össze.',
   'The web app updates together with your server. The Android app installs its own updates from here.': 'A webalkalmazás a szerverrel együtt frissül. Az Android-alkalmazás innen telepíti a frissítéseit.',
   'Starting download…': 'Letöltés indítása…',
@@ -3935,7 +3935,7 @@ export default {
   "F-Droid installs the updates for this build.": "A frissítéseket ennél a változatnál az F-Droid telepíti.",
   "Wear OS watch": "Wear OS óra",
   "Not in this build": "Ebben a változatban nincs",
-  "Wear OS watches talk to the phone through Google Play services, which F-Droid apps leave out. The APK from opengym.ch and the Google Play app have the watch link.": "A Wear OS órák a Google Play-szolgáltatásokon át beszélnek a telefonnal, ezeket pedig az F-Droid appok kihagyják. Az opengym.ch-s APK és a Google Play-es app tud órát csatlakoztatni.",
+  "Wear OS watches talk to the phone through Google Play services, which F-Droid apps leave out. The APK from GitHub and the Google Play app have the watch link.": "A Wear OS órák a Google Play-szolgáltatásokon át beszélnek a telefonnal, ezeket pedig az F-Droid appok kihagyják. A GitHub-s APK és a Google Play-es app tud órát csatlakoztatni.",
   // Stats redesign
   "Muscles": "Izmok",
   "Chart": "Diagram",
