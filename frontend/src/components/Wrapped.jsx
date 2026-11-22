@@ -188,7 +188,7 @@ export default function Wrapped() {
   const share = c => {
     const body = S.body
     useUI.getState().openSheet(closeSheet => <ShareCardSheet title={t('Share this card')} close={closeSheet} toast={m => useUI.getState().toast(m)}
-      name={`opengym-${month || year}-${c.id}.png`} shareTitle={t('Your {0} in gymbro', month ? monthLabel(month) : String(year))}
+      name={`gymbro-${month || year}-${c.id}.png`} shareTitle={t('Your {0} in gymbro', month ? monthLabel(month) : String(year))}
       render={pref => wrappedCardImage(c, { ...pref, year: label, body })} />)
   }
   const hideBody = () => update(s => { s.wrappedBody = false })

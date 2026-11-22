@@ -270,7 +270,7 @@ export default function ShareWorkout({ w, close }) {
     setBusy(true)
     const blob = await toPng(canvasRef.current)
     if (!blob) { toast(t('Could not create the image')); setBusy(false); return }
-    const done = await how(blob, `opengym-workout-${day}${pref.template === 'sticker' ? '-sticker' : ''}.png`, w.name || 'gymbro', toast)
+    const done = await how(blob, `gymbro-workout-${day}${pref.template === 'sticker' ? '-sticker' : ''}.png`, w.name || 'gymbro', toast)
     setBusy(false)
     if (done !== false) close?.()
   }
