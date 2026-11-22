@@ -29,6 +29,10 @@ describe('print-doc', () => {
   it('a page: logo, title, facts, owner and date, right to left in Arabic', () => {
     const html = printShell({ title: 'Leg <day>', kicker: 'Routine', facts: ['3 exercises', '', 'x'], owner: 'Ana', date: '2026-10-15', body: '<p>b</p>' })
     expect(html).toContain(LOGO_SVG)
+    // The name beside the mark, split across two spans the way the web lockup is: a search for it
+    // as one string never matches, which is how the rename left this printing the old one.
+    expect(html).toContain('<span>gym<span class="g">bro</span></span>')
+    expect(html).not.toContain('<span>open')
     expect(html).toContain('<title>Leg &lt;day&gt;</title>')
     expect(html).toContain('<div class="facts">3 exercises<span class="dot">·</span>x</div>')
     expect(html).toContain('<b>Ana</b>')
