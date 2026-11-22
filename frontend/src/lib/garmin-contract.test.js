@@ -124,7 +124,7 @@ describe('phone → watch: the snapshot', () => {
     const missing = read1.filter(k => !sent.has(k) && !new RegExp(`\\b${k}\\b`).test(watchSync + snapshotJs))
     expect(missing).toEqual([])
     // and the ones this watch alone gets are made by garminSnapshot
-    const g = garminSnapshot({ unit: 'kg', restSec: 90, acked: ['a'], discarded: ['w0'], settings: { accent: '#A3E635', onAccent: '#000000', crown: 'weight', effort: 'rir', autoHolds: true, forgotten: { askMin: 20 } }, active: { id: 'w', cur: 0, entries: [{ id: 'e', mode: 'reps', sets: [{ w: 1, r: 1, done: true }] }] }, ready: { today: { name: 'A', routineIds: ['r'], entries: [] }, others: [] } })
+    const g = garminSnapshot({ unit: 'kg', restSec: 90, acked: ['a'], discarded: ['w0'], settings: { accent: '#ff9f0a', onAccent: '#000000', crown: 'weight', effort: 'rir', autoHolds: true, forgotten: { askMin: 20 } }, active: { id: 'w', cur: 0, entries: [{ id: 'e', mode: 'reps', sets: [{ w: 1, r: 1, done: true }] }] }, ready: { today: { name: 'A', routineIds: ['r'], entries: [] }, others: [] } })
     expect(Object.keys(g.settings).sort()).toEqual(['accent', 'askMin', 'autoHolds', 'crown', 'effort', 'lang', 'onAccent', 'restHaptics', 'show'])
     expect(g.active).toMatchObject({ count: 1, progress: [1, 1], volume: 1 })
     expect(g.active.entries[0].i).toBe(0)

@@ -249,7 +249,7 @@ public class OpenGymWidgetProvider extends AppWidgetProvider {
 
     /**
      * `accent` as text on `bg`: as it is while it reads at 3:1 (large text, an icon), otherwise
-     * darkened in steps until it does. The brand's green (#a3e635) is 1.5:1 on the light widget's
+     * darkened in steps until it does. The brand's green (#ff9f0a) is 1.5:1 on the light widget's
      * white and comes out a deep lime there; on the dark card every accent stays as it is.
      */
     static int readableOn(int accent, int bg) {

@@ -5659,7 +5659,7 @@ export default {
   "White": "Hvid",
   "Your own code for this set": "Din egen kode til dette sæt",
   "gymbro dark": "gymbro mørk",
-  "gymbro green": "gymbro grøn",
+  "gymbro": "gymbro",
   "A model on your network": "En model på dit netværk",
   "A paid ChatGPT plan, on the web. Business and Enterprise workspaces decide whether members may add their own.": "Et betalt ChatGPT-abonnement, på nettet. Business- og Enterprise-arbejdsområder bestemmer, om medlemmer må tilføje deres egne.",
   "Add gymbro to the assistant app you already pay for": "Tilføj gymbro til den assistent-app, du allerede betaler for",

@@ -448,7 +448,7 @@ test('header: one line at every width, and the panels hang from the bar', () => 
   assert.match(js, /setProperty\('--nav-b'/)
   assert.match(js, /document\.documentElement\.style\.overflow = open \? 'hidden' : ''/)
   // One green: the brand's.
-  assert.match(css, /--acc: #a3e635;/)
+  assert.match(css, /--acc: #ff9f0a;/)
   assert.doesNotMatch(css + fs.readFileSync(path.join(ROOT, 'website/routines/routines.css'), 'utf8'), /#32d74b|#30d158|50, 215, 75/i)
   const compact = new Function(`${/const compact = [^\n]+/.exec(js)[0]}; return compact`)()
   assert.deepEqual([20358, 2141, 950, 1000].map(compact), ['20.4k', '2.1k', '950', '1k'])

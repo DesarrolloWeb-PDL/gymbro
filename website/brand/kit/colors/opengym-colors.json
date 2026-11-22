@@ -2,8 +2,8 @@
   "name": "openGym",
   "colors": {
     "openGym green": {
-      "hex": "#A3E635",
-      "rgb": "163 230 53",
+      "hex": "#ff9f0a",
+      "rgb": "255 159 10",
       "use": "Buttons, highlights, the word Gym."
     },
     "Ink": {
@@ -22,7 +22,7 @@
       "use": "Text on light."
     },
     "Green on light": {
-      "hex": "#4D7C0F",
+      "hex": "#a35a00",
       "rgb": "77 124 15",
       "use": "Green text on white (5:1)."
     },

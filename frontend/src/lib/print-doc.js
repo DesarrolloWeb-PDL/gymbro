@@ -46,7 +46,7 @@ export function probeMarks(probe) {
 // The logo's mark: a loaded Olympic barbell in brand green on the 352×174 grid (x 80..432,
 // y 169..343), beside "gym" in the theme's ink and "bro" in brand green.
 export const LOGO_SVG = '<svg class="logo-mark" viewBox="80 169 352 174" aria-hidden="true">'
-  + '<g fill="#a3e635"><rect x="80" y="248" width="352" height="16"/><rect x="85" y="223" width="19" height="66"/>'
+  + '<g fill="#ff9f0a"><rect x="80" y="248" width="352" height="16"/><rect x="85" y="223" width="19" height="66"/>'
   + '<rect x="107" y="199" width="20" height="114"/><rect x="130" y="169" width="26" height="174"/>'
   + '<rect x="356" y="169" width="26" height="174"/><rect x="385" y="199" width="20" height="114"/>'
   + '<rect x="408" y="223" width="19" height="66"/></g></svg>'
@@ -80,7 +80,7 @@ export const PRINT_CSS = `
   :root {
     --ink: #15171c; --ink-2: #3b404b; --muted: #6b7180; --faint: #9aa0ad;
     --rule: #e3e6ec; --rule-soft: #eff1f5; --tint: #f6f7f9;
-    --lime: #a3e635; --lime-ink: #4d7c0f; --lime-soft: #f1f9e1;
+    --lime: #ff9f0a; --lime-ink: #a35a00; --lime-soft: #fff4e5;
   }
   * { box-sizing: border-box; }
   html { color-scheme: light; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
@@ -101,7 +101,7 @@ export const PRINT_CSS = `
   .mast { display: block; border-bottom: 1.5px solid var(--ink); padding-bottom: 9pt; margin-bottom: 14pt; }
   .mast-top { display: flex; align-items: center; justify-content: space-between; gap: 12pt; margin-bottom: 11pt; }
   .brand { display: flex; align-items: center; gap: .2em; font-weight: 700; font-size: 12pt; letter-spacing: -.036em; color: #12151b; white-space: nowrap; direction: ltr; unicode-bidi: isolate; }
-  .brand .g { color: #a3e635; }
+  .brand .g { color: #ff9f0a; }
   .logo-mark { height: 1.07em; width: calc(1.07em * 352 / 174); flex: none; }
   .mast-meta { font-size: 8pt; color: var(--muted); text-align: end; line-height: 1.35; }
   .mast-meta b { color: var(--ink-2); font-weight: 600; }

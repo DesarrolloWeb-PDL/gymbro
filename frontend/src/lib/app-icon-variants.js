@@ -6,10 +6,10 @@
 // (null: the primary icon) and `android` the activity-alias in AndroidManifest.xml. `art` is a
 // hand-made SVG the script renders instead of the glyph; `bg`/`fg` are then just its main colours.
 export const APP_ICON_VARIANTS = [
-  { id: 'default', name: 'Original', bg: '#0c0e12', fg: '#a3e635', ios: null, android: 'IconDefault' },
+  { id: 'default', name: 'Original', bg: '#0c0e12', fg: '#ff9f0a', ios: null, android: 'IconDefault' },
   { id: 'light', name: 'Light', bg: '#ffffff', fg: '#65a30d', ios: 'AppIcon-Light', android: 'IconLight' },
   { id: 'mono', name: 'Mono', bg: '#0c0e12', fg: '#f2f2f7', ios: 'AppIcon-Mono', android: 'IconMono' },
-  { id: 'neon', name: 'Green', bg: '#a3e635', fg: '#0c0e12', ios: 'AppIcon-Neon', android: 'IconNeon' },
+  { id: 'neon', name: 'Green', bg: '#ff9f0a', fg: '#0c0e12', ios: 'AppIcon-Neon', android: 'IconNeon' },
   { id: 'sky', name: 'Blue', bg: '#0a84ff', fg: '#ffffff', ios: 'AppIcon-Sky', android: 'IconSky' },
   { id: 'orange', name: 'Orange', bg: '#ff9f0a', fg: '#0c0e12', ios: 'AppIcon-Orange', android: 'IconOrange' },
   { id: 'pink', name: 'Pink', bg: '#ff375f', fg: '#ffffff', ios: 'AppIcon-Pink', android: 'IconPink' },
@@ -19,7 +19,7 @@ export const APP_ICON_VARIANTS = [
   // Christmas only in December (`months`, 1-based): the theme is a surprise every year until
   // 1 December (lib/seasonal.js `hidden`), its icon too. One already on the home screen stays
   // offered all year. The native projects carry it in every build.
-  { id: 'christmas', name: 'Christmas', bg: '#070b16', fg: '#a3e635', art: 'resources/icons/christmas.svg', ios: 'AppIcon-Christmas', android: 'IconChristmas', months: [12] },
+  { id: 'christmas', name: 'Christmas', bg: '#070b16', fg: '#ff9f0a', art: 'resources/icons/christmas.svg', ios: 'AppIcon-Christmas', android: 'IconChristmas', months: [12] },
 ]
 
 export const APP_ICON_IDS = APP_ICON_VARIANTS.map(v => v.id)

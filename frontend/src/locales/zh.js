@@ -5717,7 +5717,7 @@ export default {
   "White": "白色",
   "Your own code for this set": "你给这组定的记号",
   "gymbro dark": "gymbro 深色",
-  "gymbro green": "gymbro 绿色",
+  "gymbro": "gymbro",
   // --- sub-connect-146: Use your subscription (Claude, ChatGPT, Gemini connectors) ---
   "A model on your network": "你网络里的模型",
   "A paid ChatGPT plan, on the web. Business and Enterprise workspaces decide whether members may add their own.": "付费的 ChatGPT 方案，网页版。Business 和 Enterprise 工作区由工作区决定成员能否自行添加。",

@@ -140,15 +140,15 @@
   --on-acc:#ffffff;
 }
 
-/* The brand's own green, the logo's #a3e635 (1.4.5, the default for a new profile). Far lighter than
+/* The brand's own green, the logo's #ff9f0a (1.4.5, the default for a new profile). Far lighter than
    the system colours, so everything filled with it carries the brand's near-black (#0c0e12, 12.8:1)
    and a switch's white knob gets its hairline ring. With this accent the status green (a done day,
    a tick, the green settings tiles) is the same green, so the screen shows one green, not two; a
    glyph on a green tile turns dark with it (--on-green, below). In the light theme the fill steps to
-   #84cc16, the next shade of the same lime, which still reads on white, and text takes #4a7a0e
+   #e07f00, the next shade of the same lime, which still reads on white, and text takes #4a7a0e
    (4.6:1 on the page, 5.2:1 on a card). */
-:root[data-accent="brand"] { --acc:#a3e635; --acc-2:#84cc16; --on-acc:#0c0e12; --knob-ring:rgba(0,0,0,.28); --green:#a3e635; --on-green:#0c0e12 }
-:root[data-theme="light"][data-accent="brand"] { --acc:#84cc16; --acc-2:#65a30d; --green:#84cc16; --green-ink:#4a7a0e; --win-ink:#4a7a0e }
+:root[data-accent="brand"] { --acc:#ff9f0a; --acc-2:#e07f00; --on-acc:#0c0e12; --knob-ring:rgba(0,0,0,.28); --green:#ff9f0a; --on-green:#0c0e12 }
+:root[data-theme="light"][data-accent="brand"] { --acc:#e07f00; --acc-2:#65a30d; --green:#e07f00; --green-ink:#4a7a0e; --win-ink:#4a7a0e }
 /* the other accents: Apple's system colours, so a recolour never looks off-system */
 :root[data-accent="lime"]  { --acc:var(--green);  --acc-2:#248a3d; --on-acc:#000 }
 :root[data-accent="sky"]   { --acc:var(--blue);   --acc-2:#0060df; --on-acc:#fff }
@@ -216,7 +216,7 @@ input,textarea,[contenteditable]{caret-color:var(--acc-ink)}
     --sep:rgba(60,60,67,.6); --sep-op:rgba(60,60,67,.5);
   }
   /* The brand's green keeps its own shades; its words go one step deeper (7:1 on white). */
-  :root[data-theme="light"][data-accent="brand"]{ --green-ink:#3f6212; --acc-ink:#3f6212; --win-ink:#3f6212 }
+  :root[data-theme="light"][data-accent="brand"]{ --green-ink:#7c3d00; --acc-ink:#7c3d00; --win-ink:#7c3d00 }
 }
 
 /* ---------------------------------------------------------------- reset -- */
@@ -4654,9 +4654,9 @@ button.wl-summary{width:100%;padding:0 0 10px;text-align:start;border-radius:var
 /* The gymbro logo (components/BrandLogo.jsx, assets/logo): brand colours whatever the accent, the
    type 700 with tight tracking, the mark 1.07em high with its middle 0.36em over the baseline. */
 .brand-lockup{display:inline-block;font-weight:700;letter-spacing:-.036em;line-height:1.1;white-space:nowrap;unicode-bidi:isolate;direction:ltr}
-.brand-lockup-mark{display:inline-block;height:1.07em;width:calc(1.07em * 352 / 174);vertical-align:-.175em;margin-inline-end:.2em;fill:#a3e635}
+.brand-lockup-mark{display:inline-block;height:1.07em;width:calc(1.07em * 352 / 174);vertical-align:-.175em;margin-inline-end:.2em;fill:#ff9f0a}
 .brand-lockup-lead{color:#eef1f6}
-.brand-lockup-accent{color:#a3e635}
+.brand-lockup-accent{color:#ff9f0a}
 :root[data-theme="light"] .brand-lockup-lead{color:#12151b}
 
 /* Add set / Warm-up / Remove: 44px tall, the leading glyph on the card's content edge; wrapped siblings share the same edge */

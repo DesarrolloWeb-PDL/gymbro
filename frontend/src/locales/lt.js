@@ -5713,7 +5713,7 @@ export default {
   "White": "Balta",
   "Your own code for this set": "Tavo paties kodas šiai serijai",
   "gymbro dark": "gymbro tamsi",
-  "gymbro green": "gymbro žalia",
+  "gymbro": "gymbro",
   // --- sub-connect-146: Use your subscription (Claude, ChatGPT, Gemini connectors) ---
   "A model on your network": "Modelis jūsų tinkle",
   "A paid ChatGPT plan, on the web. Business and Enterprise workspaces decide whether members may add their own.": "Mokamas ChatGPT planas, naršyklėje. Business ir Enterprise darbo erdvėse pati erdvė sprendžia, ar nariai gali pridėti savo.",

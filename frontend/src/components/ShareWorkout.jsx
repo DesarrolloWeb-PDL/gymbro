@@ -53,8 +53,8 @@ const BG_NAMED = { brand: BRAND.ink, black: '#000000', white: '#ffffff' }
 const INK_NAMED = { white: '#ffffff', black: '#000000', brand: BRAND.green }
 const HI_NAMED = { brand: BRAND.green, white: '#ffffff', black: '#000000' }
 const SWATCH_LABEL = () => ({ auto: t('Auto'), brand: t('gymbro dark'), black: t('Black'), white: t('White'), accent: t('Accent'), clear: t('See-through') })
-const INK_LABEL = () => ({ auto: t('Auto'), white: t('White'), black: t('Black'), brand: t('gymbro green') })
-const HI_LABEL = () => ({ auto: t('Accent'), brand: t('gymbro green'), white: t('White'), black: t('Black') })
+const INK_LABEL = () => ({ auto: t('Auto'), white: t('White'), black: t('Black'), brand: t('gymbro') })
+const HI_LABEL = () => ({ auto: t('Accent'), brand: t('gymbro'), white: t('White'), black: t('Black') })
 
 /** One row of colour swatches, with a custom colour at its end. Each swatch carries its name, not
  *  only its colour, so the row reads without colour vision. */
@@ -74,7 +74,7 @@ function ColorRow({ title, value, presets, labels, named, acc, onPick }) {
       <label className={'sharew-sw' + (custom ? ' on' : '')}>
         <span className="sharew-dot is-custom" style={custom ? { background: value } : undefined} aria-hidden="true" />
         <span>{t('Custom')}</span>
-        <input type="color" className="sharew-cpick" aria-label={t('Custom colour for {0}', title)} value={custom ? value : '#a3e635'} onChange={e => onPick(e.target.value)} />
+        <input type="color" className="sharew-cpick" aria-label={t('Custom colour for {0}', title)} value={custom ? value : '#ff9f0a'} onChange={e => onPick(e.target.value)} />
       </label>
     </div>
   </div>
@@ -378,7 +378,7 @@ export default function ShareWorkout({ w, close }) {
 }
 
 // Kept for a test that wants a picture without the sheet: the card for a template as a PNG blob.
-export async function shareCardPng(model, { template, format, look, show, photo = null, body = null, acc = '#a3e635', bg = 'auto', ink = 'auto', hi = 'auto' }) {
+export async function shareCardPng(model, { template, format, look, show, photo = null, body = null, acc = '#ff9f0a', bg = 'auto', ink = 'auto', hi = 'auto' }) {
   const probe = makeCanvas(1, 1, CARD_FONT)
   if (!probe) return null
   const shape = body && model.levels ? body : null

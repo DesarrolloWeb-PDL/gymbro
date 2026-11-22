@@ -21,7 +21,7 @@
 .rt-page [hidden] { display: none !important; }
 .rt-page main section { padding: 0; }
 .rt-page svg { flex: none; }
-.rt-page mark { background: rgba(163, 230, 53, .26); color: inherit; border-radius: 3px; padding: 0 1px; }
+.rt-page mark { background: rgba(255, 159, 10, .26); color: inherit; border-radius: 3px; padding: 0 1px; }
 
 /* The still tile: one look for every exercise picture on these pages. */
 .still { position: relative; display: block; flex: none; overflow: hidden; background: var(--tile); border-radius: 10px; }
@@ -201,9 +201,9 @@
   transition: background-color .15s var(--ease), color .15s var(--ease), box-shadow .15s var(--ease), transform .12s var(--ease);
 }
 .qp:active { transform: scale(.97); }
-.qp[aria-pressed="true"] { background: var(--acc-soft); color: var(--acc); box-shadow: inset 0 0 0 1px rgba(163, 230, 53, .45); }
+.qp[aria-pressed="true"] { background: var(--acc-soft); color: var(--acc); box-shadow: inset 0 0 0 1px rgba(255, 159, 10, .45); }
 .qp[aria-pressed="true"]::before { content: ""; width: 12px; height: 7px; border-left: 2px solid currentColor; border-bottom: 2px solid currentColor; transform: translateY(-2px) rotate(-45deg); }
-@media (hover: hover) and (pointer: fine) { .qp:hover { background: rgba(255, 255, 255, .06); } .qp[aria-pressed="true"]:hover { background: rgba(163, 230, 53, .2); } }
+@media (hover: hover) and (pointer: fine) { .qp:hover { background: rgba(255, 255, 255, .06); } .qp[aria-pressed="true"]:hover { background: rgba(255, 159, 10, .2); } }
 
 .rt-rhead { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; margin: 18px 0 16px; scroll-margin-top: 140px; }
 .rt-rhead h2 { font-size: clamp(20px, 2.4vw, 24px); letter-spacing: -.025em; font-variant-numeric: tabular-nums; margin-right: 4px; }
@@ -318,7 +318,7 @@
 .rt-week li { display: flex; min-width: 0; }
 .rt-week .cell { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px; min-height: 84px; padding: 10px 10px 12px; border-radius: 14px; background: var(--surface); color: var(--fg); }
 .rt-week a.cell { background: var(--acc-soft); transition: background-color .15s var(--ease); }
-.rt-week a.cell:hover { text-decoration: none; background: rgba(163, 230, 53, .2); }
+.rt-week a.cell:hover { text-decoration: none; background: rgba(255, 159, 10, .2); }
 .rt-week .d { color: var(--fg-2); font-size: 13px; font-weight: 600; }
 .rt-week .on .d { color: var(--acc); }
 .rt-week .s { font-size: 14px; line-height: 1.25; overflow-wrap: anywhere; }

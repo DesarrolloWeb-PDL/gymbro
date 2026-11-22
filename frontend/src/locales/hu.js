@@ -5720,7 +5720,7 @@ export default {
   "White": "Fehér",
   "Your own code for this set": "A saját kódod ehhez a sorozathoz",
   "gymbro dark": "gymbro sötét",
-  "gymbro green": "gymbro zöld",
+  "gymbro": "gymbro",
   // --- sub-connect-146: Use your subscription (Claude, ChatGPT, Gemini connectors) ---
   "A model on your network": "Egy modell a saját hálózatodon",
   "A paid ChatGPT plan, on the web. Business and Enterprise workspaces decide whether members may add their own.": "Fizetős ChatGPT-csomag, a weben. Business és Enterprise munkaterületeken a munkaterület dönti el, hogy a tagok hozzáadhatnak-e sajátot.",

@@ -5683,7 +5683,7 @@ export default {
   "White": "Bílá",
   "Your own code for this set": "Tvůj vlastní kód pro tuhle sérii",
   "gymbro dark": "Tmavá gymbro",
-  "gymbro green": "Zelená gymbro",
+  "gymbro": "gymbro",
   // --- sub-connect-146: Use your subscription (Claude, ChatGPT, Gemini connectors) ---
   "A model on your network": "Model ve tvé síti",
   "A paid ChatGPT plan, on the web. Business and Enterprise workspaces decide whether members may add their own.": "Placený plán ChatGPT, na webu. V prostorech Business a Enterprise rozhoduje prostor, jestli si členové můžou přidat vlastní.",

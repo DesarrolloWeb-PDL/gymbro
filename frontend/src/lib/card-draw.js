@@ -44,7 +44,7 @@ export function mixColor(a, b, p) {
 }
 
 // The accent as words on a light card: the accent darkened by 38 %, as before, while that reads at
-// 4.5:1 on the card's page and tiles; a lighter accent (the brand's #a3e635, a yellow, a pastel of
+// 4.5:1 on the card's page and tiles; a lighter accent (the brand's #ff9f0a, a yellow, a pastel of
 // the user's own) keeps going down its own hue until it does (lib/accent.js inkIn, 1.4.5).
 export function accTextOnLight(a) {
   const mixed = mixColor(a, '#000000', 0.62)
@@ -70,7 +70,7 @@ const MARK = [
   [100, -87, 26, 174], [129, -57, 20, 114], [152, -33, 19, 66],
 ]
 export const MARK_ASPECT = 352 / 174
-export const BRAND = { green: '#a3e635', ink: '#0c0e12', light: '#eef1f6', dark: '#12151b' }
+export const BRAND = { green: '#ff9f0a', ink: '#0c0e12', light: '#eef1f6', dark: '#12151b' }
 
 /** The logo mark, `h` high, its left edge at x, centred on y. */
 export function drawMark(ctx, x, y, h, color = BRAND.green) {

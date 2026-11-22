@@ -25,7 +25,7 @@ import ch.duartesantos.opengym.wear.WatchSettings
  * Always On (ambient): no lit fills, only their outlines, the text a little dimmer, nothing moves.
  */
 object Og {
-    /** The brand's green (#a3e635, a new profile's accent since 1.4.5), until the phone has said which one it wears. */
+    /** The brand's green (#ff9f0a, a new profile's accent since 1.4.5), until the phone has said which one it wears. */
     val Green = Color(0xFFA3E635)
     /** The brand's near-black (#0c0e12): what reads on the green. */
     val OnGreen = Color(0xFF0C0E12)

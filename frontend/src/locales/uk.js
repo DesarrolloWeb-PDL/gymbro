@@ -5714,7 +5714,7 @@ export default {
   "White": "Білий",
   "Your own code for this set": "Твій власний код для цього підходу",
   "gymbro dark": "Темний gymbro",
-  "gymbro green": "Зелений gymbro",
+  "gymbro": "gymbro",
   // --- sub-connect-146: Use your subscription (Claude, ChatGPT, Gemini connectors) ---
   "A model on your network": "Модель у твоїй мережі",
   "A paid ChatGPT plan, on the web. Business and Enterprise workspaces decide whether members may add their own.": "Платний план ChatGPT, у браузері. У просторах Business та Enterprise сам простір вирішує, чи можуть учасники додавати власні.",

@@ -33,7 +33,7 @@ html,body{width:var(--w);height:var(--h);overflow:hidden;background:#0c0e12;colo
 .glow{position:absolute;border-radius:50%;background:radial-gradient(circle,rgba(163,230,53,.16),rgba(163,230,53,0) 62%)}
 .lockup{display:block}
 h1{font-weight:700;letter-spacing:-.035em;line-height:1.02}
-h1 em{font-style:normal;color:#a3e635}
+h1 em{font-style:normal;color:#ff9f0a}
 .url{color:#8b919c;font-weight:500;letter-spacing:.01em}
 .phone{position:absolute;border-radius:9% / 4.2%;background:#1b1f26;padding:1.1%;box-shadow:0 0 0 2px #2c313a,0 40px 100px rgba(0,0,0,.6);overflow:hidden}
 .phone img{display:block;width:100%;border-radius:8% / 3.7%}
@@ -75,7 +75,7 @@ function body(b) {
     return `<div class="glow" style="width:${w * 0.6}px;height:${w * 0.6}px;left:${w * 0.2}px;top:${h * 0.5 - w * 0.3}px"></div>
 <div class="center" style="gap:34px">
   <div class="lockup" style="width:720px;height:${720 * 238 / 868}px">${LOCKUP}</div>
-  <p class="url" style="font-size:44px">Your workouts. Your weights. <span style="color:#a3e635">Your data.</span></p>
+  <p class="url" style="font-size:44px">Your workouts. Your weights. <span style="color:#ff9f0a">Your data.</span></p>
 </div>`
   }
   if (b.kind === 'wall') {

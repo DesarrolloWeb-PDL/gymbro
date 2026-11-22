@@ -4,7 +4,7 @@
    shared Contents button opens the same list as a drawer (.side in styles.css).
    Loaded after styles.css; the home page does not load it. */
 .ref {
-  --r-ink: #0c0e12; --r-surf: #15181d; --r-surf-2: #1d2128; --r-text: #e7e9ee; --r-text-2: #b4b9c3; --r-muted: #8b919c; --r-green: #a3e635;
+  --r-ink: #0c0e12; --r-surf: #15181d; --r-surf-2: #1d2128; --r-text: #e7e9ee; --r-text-2: #b4b9c3; --r-muted: #8b919c; --r-green: #ff9f0a;
   --r-e: cubic-bezier(.16, 1, .3, 1);
   display: grid; grid-template-columns: 196px minmax(0, 1fr); gap: 0 clamp(32px, 5vw, 72px); align-items: start;
   padding-top: clamp(40px, 6vw, 72px); padding-bottom: 72px;

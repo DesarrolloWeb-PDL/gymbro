@@ -130,7 +130,7 @@ extension Color {
     }
 }
 
-/// The brand's colours: the green (#a3e635), what every surface falls back on until the app has
+/// The brand's colours: the green (#ff9f0a), what every surface falls back on until the app has
 /// said which accent it wears (1.4.5), and the near-black (#0c0e12) that reads on it.
 extension Color {
     static let openGymGreen = Color(red: 0xa3 / 255, green: 0xe6 / 255, blue: 0x35 / 255)
@@ -1580,7 +1580,7 @@ struct OpenGymMarkShape: Shape {
     }
 }
 
-/// The mark in brand green (#A3E635), `width` points wide. The logo's colour, never the accent.
+/// The mark in brand green (#ff9f0a), `width` points wide. The logo's colour, never the accent.
 struct OpenGymMark: View {
     var width: CGFloat = 20
 

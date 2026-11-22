@@ -14,10 +14,10 @@
   --fg-2: #a1a1a6;
   --fg-3: #7d7d85;  /* >=4.5:1 on every panel — WCAG AA for small text */
 
-  --acc: #a3e635;
+  --acc: #ff9f0a;
   --acc-ink: #0c0e12;
-  --acc-soft: rgba(163, 230, 53, .13);
-  --acc-on-light: #4d7c0f; /* brand green for text on light surfaces (5:1 on white) */
+  --acc-soft: rgba(255, 159, 10, .13);
+  --acc-on-light: #a35a00; /* brand green for text on light surfaces (5:1 on white) */
 
   --r-s: 12px;
   --r-m: 20px;
@@ -62,7 +62,7 @@ img, svg, iframe { display: block; max-width: 100%; }
 img { height: auto; }
 button { font: inherit; color: inherit; background: none; border: 0; }
 
-::selection { background: rgba(163, 230, 53, .3); }
+::selection { background: rgba(255, 159, 10, .3); }
 :focus-visible { outline: 2px solid var(--acc); outline-offset: 3px; border-radius: 6px; }
 
 .wrap { max-width: var(--max); margin: 0 auto; padding: 0 var(--pad); }
@@ -152,9 +152,9 @@ nav {
 }
 .brand:hover { text-decoration: none; }
 .brand-word { white-space: nowrap; }
-.brand-word span { color: #a3e635; }
+.brand-word span { color: #ff9f0a; }
 .brand-mark {
-  height: 1.07em; width: calc(1.07em * 352 / 174); flex: none; fill: #a3e635;
+  height: 1.07em; width: calc(1.07em * 352 / 174); flex: none; fill: #ff9f0a;
   margin-right: .2em;
 }
 
@@ -431,7 +431,7 @@ body.menu-open::after, body.contents-open::after { opacity: 1; pointer-events: a
 }
 .hero-stage::before {
   content: ""; position: absolute; inset: -12% -46% 14%;
-  background: radial-gradient(closest-side, rgba(163, 230, 53, .2), transparent 72%);
+  background: radial-gradient(closest-side, rgba(255, 159, 10, .2), transparent 72%);
   filter: blur(10px); pointer-events: none;
 }
 .hero-stage .device {
@@ -606,7 +606,7 @@ section { padding: var(--sec) 0 0; }
   background: var(--surface); border: 1px solid var(--hair-soft);
   border-radius: var(--r-l); padding: clamp(24px, 3.2vw, 34px);
 }
-.card.hl { border-color: rgba(163, 230, 53, .32); background: linear-gradient(180deg, rgba(163, 230, 53, .05), transparent 55%), var(--surface); }
+.card.hl { border-color: rgba(255, 159, 10, .32); background: linear-gradient(180deg, rgba(255, 159, 10, .05), transparent 55%), var(--surface); }
 .card .ic { width: 38px; height: 38px; color: var(--acc); margin-bottom: 16px; }
 .card .ic svg { width: 100%; height: 100%; }
 .card h3 { font-size: clamp(21px, 2.6vw, 25px); }
@@ -816,7 +816,7 @@ footer {
 .prose .who { color: var(--fg-3); margin-top: 26px; }
 
 .note {
-  background: var(--acc-soft); border: 1px solid rgba(163, 230, 53, .2);
+  background: var(--acc-soft); border: 1px solid rgba(255, 159, 10, .2);
   border-radius: var(--r-s); padding: 15px 18px; margin: 20px 0;
 }
 .note p, .note { color: #cfe9d5; font-size: 15.5px; line-height: 1.55; }
@@ -1011,7 +1011,7 @@ table.cfg td:first-child { white-space: nowrap; width: 1%; padding-right: 26px; 
    their color-only look — they are recognisable as controls by placement. */
 .prose p a, .prose li a, .prose td a, .foot .c a, .note a {
   text-decoration: underline;
-  text-decoration-color: rgba(163, 230, 53, .45);
+  text-decoration-color: rgba(255, 159, 10, .45);
   text-underline-offset: 2.5px;
 }
 .prose p a:hover, .prose li a:hover, .prose td a:hover, .foot .c a:hover, .note a:hover {
@@ -1025,8 +1025,8 @@ table.cfg td:first-child { white-space: nowrap; width: 1%; padding-right: 26px; 
    beside the text instead (ref.css), and this pill is only for narrower screens. */
 .toc-btn {
   color: var(--acc); font-weight: 600; font-size: 14.5px;
-  border-color: rgba(163, 230, 53, .45);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, .5), 0 0 0 4px rgba(163, 230, 53, .08);
+  border-color: rgba(255, 159, 10, .45);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, .5), 0 0 0 4px rgba(255, 159, 10, .08);
 }
 .toc-btn:hover { color: var(--fg); border-color: var(--acc); background: rgba(32, 33, 37, .96); }
 

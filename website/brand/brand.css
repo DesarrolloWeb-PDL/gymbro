@@ -1,7 +1,7 @@
 /* opengym.ch/brand: the parts only the brand page has (figures, the background picker, swatches,
    download cards, the banner list). Layout, contents and type come from ../ref.css. */
 .brand-doc {
-  --ink: #0c0e12; --paper: #eef1f6; --dark: #12151b; --green: #a3e635; --onl: #4d7c0f;
+  --ink: #0c0e12; --paper: #eef1f6; --dark: #12151b; --green: #ff9f0a; --onl: #a35a00;
   --surf: #15181d; --surf-2: #1d2128; --text: #e7e9ee; --text-2: #b4b9c3; --muted: #8b919c;
   --e: cubic-bezier(.16, 1, .3, 1);
 }
@@ -35,12 +35,12 @@
 .bg-dl { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
 .bg-dl a { font-size: 13px; font-weight: 600; padding: 5px 11px; border-radius: 99px; background: var(--surf-2); color: var(--text) !important; text-decoration: none !important;
   transition: background .15s, transform .15s var(--e); }
-.bg-dl a:hover { background: rgba(163, 230, 53, .18); } .bg-dl a:active { transform: scale(.95); }
+.bg-dl a:hover { background: rgba(255, 159, 10, .18); } .bg-dl a:active { transform: scale(.95); }
 
 /* construction, space, specimen, icons */
 .bg-construct svg { width: 100%; height: auto; }
 .bg-construct { padding: 4% 5%; aspect-ratio: auto; }
-.bg-space-box { width: 72%; outline: 1.5px dashed rgba(163, 230, 53, .7); outline-offset: -7.6%; line-height: 0; }
+.bg-space-box { width: 72%; outline: 1.5px dashed rgba(255, 159, 10, .7); outline-offset: -7.6%; line-height: 0; }
 .bg-space-box img { width: 100%; height: auto; }
 .bg-specimen { flex-direction: column; align-items: flex-start; justify-content: center; gap: 8px; aspect-ratio: auto; padding: 36px 34px; }
 .bg-sp-1 { font-size: clamp(44px, 6vw, 72px); font-weight: 700; letter-spacing: -.045em; line-height: 1; font-variant-numeric: tabular-nums; color: var(--paper); }

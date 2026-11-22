@@ -5727,7 +5727,7 @@ export default {
   "White": "Bianco",
   "Your own code for this set": "Il tuo codice per questa serie",
   "gymbro dark": "Scuro gymbro",
-  "gymbro green": "Verde gymbro",
+  "gymbro": "gymbro",
   // --- sub-connect-146: Use your subscription (Claude, ChatGPT, Gemini connectors) ---
   "A model on your network": "Un modello nella tua rete",
   "A paid ChatGPT plan, on the web. Business and Enterprise workspaces decide whether members may add their own.": "Un piano ChatGPT a pagamento, sul web. Negli spazi di lavoro Business ed Enterprise è lo spazio a decidere se i membri possono aggiungerne di propri.",

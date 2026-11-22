@@ -5682,7 +5682,7 @@ export default {
   "White": "Putih",
   "Your own code for this set": "Kode milikmu untuk set ini",
   "gymbro dark": "Gelap gymbro",
-  "gymbro green": "Hijau gymbro",
+  "gymbro": "gymbro",
   // --- sub-connect-146: Use your subscription (Claude, ChatGPT, Gemini connectors) ---
   "A model on your network": "Model di jaringanmu",
   "A paid ChatGPT plan, on the web. Business and Enterprise workspaces decide whether members may add their own.": "Paket ChatGPT berbayar, di web. Di workspace Business dan Enterprise, workspace-nya yang menentukan apakah anggota boleh menambahkan milik sendiri.",
