@@ -1,9 +1,13 @@
-// The gymbro logo, as in assets/logo: the mark (five plain rectangles on a 352×174 grid, square
-// corners, brand green) and the lockup (mark, then "gym" in the theme's ink and "bro" in brand
-// green). Brand colours, not the accent: the accent is the user's, the logo is not. Never mirrored
-// in RTL.
+// The gymbro mark: a loaded Olympic barbell on a 352×174 grid (x 80..432, y 169..343),
+// square corners, brand green. The stack tapers outward the way a real bar is loaded -
+// tallest plate against the grip, shortest at the sleeve - and the shaft runs the full
+// width so the sleeves read as bar continuing past the plates. Brand colours, not the
+// accent: the accent is the user's, the logo is not. Never mirrored in RTL.
 
-const RECTS = [[80, 242, 352, 28], [80, 199, 36, 114], [131, 169, 47, 174], [334, 169, 47, 174], [396, 199, 36, 114]]
+const RECTS = [
+  [80, 248, 352, 16], [85, 223, 19, 66], [107, 199, 20, 114], [130, 169, 26, 174],
+  [356, 169, 26, 174], [385, 199, 20, 114], [408, 223, 19, 66],
+]
 
 /** The mark alone, `height` px high (width follows, 352:174). `color` only for a one-colour use. */
 export function BrandMark({ height = 24, color = '#a3e635', className, style }) {

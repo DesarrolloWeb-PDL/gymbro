@@ -62,9 +62,13 @@ export function cardPalette(style, acc = BRAND.green) {
     : { bg: '#000000', surface: '#1c1c1e', tile: '#2c2c2e', label: '#ffffff', label2: '#98989f', acc: a, accText: a, sep: '#38383a', light: false }
 }
 
-// The brand mark (assets/logo/opengym-mark.svg) on its own 352×174 grid, centred on 0,0. Square
-// corners and these exact proportions: the logo is not ours to restyle per card.
-const MARK = [[-176, -14, 352, 28], [-176, -57, 36, 114], [-125, -87, 47, 174], [78, -87, 47, 174], [140, -57, 36, 114]]
+// The gymbro mark, centred on 0,0: a loaded Olympic barbell on the same 352×174 grid as
+// BrandLogo.jsx, shifted so the shaft's centre is the origin. Square corners and these exact
+// proportions: the logo is not ours to restyle per card.
+const MARK = [
+  [-176, -8, 352, 16], [-171, -33, 19, 66], [-149, -57, 20, 114], [-126, -87, 26, 174],
+  [100, -87, 26, 174], [129, -57, 20, 114], [152, -33, 19, 66],
+]
 export const MARK_ASPECT = 352 / 174
 export const BRAND = { green: '#a3e635', ink: '#0c0e12', light: '#eef1f6', dark: '#12151b' }
 

@@ -43,12 +43,13 @@ export function probeMarks(probe) {
   return { s: id => mark('s', id), e: id => mark('e', id), h: id => mark('h', id) }
 }
 
-// The logo's mark (assets/logo/opengym-mark.svg): five plain rectangles in brand green, beside "open"
-// plus "Gym" in brand green, the light lockup of assets/logo/opengym-logo-light.svg.
+// The logo's mark: a loaded Olympic barbell in brand green on the 352×174 grid (x 80..432,
+// y 169..343), beside "gym" in the theme's ink and "bro" in brand green.
 export const LOGO_SVG = '<svg class="logo-mark" viewBox="80 169 352 174" aria-hidden="true">'
-  + '<g fill="#a3e635"><rect x="80" y="242" width="352" height="28"/><rect x="80" y="199" width="36" height="114"/>'
-  + '<rect x="131" y="169" width="47" height="174"/><rect x="334" y="169" width="47" height="174"/>'
-  + '<rect x="396" y="199" width="36" height="114"/></g></svg>'
+  + '<g fill="#a3e635"><rect x="80" y="248" width="352" height="16"/><rect x="85" y="223" width="19" height="66"/>'
+  + '<rect x="107" y="199" width="20" height="114"/><rect x="130" y="169" width="26" height="174"/>'
+  + '<rect x="356" y="169" width="26" height="174"/><rect x="385" y="199" width="20" height="114"/>'
+  + '<rect x="408" y="223" width="19" height="66"/></g></svg>'
 
 // "Page {0} of {1}" in the reader's language, as the content of an @page margin box: the text
 // around the two numbers comes from the translation, the numbers from CSS counters.
