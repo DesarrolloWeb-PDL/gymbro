@@ -14,7 +14,7 @@ import Icon from './Icon.jsx'
    the name and password, a daily backup on this device, Back up now and Restore. The rules and
    the client are lib/webdav.js; the runs lib/webdav-run.js. */
 
-export const WEBDAV_DOCS = 'https://github.com/DuarteSantos8/openGym/blob/main/docs/WEBDAV_BACKUP.md'
+export const WEBDAV_DOCS = 'https://github.com/DesarrolloWeb-PDL/gymbro/blob/main/docs/WEBDAV_BACKUP.md'
 
 /** This device's WebDAV settings, with `foreign` while another account than the one active set them up. */
 export function useWebdavConfig() {

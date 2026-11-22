@@ -14,7 +14,7 @@ import { Section, Row, Switch, Button, TextField } from './ui.jsx'
    where, and the Home line about the fasting window. openRunning has no app yet: its contract is
    docs/dev/SISTER_APPS.md, and runs come in through Apple Health / Health Connect meanwhile. */
 
-export const SISTER_DOCS = 'https://github.com/DuarteSantos8/openGym/blob/main/docs/dev/SISTER_APPS.md'
+export const SISTER_DOCS = 'https://github.com/DesarrolloWeb-PDL/gymbro/blob/main/docs/dev/SISTER_APPS.md'
 
 /** This device's openNutrition link, kept up to date; with `range`, the days of it are fetched too. */
 export function useNutritionLink(range = null) {

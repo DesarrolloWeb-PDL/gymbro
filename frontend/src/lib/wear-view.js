@@ -11,7 +11,7 @@
 // other one looks exactly like a watch without the app, which is why the two "get it" lines differ.
 
 // How to put the watch app on a watch next to the sideloaded phone APK.
-export const WEAR_DOCS = 'https://github.com/DuarteSantos8/openGym/blob/main/docs/WEAR_OS.md#installing'
+export const WEAR_DOCS = 'https://github.com/DesarrolloWeb-PDL/gymbro/blob/main/docs/WEAR_OS.md#installing'
 
 /**
  * The page's one line about the link, as a key (the page has the words), what it offers

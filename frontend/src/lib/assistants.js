@@ -9,8 +9,8 @@
 // profile's tokens are connectors, and whether this server can be reached from the internet at all.
 import { t } from './i18n.js'
 
-export const SELF_HOSTING_DOCS = 'https://github.com/DuarteSantos8/openGym/blob/main/docs/SELF_HOSTING.md'
-export const MCP_REMOTE_DOCS = 'https://github.com/DuarteSantos8/openGym/blob/main/docs/MCP_REMOTE.md'
+export const SELF_HOSTING_DOCS = 'https://github.com/DesarrolloWeb-PDL/gymbro/blob/main/docs/SELF_HOSTING.md'
+export const MCP_REMOTE_DOCS = 'https://github.com/DesarrolloWeb-PDL/gymbro/blob/main/docs/MCP_REMOTE.md'
 
 // Where each app adds a connector, as its makers document it (checked 2026-11-08):
 //   Claude   claude.com/docs/connectors/custom/add-unlisted: Customize > Connectors, Free (one

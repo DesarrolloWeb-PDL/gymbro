@@ -32,8 +32,8 @@ import { getCalendar } from '../lib/api-tokens.js'
    webhooks are new, and they live on the server (api/integrations). lib/integrations.js decides
    which card shows where; this file only draws them. */
 
-export const MCP_DOCS = 'https://github.com/DuarteSantos8/openGym/blob/main/mcp/README.md'
-export const INTEGRATIONS_DOCS = 'https://github.com/DuarteSantos8/openGym/blob/main/docs/INTEGRATIONS.md'
+export const MCP_DOCS = 'https://github.com/DesarrolloWeb-PDL/gymbro/blob/main/mcp/README.md'
+export const INTEGRATIONS_DOCS = 'https://github.com/DesarrolloWeb-PDL/gymbro/blob/main/docs/INTEGRATIONS.md'
 
 const sheet = render => useUI.getState().openSheet(render)
 const nameOf = card => (card.translate ? t(card.name) : card.name)

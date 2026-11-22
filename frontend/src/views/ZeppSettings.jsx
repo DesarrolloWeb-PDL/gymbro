@@ -15,7 +15,7 @@ import { useUI } from '../store/useUI.js'
 import { connectServer } from '../components/ServerSync.jsx'
 
 // How to put the watch app on the watch while it is not in the Zepp App Store (docs/ZEPP_OS.md).
-export const ZEPP_INSTALL_DOCS = 'https://github.com/DuarteSantos8/openGym/blob/main/docs/ZEPP_OS.md#installing-it'
+export const ZEPP_INSTALL_DOCS = 'https://github.com/DesarrolloWeb-PDL/gymbro/blob/main/docs/ZEPP_OS.md#installing-it'
 
 /** The address the Zepp app's settings page wants: the paired server, else this page's own. */
 const pairedServer = () => { try { return remoteAuth() } catch { return null } }

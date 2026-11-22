@@ -13,7 +13,7 @@ import { Section, Row, SelectRow, Button, TextField } from '../components/ui.jsx
    over MCP, a planner, a script), each seeing and changing only what is ticked, revoked here. The
    server keeps only a hash, so a new token is shown once. */
 
-export const MCP_REMOTE_DOCS = 'https://github.com/DuarteSantos8/openGym/blob/main/docs/MCP_REMOTE.md'
+export const MCP_REMOTE_DOCS = 'https://github.com/DesarrolloWeb-PDL/gymbro/blob/main/docs/MCP_REMOTE.md'
 export const ICON = { workouts: 'dumbbell', plans: 'calendar', bodyweight: 'scale', measurements: 'ruler', notes: 'pencil' }
 export const TINT = { workouts: 'var(--green)', plans: 'var(--orange)', bodyweight: 'var(--teal)', measurements: 'var(--indigo)', notes: 'var(--yellow)' }
 const sheet = render => useUI.getState().openSheet(render)
