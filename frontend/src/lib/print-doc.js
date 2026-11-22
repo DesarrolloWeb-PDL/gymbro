@@ -156,7 +156,7 @@ export function printShell({ title, kicker = '', facts = [], owner = '', date, b
 ${css}</style></head>
 <body><div class="doc">
   <header class="mast keep">
-    <div class="mast-top"><div class="brand">${LOGO_SVG}<span>gym<span class="g">bro</span></span></div><div class="mast-meta">${meta}</div></div>
+    <div class="mast-top"><div class="brand">${LOGO_SVG}<span translate="no">Gym<span class="g">Bro</span></span></div><div class="mast-meta">${meta}</div></div>
     ${kicker ? `<div class="kicker">${esc(kicker)}</div>` : ''}
     <h1>${esc(title)}</h1>
     ${factLine ? `<div class="facts">${factLine}</div>` : ''}

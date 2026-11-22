@@ -108,8 +108,8 @@ export function brandNeedsBadge(bg) {
 }
 
 /**
- * The footer every card ends with: the official lockup (brand-green mark, "gym" in the theme's ink
- * plus "bro" in brand green, as in assets/logo). `y` is the text's baseline. Drawn left to right
+ * The footer every card ends with: the official lockup (brand-green mark, "Gym" in the theme's ink
+ * plus "Bro" in brand green, as in assets/logo). `y` is the text's baseline. Drawn left to right
  * whatever the language: it is a logo, and a logo does not mirror.
  */
 // `badge`: the lockup on its dark badge whatever the paper, for a card that has no paper of its
@@ -125,7 +125,7 @@ export function drawBrand(ctx, { x, y, colors, family, size = 40, badge: forceBa
   ctx.textAlign = 'left'
   ctx.font = `700 ${size}px ${family}`
   if ('letterSpacing' in ctx) ctx.letterSpacing = `${(-size * 0.036).toFixed(2)}px`
-  const textW = ctx.measureText('gymbro').width
+  const textW = ctx.measureText('GymBro').width
   const lockW = markH * MARK_ASPECT + gap + textW
   let lx = x
   if (badge) {
@@ -138,10 +138,10 @@ export function drawBrand(ctx, { x, y, colors, family, size = 40, badge: forceBa
   drawMark(ctx, lx, y - size * 0.36, markH, BRAND.green)
   let tx = lx + markH * MARK_ASPECT + gap
   ctx.fillStyle = onDark ? BRAND.light : BRAND.dark
-  ctx.fillText('gym', tx, y)
-  tx += ctx.measureText('gym').width
+  ctx.fillText('Gym', tx, y)
+  tx += ctx.measureText('Gym').width
   ctx.fillStyle = BRAND.green
-  ctx.fillText('bro', tx, y)
+  ctx.fillText('Bro', tx, y)
   if ('letterSpacing' in ctx) ctx.letterSpacing = '0px'
 }
 

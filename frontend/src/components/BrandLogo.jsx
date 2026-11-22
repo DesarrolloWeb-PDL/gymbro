@@ -30,7 +30,7 @@ export default function BrandLogo({ size = 34, as: Tag = 'span', className = '',
       <svg className="brand-lockup-mark" viewBox="80 169 352 174" aria-hidden="true" focusable="false">
         {RECTS.map(([x, y, w, h]) => <rect key={x + '-' + y} x={x} y={y} width={w} height={h} />)}
       </svg>
-      <span className="brand-lockup-lead">gym</span><span className="brand-lockup-accent">bro</span>
+      <span className="brand-lockup-lead" translate="no">Gym</span><span className="brand-lockup-accent" translate="no">Bro</span>
     </Tag>
   )
 }

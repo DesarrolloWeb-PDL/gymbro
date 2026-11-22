@@ -31,7 +31,7 @@ describe('print-doc', () => {
     expect(html).toContain(LOGO_SVG)
     // The name beside the mark, split across two spans the way the web lockup is: a search for it
     // as one string never matches, which is how the rename left this printing the old one.
-    expect(html).toContain('<span>gym<span class="g">bro</span></span>')
+    expect(html).toContain('<span translate="no">Gym<span class="g">Bro</span></span>')
     expect(html).not.toContain('<span>open')
     // No site of its own either: the PDF is handed to someone else, and opengym.ch is not ours.
     expect(html).not.toContain('opengym.ch')

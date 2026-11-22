@@ -27,17 +27,26 @@ function render(node) {
 }
 
 describe('BrandLogo', () => {
-  it('writes the brand as gymbro, not the name the fork came from', () => {
+  it('writes the brand as GymBro, not the name the fork came from', () => {
     const el = render(<BrandLogo />)
-    expect(el.textContent).toBe('gymbro')
+    expect(el.textContent).toBe('GymBro')
     expect(el.textContent).not.toMatch(/open/i)
-    expect(el.textContent).not.toMatch(/gym$/i) // "Gym" alone was the old second half
+    // Capital G and B, per the brand: gymbro lowercase is the machine form, GymBro is the
+    // written one - the tab title, the manifest and the locale keys keep the former.
+    expect(el.textContent).toMatch(/^GymBro$/)
+  })
+
+  it('tells the translator to leave the name alone', () => {
+    const el = render(<BrandLogo />)
+    for (const half of el.querySelectorAll('.brand-lockup-lead, .brand-lockup-accent')) {
+      expect(half.getAttribute('translate'), half.textContent).toBe('no')
+    }
   })
 
   it('keeps the two-tone split: the lead follows the theme, the accent is brand green', () => {
     const el = render(<BrandLogo />)
-    expect(el.querySelector('.brand-lockup-lead')?.textContent).toBe('gym')
-    expect(el.querySelector('.brand-lockup-accent')?.textContent).toBe('bro')
+    expect(el.querySelector('.brand-lockup-lead')?.textContent).toBe('Gym')
+    expect(el.querySelector('.brand-lockup-accent')?.textContent).toBe('Bro')
     // The old class names must be gone: a stale one would silently drop the colour.
     expect(el.querySelector('.brand-lockup-open')).toBeNull()
     expect(el.querySelector('.brand-lockup-gym')).toBeNull()

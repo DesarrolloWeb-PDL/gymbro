@@ -39,11 +39,10 @@ const draw = () => {
 }
 
 describe('drawBrand', () => {
-  it('paints the brand as gymbro, never the name the fork came from', () => {
+  it('paints the brand as GymBro, never the name the fork came from', () => {
     const painted = draw().filter(([k]) => k === 'fill').map(([, s]) => s)
-    expect(painted.join('')).toContain('gymbro')
+    expect(painted.join('')).toContain('GymBro')
     expect(painted).not.toContain('open')
-    expect(painted).not.toContain('Gym')
   })
 
   it('carries no site of its own: the card is shared, and opengym.ch is not ours to advertise', () => {
@@ -57,9 +56,9 @@ describe('drawBrand', () => {
     const measured = calls.filter(([k]) => k === 'measure').map(([, s]) => s)
     const painted = calls.filter(([k]) => k === 'fill').map(([, s]) => s).join('')
 
-    // The badge width comes from measureText('gymbro'); whatever is painted has to add up to it.
-    expect(measured).toContain('gymbro')
-    expect(painted).toContain('gymbro')
+    // The badge width comes from measureText('GymBro'); whatever is painted has to add up to it.
+    expect(measured).toContain('GymBro')
+    expect(painted).toContain('GymBro')
   })
 
   it('keeps the two-tone split: the lead in the theme ink, the accent in brand green', () => {
@@ -76,7 +75,7 @@ describe('drawBrand', () => {
     }
     const lead = fills.find(([, s]) => s !== BRAND.green)
     const accent = fills.find(([, s]) => s === BRAND.green)
-    expect(lead?.[0]).toBe('gym')
-    expect(accent?.[0]).toBe('bro')
+    expect(lead?.[0]).toBe('Gym')
+    expect(accent?.[0]).toBe('Bro')
   })
 })
