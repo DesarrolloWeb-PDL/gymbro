@@ -40,7 +40,7 @@ vi.mock('@capacitor/filesystem', () => ({
 const { writeAutoBackup, AUTO_BACKUP_DIR, AUTO_BACKUP_KEEP } = await import('./mobile.js')
 
 const day = n => { const d = new Date(2026, 0, 1); d.setDate(d.getDate() + n); return d.toISOString().slice(0, 10) }
-const backup = d => 'opengym-backup-' + d + '.json'
+const backup = d => 'gymbro-backup-' + d + '.json'
 const inFolder = () => [...h.files.keys()].filter(k => k.startsWith('DOCUMENTS/gymbro/')).map(k => k.slice('DOCUMENTS/gymbro/'.length)).sort()
 const put = (path, data = '{}') => h.files.set('DOCUMENTS/' + path, data)
 
@@ -62,7 +62,7 @@ describe('writeAutoBackup', () => {
     put('gymbro/notes.txt'); put('gymbro/opengym-backup-latest.json'); put('gymbro/' + backup(day(0)).replace('.json', '.json.bak'))
     put('gymbro/' + backup('2020-01-01') + '/inside.json')   // a directory that happens to carry the name
     await writeAutoBackup({})
-    const dated = inFolder().filter(n => /^opengym-backup-\d{4}-\d{2}-\d{2}\.json$/.test(n))
+    const dated = inFolder().filter(n => /^(?:opengym|gymbro)-backup-\d{4}-\d{2}-\d{2}\.json$/.test(n))
     expect(AUTO_BACKUP_KEEP).toBe(14)
     expect(dated).toHaveLength(14)
     expect(dated).toContain(backup(todayISO()))

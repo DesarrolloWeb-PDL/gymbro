@@ -184,7 +184,7 @@ function RestoreList({ list, close }) {
     <div className="muted small" style={{ marginBottom: 12 }}>{t('Pick one. You choose whether it replaces what is here or merges with it.')}</div>
     <Section>
       {list.map(b => <Row key={b.name} icon="clock" iconTint="var(--blue)" accessory="chevron"
-        title={b.name.slice('opengym-backup-'.length, -'.json'.length)}
+        title={b.name.match(/^(?:opengym|gymbro)-backup-(.+)\.json$/)?.[1] || b.name}
         subtitle={[b.workouts != null ? tn('{0} workout', '{0} workouts', b.workouts) : null, b.size ? Math.max(1, Math.round(b.size / 1024)) + ' KB' : null].filter(Boolean).join(' · ') || null}
         value={busy === b.name ? t('Loading…') : null} onClick={busy ? undefined : () => pick(b)} />)}
     </Section>

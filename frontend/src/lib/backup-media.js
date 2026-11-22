@@ -31,14 +31,17 @@ import { sanitizeAvatar } from './avatar.js'
 // The server's default cap for a sound of one's own (api/media.js MEDIA_AUDIO_MAX_MB).
 const AUDIO_MB = 2
 
-export const BACKUP_JSON = 'opengym-backup.json'
+export const BACKUP_JSON = 'gymbro-backup.json'
+// A zip packed before the rename holds the old entry under this name. It is still this app's
+// backup, so it is read; only the name written from now on is the new one.
+const BACKUP_JSON_OLD = 'opengym-backup.json'
 // .wav: a sound of one's own (lib/user-sounds.js), exported since v1.4.5 but read back only now.
 const MEDIA_ENTRY = /^media\/([0-9a-f]{64})\.(jpg|png|webp|gif|mp4|mov|webm|wav)$/
 
 const README = `gymbro backup with photos and videos
 =====================================
 
-opengym-backup.json  your data - the same file "Export backup (JSON)" writes.
+gymbro-backup.json   your data - the same file "Export backup (JSON)" writes.
 media/               the photos, GIFs and videos of your own exercises and of your
                      workouts, each named by its SHA-256, plus the small previews
                      shown in lists.
@@ -124,7 +127,7 @@ export async function readBackupFile(file) {
   const zip = await looksLikeZip(file)
   if (zip) {
     const entries = await readZip(file)
-    const json = entries.find(e => e.name === BACKUP_JSON)
+    const json = entries.find(e => e.name === BACKUP_JSON || e.name === BACKUP_JSON_OLD)
     if (!json) throw notBackup()
     state = JSON.parse(await json.blob.text())
     if (!isBackup(state)) throw notBackup()

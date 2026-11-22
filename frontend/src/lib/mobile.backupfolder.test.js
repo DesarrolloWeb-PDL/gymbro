@@ -38,7 +38,7 @@ vi.mock('@capacitor/core', () => ({
 const mobile = await import('./mobile.js')
 const { writeAutoBackup, chooseBackupFolder, resetBackupFolder, backupFolder, onBackupFolderChange, BACKUP_FOLDER_FILE, AUTO_BACKUP_KEEP, _resetBackupFolder } = mobile
 
-const today = 'opengym-backup-' + todayISO() + '.json'
+const today = 'gymbro-backup-' + todayISO() + '.json'
 const saved = () => JSON.parse(h.files.get('DATA/' + BACKUP_FOLDER_FILE) || 'null')
 const methods = () => h.calls.map(c => c[0])
 const SYNC = 'content://com.android.externalstorage.documents/tree/primary%3ASync'

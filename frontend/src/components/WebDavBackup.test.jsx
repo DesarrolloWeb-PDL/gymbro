@@ -64,7 +64,7 @@ describe('WebDAV backup sheet', () => {
     await flush()
     expect(loadConfig()).toMatchObject({ url: 'https://dav.example.com/me/openGym/', user: 'me', daily: true })
     expect(localStorage.getItem(CONFIG_KEY)).not.toContain('app-pw')
-    expect([...files.keys()].some(n => /^opengym-backup-\d{4}-\d{2}-\d{2}\.json$/.test(n))).toBe(true)
+    expect([...files.keys()].some(n => /^(?:opengym|gymbro)-backup-\d{4}-\d{2}-\d{2}\.json$/.test(n))).toBe(true)
     expect(host.textContent).toContain('Back up now')
   })
   it('restore lists the folder’s backups and hands the chosen one to the import', async () => {

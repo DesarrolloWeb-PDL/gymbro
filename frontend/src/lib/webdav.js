@@ -29,7 +29,11 @@ export const DAY_MS = 86400000
 // A daily backup is due once the last good one is this old (a little under a day, so one taken at
 // 08:10 is due again at 08:00 the next morning).
 export const DUE_MS = 20 * 3600000
-export const NAME_RE = /^opengym-backup-\d{4}-\d{2}-\d{2}\.json$/
+// A backup is discovered by name, and the prefix changed with the fork: everything written
+// before it is still the user's backup and has to stay listable, restorable and prunable, so the
+// read side takes both while writes take only the new one. The index is not a dated backup and
+// must not slip in through this - hence the digits, not just a prefix.
+export const NAME_RE = /^(?:opengym|gymbro)-backup-\d{4}-\d{2}-\d{2}\.json$/
 
 const store = () => { try { return typeof localStorage === 'undefined' ? null : localStorage } catch { return null } }
 
@@ -113,7 +117,7 @@ export function basicAuth(user, pass) {
 export const backupName = (day = new Date()) => {
   const d = day instanceof Date ? day : new Date(day)
   const p = n => String(n).padStart(2, '0')
-  return `opengym-backup-${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}.json`
+  return `gymbro-backup-${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}.json`
 }
 
 /** An index as stored: our file names only, newest first, no repeats. */
