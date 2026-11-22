@@ -10,7 +10,6 @@ import { inkIn } from './accent.js'
 export const FORMATS = { story: { width: 1080, height: 1920 }, square: { width: 1080, height: 1080 } }
 export const FORMAT_IDS = Object.keys(FORMATS)
 export const STYLE_IDS = ['dark', 'light']
-export const SITE = 'opengym.ch'
 
 /**
  * The colours of a card, the app's own (index.css) in a fixed light or dark look, whatever the
@@ -106,13 +105,13 @@ export function brandNeedsBadge(bg) {
 
 /**
  * The footer every card ends with: the official lockup (brand-green mark, "gym" in the theme's ink
- * plus "bro" in brand green, as in assets/logo) and the site at the other end. `y` is the text's
- * baseline. Drawn left to right whatever the language: it is a logo, and a logo does not mirror.
+ * plus "bro" in brand green, as in assets/logo). `y` is the text's baseline. Drawn left to right
+ * whatever the language: it is a logo, and a logo does not mirror.
  */
 // `badge`: the lockup on its dark badge whatever the paper, for a card that has no paper of its
 // own: a photo behind it, or a see-through PNG laid over one later (TestFlight 11-08: the logo
 // on a photo read as see-through). The badge is solid BRAND.ink, never a tint.
-export function drawBrand(ctx, { x, y, width, colors, family, size = 40, badge: forceBadge = false }) {
+export function drawBrand(ctx, { x, y, colors, family, size = 40, badge: forceBadge = false }) {
   // Proportions of assets/logo/gymbro-logo-dark.svg: the mark 1.07× the type, a gap of 0.2×.
   const markH = size * 1.07
   const gap = size * 0.2
@@ -140,11 +139,6 @@ export function drawBrand(ctx, { x, y, width, colors, family, size = 40, badge: 
   ctx.fillStyle = BRAND.green
   ctx.fillText('bro', tx, y)
   if ('letterSpacing' in ctx) ctx.letterSpacing = '0px'
-  ctx.font = `600 ${Math.round(size * 0.72)}px ${family}`
-  ctx.fillStyle = colors.label2
-  ctx.textAlign = 'right'
-  ctx.fillText(SITE, x + width, y)
-  ctx.textAlign = 'left'
 }
 
 /** The box the lockup's badge covers for a baseline at `y` and type `size` (as drawBrand draws

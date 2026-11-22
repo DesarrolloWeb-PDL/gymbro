@@ -13,14 +13,15 @@ import WebKit
  * honoured: the page-break rules that keep an exercise whole, the inline SVG charts, flex and
  * grid. (UIMarkupTextPrintFormatter, used before, is a far older HTML importer that ignores
  * break-inside and @page, so exercises could be cut in half and the text ran to the paper edge.)
- * WebKit has no @page margin boxes, so the margins and the footer ("opengym.ch" and
- * "Page 1 of 3") are drawn here by a UIPrintPageRenderer.
+ * WebKit has no @page margin boxes, so the margins and the footer ("Page 1 of 3") are drawn here
+ * by a UIPrintPageRenderer. The left half of the footer is the caller's to fill; it defaults to
+ * nothing, because a printout is handed to someone else and opengym.ch is not ours to advertise.
  *
  * Usage from JS:
  *   import { registerPlugin } from '@capacitor/core';
  *   const Print = registerPlugin('Print');
  *   await Print.printHtml({ html: '<!doctype html>…', name: 'Weekly Training Plan',
- *                           footer: { left: 'opengym.ch', page: 'Page {0} of {1}' } });
+ *                           footer: { left: '', page: 'Page {0} of {1}' } });
  */
 @objc(PrintPlugin)
 public class PrintPlugin: CAPPlugin, CAPBridgedPlugin, WKNavigationDelegate {
@@ -77,7 +78,7 @@ public class PrintPlugin: CAPPlugin, CAPBridgedPlugin, WKNavigationDelegate {
         guard let call = pending, webView === printView else { return }
         let footer = call.getObject("footer")
         let renderer = FooterPageRenderer(
-            left: footer?["left"] as? String ?? "opengym.ch",
+            left: footer?["left"] as? String ?? "",
             page: footer?["page"] as? String ?? "{0} / {1}"
         )
         renderer.addPrintFormatter(webView.viewPrintFormatter(), startingAtPageAt: 0)

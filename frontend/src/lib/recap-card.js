@@ -59,7 +59,7 @@ export function drawRecapCard(ctx, words, { width, height, colors, family = CARD
     font(words.top, 600, story ? 44 : 36, width - pad * 2)
     ctx.fillText(run(words.top), x0, y)
   }
-  drawBrand(ctx, { x: pad, y: height - (story ? 140 : 80), width: width - pad * 2, colors, family })
+  drawBrand(ctx, { x: pad, y: height - (story ? 140 : 80), colors, family })
 }
 
 /** The picture as a PNG blob, or null where there is no canvas. */

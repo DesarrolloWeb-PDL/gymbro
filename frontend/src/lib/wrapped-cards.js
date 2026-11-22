@@ -377,7 +377,7 @@ export function drawWrappedCard(ctx, layout, colors, map = null, family = CARD_F
       ctx.fillStyle = colors.sep
       ctx.fillRect(item.x, item.y, item.w, 2)
     } else if (item.kind === 'brand') {
-      drawBrand(ctx, { x: item.x, y: item.y, width: item.w, colors, family, size: item.size })
+      drawBrand(ctx, { x: item.x, y: item.y, colors, family, size: item.size })
     } else if (item.kind === 'text') {
       drawText(ctx, item, colors, rtl, family)
     }

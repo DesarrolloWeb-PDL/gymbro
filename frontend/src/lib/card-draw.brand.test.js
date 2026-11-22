@@ -34,7 +34,7 @@ function recorder() {
 
 const draw = () => {
   const { ctx, calls } = recorder()
-  drawBrand(ctx, { x: 10, y: 100, width: 400, colors: cardPalette('dark'), family: 'sans-serif' })
+  drawBrand(ctx, { x: 10, y: 100, colors: cardPalette('dark'), family: 'sans-serif' })
   return calls
 }
 
@@ -44,6 +44,12 @@ describe('drawBrand', () => {
     expect(painted.join('')).toContain('gymbro')
     expect(painted).not.toContain('open')
     expect(painted).not.toContain('Gym')
+  })
+
+  it('carries no site of its own: the card is shared, and opengym.ch is not ours to advertise', () => {
+    const painted = draw().filter(([k]) => k === 'fill').map(([, s]) => s)
+    expect(painted.join('')).not.toContain('opengym.ch')
+    expect(painted.join('')).not.toContain('.ch')
   })
 
   it('measures the same string it paints, so the badge is the width of the logo', () => {
@@ -59,7 +65,7 @@ describe('drawBrand', () => {
   it('keeps the two-tone split: the lead in the theme ink, the accent in brand green', () => {
     const { ctx, calls } = recorder()
     const colors = cardPalette('dark')
-    drawBrand(ctx, { x: 10, y: 100, width: 400, colors, family: 'sans-serif' })
+    drawBrand(ctx, { x: 10, y: 100, colors, family: 'sans-serif' })
 
     // fillStyle assignments are plain sets; find the one in force for each painted half.
     const fills = []

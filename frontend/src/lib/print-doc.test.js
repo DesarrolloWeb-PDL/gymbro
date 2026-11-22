@@ -33,6 +33,8 @@ describe('print-doc', () => {
     // as one string never matches, which is how the rename left this printing the old one.
     expect(html).toContain('<span>gym<span class="g">bro</span></span>')
     expect(html).not.toContain('<span>open')
+    // No site of its own either: the PDF is handed to someone else, and opengym.ch is not ours.
+    expect(html).not.toContain('opengym.ch')
     expect(html).toContain('<title>Leg &lt;day&gt;</title>')
     expect(html).toContain('<div class="facts">3 exercises<span class="dot">·</span>x</div>')
     expect(html).toContain('<b>Ana</b>')

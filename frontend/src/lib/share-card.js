@@ -749,7 +749,7 @@ export function drawShareCard(ctx, layout, colors, { map = null, photo = null, f
         break
       case 'brand':
         // The badge is solid: no sticker shadow under the lockup, it would read as a smudge.
-        drawBrand(ctx, { x: item.x, y: item.y, width: item.w, colors, family, size: item.size, badge: !!item.badge })
+        drawBrand(ctx, { x: item.x, y: item.y, colors, family, size: item.size, badge: !!item.badge })
         break
       default:
         withShadow(ctx, colors, () => paintText(ctx, item, colors, !!layout.rtl, family))
