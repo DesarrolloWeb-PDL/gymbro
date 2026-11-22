@@ -51,8 +51,10 @@ import java.util.regex.Pattern;
 public class BackupFolderPlugin extends Plugin {
 
     private static final int RW = Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION;
-    // The only files write and prune touch: "opengym-backup-2026-10-15.json", "...-2.json".
-    static final Pattern BACKUP_NAME = Pattern.compile("opengym-backup-\\d{4}-\\d{2}-\\d{2}(-[2-9])?\\.json");
+    // The only files write and prune touch: "gymbro-backup-2026-10-15.json", "...-2.json", and the
+    // opengym-backup-… copies from before the rename, which are still this install's to prune.
+    // Kept in step with lib/mobile.js AUTO_BACKUP_NAME by android-backup.test.js.
+    static final Pattern BACKUP_NAME = Pattern.compile("(?:opengym|gymbro)-backup-\\d{4}-\\d{2}-\\d{2}(-[2-9])?\\.json");
     // Writes and listings go through a content provider, which may be a cloud app: off the main
     // thread, and one at a time so two backups never race for the same name.
     private final ExecutorService io = Executors.newSingleThreadExecutor();
