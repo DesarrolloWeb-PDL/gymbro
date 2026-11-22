@@ -35,8 +35,12 @@ export const DENSITIES = { ldpi: 0.75, mdpi: 1, hdpi: 1.5, xhdpi: 2, xxhdpi: 3, 
 export const PREVIEW = 112
 export const IOS_SIZE = 1024
 
-/** The glyph's rectangles, in the 512 grid of resources/icon.svg: one source for every icon. */
-export function glyph(svg = readFileSync(join(ROOT, 'resources/icon.svg'), 'utf8')) {
+/** The glyph's shapes, in the 512 grid: one source for every recolourable icon.
+ *  Reads the MARK, not the app icon: the icon is the full-colour plate and goes through
+ *  drawArt as an `art` variant, while these are the single-colour shapes each variant
+ *  recolours with its own fg/bg. Keeping them apart is what lets the plate be multi-colour
+ *  without breaking neon, light, mono and the rest. */
+export function glyph(svg = readFileSync(join(ROOT, 'resources/mark.svg'), 'utf8')) {
   const g = svg.match(/<g[^>]*>([\s\S]*?)<\/g>/)?.[1] || ''
   return [...g.matchAll(/<rect\s+x="(\d+)"\s+y="(\d+)"\s+width="(\d+)"\s+height="(\d+)"/g)]
     .map(m => m.slice(1, 5).map(Number))
@@ -221,7 +225,7 @@ export function pngInfo(buf) {
 }
 
 const svgOf = (v, rects) => `<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 512 512">
-  <!-- gymbro app icon "${v.id}", written by scripts/app-icons.mjs (the glyph of resources/icon.svg). -->
+  <!-- gymbro app icon "${v.id}", written by scripts/app-icons.mjs (the glyph of resources/mark.svg). -->
   <rect width="512" height="512" fill="${v.bg}"/>
   <g fill="${v.fg}">
 ${rects.map(([x, y, w, h]) => `    <rect x="${x}" y="${y}" width="${w}" height="${h}"/>`).join('\n')}
