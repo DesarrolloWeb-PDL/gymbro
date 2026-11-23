@@ -163,7 +163,11 @@ export function createMcpHandler({
 
 // Started as a program (the container's command), not when imported by a test.
 if (import.meta.url === `file://${process.argv[1]}`) {
-  const port = +(process.env.MCP_PORT || 3100)
+  // PORT is the platform's contract (Vercel's container runtime injects it and proxies to it),
+  // MCP_PORT is what compose and the e2e tests set, 3100 the bare default. Reading PORT first
+  // is what makes the container answer at all outside compose: without it the server binds 3100
+  // while the proxy connects elsewhere and every request fails with a refused connection.
+  const port = +(process.env.PORT || process.env.MCP_PORT || 3100)
   const handle = createMcpHandler()
   const srv = http.createServer((req, res) => { handle(req, res).catch(e => { console.error(e); if (!res.headersSent) { res.writeHead(500); res.end() } }) })
   srv.requestTimeout = 120000
