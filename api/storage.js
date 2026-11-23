@@ -123,8 +123,16 @@ const fsDriver = {
  * The driver behind the seam. Everything except a known name is a boot error:
  * STORAGE_DRIVER=postgres must not start up writing files where its operator expects rows —
  * and it must not start without DATABASE_URL either, which createPostgresDriver enforces.
+ *
+ * GYMBRO_STORAGE is read first because STORAGE_DRIVER is already taken by containers/storage,
+ * the engine buildah uses to build the api and mcp images: Vercel passes project variables into
+ * the build step too, so STORAGE_DRIVER=postgres reached buildah, which looked for a storage
+ * driver called "postgres", found none, and failed the whole deployment with
+ * `GetDriver graph postgres ... driver not supported`. Setting GYMBRO_STORAGE on a hosted
+ * platform sidesteps that; STORAGE_DRIVER keeps working everywhere it already did, including
+ * docker compose and the tests.
  */
-export function selectDriver(name = process.env.STORAGE_DRIVER || 'fs') {
+export function selectDriver(name = process.env.GYMBRO_STORAGE || process.env.STORAGE_DRIVER || 'fs') {
   switch (name) {
     case 'fs': return fsDriver;
     case 'postgres': return createPostgresDriver({ url: process.env.DATABASE_URL });
