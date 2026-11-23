@@ -51,4 +51,18 @@ describe('the icon source and the mark source', () => {
       expect(v.art, v.id).not.toBe('resources/mark.svg')
     }
   })
+
+  it('no two colour variants are the same icon', () => {
+    // The brand re-colour swept every hex it matched, and it turned the deliberately-green
+    // Neon variant into a second copy of Orange. Two rows with the same colours are one row
+    // with a confusing name, so this pins them apart.
+    const colour = APP_ICON_VARIANTS.filter(v => !v.art)
+    const seen = new Map()
+    for (const v of colour) {
+      const key = `${v.bg}|${v.fg}`
+      expect(seen.has(key), `${v.id} is identical to ${seen.get(key)}`).toBe(false)
+      seen.set(key, v.id)
+    }
+    expect(colour.length).toBeGreaterThan(1)
+  })
 })

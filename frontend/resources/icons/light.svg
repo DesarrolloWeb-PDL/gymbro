@@ -1,7 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 512 512">
   <!-- gymbro app icon "light", written by scripts/app-icons.mjs (the glyph of resources/mark.svg). -->
   <rect width="512" height="512" fill="#ffffff"/>
-  <g fill="#65a30d">
+  <g fill="#a35a00">
     <rect x="80" y="248" width="352" height="16"/>
     <rect x="85" y="223" width="19" height="66"/>
     <rect x="107" y="199" width="20" height="114"/>

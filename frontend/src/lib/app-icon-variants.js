@@ -7,9 +7,12 @@
 // hand-made SVG the script renders instead of the glyph; `bg`/`fg` are then just its main colours.
 export const APP_ICON_VARIANTS = [
   { id: 'default', name: 'Original', bg: '#0c0e12', fg: '#ff9f0a', art: 'resources/icon.svg', ios: null, android: 'IconDefault' },
-  { id: 'light', name: 'Light', bg: '#ffffff', fg: '#65a30d', ios: 'AppIcon-Light', android: 'IconLight' },
+  { id: 'light', name: 'Light', bg: '#ffffff', fg: '#a35a00', ios: 'AppIcon-Light', android: 'IconLight' },
   { id: 'mono', name: 'Mono', bg: '#0c0e12', fg: '#f2f2f7', ios: 'AppIcon-Mono', android: 'IconMono' },
-  { id: 'neon', name: 'Green', bg: '#ff9f0a', fg: '#0c0e12', ios: 'AppIcon-Neon', android: 'IconNeon' },
+  // "Green" is the deliberately-not-the-brand option: a green icon even though the brand is
+  // orange now. The colour sweep moved it with the rest because it shared the brand's hex, and
+  // that made it identical to the Orange variant - which is why it is pinned back here.
+  { id: 'neon', name: 'Green', bg: '#a3e635', fg: '#0c0e12', ios: 'AppIcon-Neon', android: 'IconNeon' },
   { id: 'sky', name: 'Blue', bg: '#0a84ff', fg: '#ffffff', ios: 'AppIcon-Sky', android: 'IconSky' },
   { id: 'orange', name: 'Orange', bg: '#ff9f0a', fg: '#0c0e12', ios: 'AppIcon-Orange', android: 'IconOrange' },
   { id: 'pink', name: 'Pink', bg: '#ff375f', fg: '#ffffff', ios: 'AppIcon-Pink', android: 'IconPink' },
