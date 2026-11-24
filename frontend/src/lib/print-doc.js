@@ -43,13 +43,12 @@ export function probeMarks(probe) {
   return { s: id => mark('s', id), e: id => mark('e', id), h: id => mark('h', id) }
 }
 
-// The logo's mark: a loaded Olympic barbell in brand green on the 352×174 grid (x 80..432,
-// y 169..343), beside "gym" in the theme's ink and "bro" in brand green.
-export const LOGO_SVG = '<svg class="logo-mark" viewBox="80 169 352 174" aria-hidden="true">'
-  + '<g fill="#ff9f0a"><rect x="80" y="248" width="352" height="16"/><rect x="85" y="223" width="19" height="66"/>'
-  + '<rect x="107" y="199" width="20" height="114"/><rect x="130" y="169" width="26" height="174"/>'
-  + '<rect x="356" y="169" width="26" height="174"/><rect x="385" y="199" width="20" height="114"/>'
-  + '<rect x="408" y="223" width="19" height="66"/></g></svg>'
+// The logo's mark: the Olympic bumper plate, beside "Gym" in the theme's ink and "Bro" in brand
+// orange. Same artwork as resources/icon.svg and BrandLogo.jsx.
+export const LOGO_SVG = '<svg class="logo-mark" viewBox="0 0 512 512" aria-hidden="true">'
+  + '<circle cx="256" cy="256" r="196" fill="#c26a00"/><circle cx="256" cy="256" r="174" fill="#ff9f0a"/>'
+  + '<circle cx="256" cy="256" r="84" fill="#c26a00"/><circle cx="256" cy="256" r="68" fill="#eef1f6"/>'
+  + '<circle cx="256" cy="256" r="40" fill="#0c0e12"/></svg>'
 
 // "Page {0} of {1}" in the reader's language, as the content of an @page margin box: the text
 // around the two numbers comes from the translation, the numbers from CSS counters.

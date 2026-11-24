@@ -62,24 +62,27 @@ export function cardPalette(style, acc = BRAND.green) {
     : { bg: '#000000', surface: '#1c1c1e', tile: '#2c2c2e', label: '#ffffff', label2: '#98989f', acc: a, accText: a, sep: '#38383a', light: false }
 }
 
-// The gymbro mark, centred on 0,0: a loaded Olympic barbell on the same 352×174 grid as
-// BrandLogo.jsx, shifted so the shaft's centre is the origin. Square corners and these exact
-// proportions: the logo is not ours to restyle per card.
-const MARK = [
-  [-176, -8, 352, 16], [-171, -33, 19, 66], [-149, -57, 20, 114], [-126, -87, 26, 174],
-  [100, -87, 26, 174], [129, -57, 20, 114], [152, -33, 19, 66],
-]
-export const MARK_ASPECT = 352 / 174
-export const BRAND = { green: '#ff9f0a', ink: '#0c0e12', light: '#eef1f6', dark: '#12151b' }
+// The gymbro mark, centred on 0,0: the Olympic bumper plate on the 512 grid - marked rim, face,
+// marked inner ring, metal collar, sleeve hole - sized by its own diameter (2 x 196). Square
+// corners and these exact proportions: the logo is not ours to restyle per card. The bar that
+// used to live here survives only where a single colour is forced: the recolourable icon
+// variants and Android's monochrome layer.
+const PLATE = [[196, 'rim'], [174, 'face'], [84, 'rim'], [68, 'light'], [40, 'ink']]
+export const MARK_ASPECT = 1   // a circle: width equals height
+export const BRAND = { green: '#ff9f0a', ink: '#0c0e12', light: '#eef1f6', dark: '#12151b', rim: '#c26a00' }
 
-/** The logo mark, `h` high, its left edge at x, centred on y. */
+/** The logo mark, `h` high, its left edge at x, centred on y. `color` tints the face. */
 export function drawMark(ctx, x, y, h, color = BRAND.green) {
-  const s = h / 174
+  const s = h / 392                      // the plate is 2 * 196 across
+  const cx = x + h / 2, cy = y + h / 2
+  const paint = { rim: BRAND.rim, face: color, light: BRAND.light, ink: BRAND.ink }
   ctx.save()
-  ctx.translate(x + 176 * s, y)
-  ctx.scale(s, s)
-  ctx.fillStyle = color
-  for (const [rx, ry, rw, rh] of MARK) ctx.fillRect(rx, ry, rw, rh)
+  for (const [r, key] of PLATE) {
+    ctx.fillStyle = paint[key]
+    ctx.beginPath()
+    ctx.arc(cx, cy, r * s, 0, Math.PI * 2)
+    ctx.fill()
+  }
   ctx.restore()
 }
 

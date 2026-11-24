@@ -1,34 +1,44 @@
-// The gymbro mark: a loaded Olympic barbell on a 352×174 grid (x 80..432, y 169..343),
-// square corners, brand green. The stack tapers outward the way a real bar is loaded -
-// tallest plate against the grip, shortest at the sleeve - and the shaft runs the full
-// width so the sleeves read as bar continuing past the plates. Brand colours, not the
-// accent: the accent is the user's, the logo is not. Never mirrored in RTL.
+// The gymbro mark: an Olympic bumper plate on the 512 grid - marked rim, face, marked inner
+// ring, metal collar and sleeve hole, the structure the reference plates have. Brand colours,
+// not the accent: the accent is the user's, the logo is not. Never mirrored in RTL.
+//
+// This is the same artwork as resources/icon.svg, so the lockup and the app icon are one shape
+// rather than two that have to be kept in step. It replaced the barbell that used to sit here:
+// the bar survives only where a single colour is forced - the recolourable icon variants and
+// Android's monochrome layer - because a plate needs its bands to read as a plate.
 
-const RECTS = [
-  [80, 248, 352, 16], [85, 223, 19, 66], [107, 199, 20, 114], [130, 169, 26, 174],
-  [356, 169, 26, 174], [385, 199, 20, 114], [408, 223, 19, 66],
+const PLATE = [
+  { r: 196, fill: '#c26a00' },   // marked rim
+  { r: 174, fill: '#ff9f0a' },   // face: inherits `color` in the one-colour mark below
+  { r: 84, fill: '#c26a00' },    // marked inner ring
+  { r: 68, fill: '#eef1f6' },    // metal collar
+  { r: 40, fill: '#0c0e12' },    // sleeve hole
 ]
 
-/** The mark alone, `height` px high (width follows, 352:174). `color` only for a one-colour use. */
-export function BrandMark({ height = 24, color = '#ff9f0a', className, style }) {
+const discs = tint => PLATE.map((d, i) => (
+  <circle key={d.r} cx="256" cy="256" r={d.r} fill={i === 1 ? (tint || d.fill) : d.fill} />
+))
+
+/** The mark alone, `height` px high (width follows: it is a circle). `color` tints the face. */
+export function BrandMark({ height = 24, color, className, style }) {
   return (
-    <svg className={className} viewBox="80 169 352 174" width={height * 352 / 174} height={height}
-      fill={color} aria-hidden="true" focusable="false" style={{ flex: 'none', ...style }}>
-      {RECTS.map(([x, y, w, h]) => <rect key={x + '-' + y} x={x} y={y} width={w} height={h} />)}
+    <svg className={className} viewBox="0 0 512 512" width={height} height={height}
+      aria-hidden="true" focusable="false" style={{ flex: 'none', ...style }}>
+      {discs(color)}
     </svg>
   )
 }
 
 /**
  * The lockup at `size` px type: mark 1.07× the type high, a gap of 0.2×, the mark's middle at
- * 0.36× above the baseline (assets/logo/gymbro-logo-dark.svg). "gym" follows the theme
- * (index.css .brand-lockup), "bro" is brand green.
+ * 0.36× above the baseline. "Gym" follows the theme (index.css .brand-lockup), "Bro" is brand
+ * orange.
  */
 export default function BrandLogo({ size = 34, as: Tag = 'span', className = '', style }) {
   return (
     <Tag className={('brand-lockup ' + className).trim()} dir="ltr" style={{ fontSize: size, ...style }}>
-      <svg className="brand-lockup-mark" viewBox="80 169 352 174" aria-hidden="true" focusable="false">
-        {RECTS.map(([x, y, w, h]) => <rect key={x + '-' + y} x={x} y={y} width={w} height={h} />)}
+      <svg className="brand-lockup-mark" viewBox="0 0 512 512" aria-hidden="true" focusable="false">
+        {discs()}
       </svg>
       <span className="brand-lockup-lead" translate="no">Gym</span><span className="brand-lockup-accent" translate="no">Bro</span>
     </Tag>

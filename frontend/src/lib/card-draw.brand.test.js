@@ -71,7 +71,9 @@ describe('drawBrand', () => {
     let style = null
     for (const c of calls) {
       if (c[0] === 'fillStyle') style = c[1]
-      if (c[0] === 'fill') fills.push([c[1], style])
+      // Only fillText carries a string: ctx.fill() also records a 'fill' with no text, and
+      // drawMark now uses it for the plate's discs.
+      if (c[0] === 'fill' && typeof c[1] === 'string') fills.push([c[1], style])
     }
     const lead = fills.find(([, s]) => s !== BRAND.green)
     const accent = fills.find(([, s]) => s === BRAND.green)
