@@ -56,7 +56,8 @@ beforeEach(() => { mocks.webauthn = true; mocks.config = null; mocks.sheets.leng
 afterEach(() => { act(() => { mounted.splice(0).forEach(({ root, host }) => { root.unmount(); host.remove() }) }) })
 
 describe('Login: Lost access?', () => {
-  it('sits under the code button where passkeys work, and opens the steps', () => {
+  // TEMPORARY: "Lost access?" is hidden while sign-in shows one button only (see Login.jsx).
+  it.skip('sits under the code button where passkeys work, and opens the steps', () => {
     const page = mount(<Login />)
     const all = [...page.querySelectorAll('button')].map(b => b.textContent.trim())
     expect(all.indexOf('Lost access?')).toBe(all.indexOf('Use a code from your other device') + 1)

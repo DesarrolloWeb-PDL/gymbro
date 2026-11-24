@@ -53,7 +53,9 @@ beforeEach(() => { mocks.webauthn = true; mocks.config = null; mocks.sheets.leng
 afterEach(() => { act(() => { mounted.splice(0).forEach(({ root, host }) => { root.unmount(); host.remove() }) }) })
 
 describe('Login: a code from another device', () => {
-  it('sits under the ways in where passkeys work, and opens the sheet that redeems a code', () => {
+  // TEMPORARY: the device-link button is hidden while sign-in shows one button only
+  // (see Login.jsx). The flow and its sheet are untouched; bring this back with the button.
+  it.skip('sits under the ways in where passkeys work, and opens the sheet that redeems a code', () => {
     mocks.config = { allow_guest: true }
     const page = mount(<Login />)
     const all = buttons(page)

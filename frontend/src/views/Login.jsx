@@ -138,20 +138,16 @@ export default function Login() {
       {head}
       <div className="muted" style={{ marginBottom: 34 }}>{t('Your workouts. Your weights. Your profile.')}</div>
       {ssoNote}
-      {ssoButton}
-      {webauthnOK() ? <>
+      {/* TEMPORARY, until we decide how to manage sign-in: with passkey support there is one
+          button and nothing else - no password, no SSO, no device-link code, no recovery path,
+          and no way to create a profile or enter as a guest from here either. Every one of
+          those flows is still in the code and in its sheet; they are hidden, not removed.
+          Without passkeys it is different: there the password and the provider are the only
+          ways in, so they stay - hiding them would leave a browser with an empty screen. */}
+      {!webauthnOK() && ssoButton}
+      {webauthnOK() ? (
         <Button variant={sso ? undefined : 'primary'} icon="fingerprint" onClick={signIn}>{t('Sign in with passkey')}</Button>
-        <div style={{ height: 10 }} />
-        {pwOn && <><Button icon="key" onClick={() => openPasswordSignIn()}>{t('Sign in with password')}</Button><div style={{ height: 10 }} /></>}
-        <Button icon="plusCircle" onClick={register}>{t('Create new profile')}</Button>
-        {/* Already signed in on another device: a code from there gives this one a passkey of
-            its own (#95), instead of a new, empty profile. */}
-        <div style={{ height: 10 }} />
-        <Button variant="ghost" className="dim" icon="qr" onClick={openDeviceLinkRedeem}>{t('Use a code from your other device')}</Button>
-        {/* No device signs you in any more (#584): what to try, and where a recovery code goes. */}
-        <Button variant="ghost" className="dim" onClick={openLostAccess}>{t('Lost access?')}</Button>
-        {canGuest && <div style={{ height: 4 }} />}
-      </> : pwOn ? <>
+      ) : pwOn ? <>
         {sso && <div style={{ height: 4 }} />}
         {/* Plain http on a LAN address, or a browser without passkey support: the password is
             the way in, and the only way to create a profile from here. */}
