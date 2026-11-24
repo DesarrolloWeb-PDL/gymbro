@@ -4653,8 +4653,10 @@ button.wl-summary{width:100%;padding:0 0 10px;text-align:start;border-radius:var
 /* ---------------------------------------------------------- brand lockup -- */
 /* The gymbro logo (components/BrandLogo.jsx, assets/logo): brand colours whatever the accent, the
    type 700 with tight tracking, the mark 1.07em high with its middle 0.36em over the baseline. */
-.brand-lockup{display:inline-block;font-weight:700;letter-spacing:-.036em;line-height:1.1;white-space:nowrap;unicode-bidi:isolate;direction:ltr}
-.brand-lockup-mark{display:inline-block;height:1.07em;width:1.07em;vertical-align:-.175em;margin-inline-end:.2em}
+/* The lockup stacks: mark on top, name under it. The plate is a circle, so the mark is as
+   wide as it is tall and the two-tone name sits below rather than beside it. */
+.brand-lockup{display:inline-flex;flex-direction:column;align-items:center;font-weight:700;letter-spacing:-.036em;line-height:1.1;white-space:nowrap;unicode-bidi:isolate;direction:ltr}
+.brand-lockup-mark{display:block;height:1.9em;width:1.9em;margin-bottom:.14em}
 .brand-lockup-lead{color:#eef1f6}
 .brand-lockup-accent{color:#ff9f0a}
 :root[data-theme="light"] .brand-lockup-lead{color:#12151b}
