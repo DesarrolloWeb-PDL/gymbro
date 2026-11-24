@@ -24,6 +24,7 @@
 // Nothing here bundles a PDF library: the browser's print dialog or the phone's print sheet
 // renders the PDF.
 import { t, getLang, RTL_LANGS, dateLocale } from './i18n-core.js'
+import { wordmarkSvg } from './wordmark.js'
 import { MOBILE, printHtml } from './mobile.js'
 
 export const esc = str => String(str == null ? '' : str)
@@ -43,12 +44,18 @@ export function probeMarks(probe) {
   return { s: id => mark('s', id), e: id => mark('e', id), h: id => mark('h', id) }
 }
 
-// The logo's mark: the Olympic bumper plate, beside "Gym" in the theme's ink and "Bro" in brand
-// orange. Same artwork as resources/icon.svg and BrandLogo.jsx.
+// The logo's mark: the Olympic bumper plate, with GymBro drawn under it as geometry rather
+// than set in a font (lib/wordmark.js) - a browser translator rewrites DOM text and the brand
+// name is the one string that must never change. Same artwork as resources/icon.svg and
+// BrandLogo.jsx. On paper the lead is the ink, not the screen's white.
 export const LOGO_SVG = '<svg class="logo-mark" viewBox="0 0 512 512" aria-hidden="true">'
   + '<circle cx="256" cy="256" r="196" fill="#c26a00"/><circle cx="256" cy="256" r="174" fill="#ff9f0a"/>'
   + '<circle cx="256" cy="256" r="84" fill="#c26a00"/><circle cx="256" cy="256" r="68" fill="#eef1f6"/>'
   + '<circle cx="256" cy="256" r="40" fill="#0c0e12"/></svg>'
+
+// The name beside the mark, two-tone, as strokes. `h` is the box height in em: at 1.15 the
+// cap height lands where 12pt type's would, so the plate and the name read as one line.
+export const LOGO_NAME = wordmarkSvg({ lead: '#12151b', accent: '#ff9f0a', cls: 'logo-name', h: 1.15 })
 
 // "Page {0} of {1}" in the reader's language, as the content of an @page margin box: the text
 // around the two numbers comes from the translation, the numbers from CSS counters.
@@ -99,9 +106,11 @@ export const PRINT_CSS = `
   /* ---- masthead ---- */
   .mast { display: block; border-bottom: 1.5px solid var(--ink); padding-bottom: 9pt; margin-bottom: 14pt; }
   .mast-top { display: flex; align-items: center; justify-content: space-between; gap: 12pt; margin-bottom: 11pt; }
-  .brand { display: flex; align-items: center; gap: .2em; font-weight: 700; font-size: 12pt; letter-spacing: -.036em; color: #12151b; white-space: nowrap; direction: ltr; unicode-bidi: isolate; }
-  .brand .g { color: #ff9f0a; }
-  .logo-mark { height: 1.07em; width: calc(1.07em * 352 / 174); flex: none; }
+  /* On paper the name sits beside the mark: a masthead is a horizontal band and stacking
+     would spend a second line on it. The web lockup above the fold stacks instead. */
+  .brand { display: flex; align-items: center; gap: .22em; font-weight: 700; font-size: 12pt; letter-spacing: -.036em; color: #12151b; white-space: nowrap; direction: ltr; unicode-bidi: isolate; }
+  .logo-mark { height: 1.7em; width: 1.7em; flex: none; }
+  .logo-name { display: block; flex: none; }
   .mast-meta { font-size: 8pt; color: var(--muted); text-align: end; line-height: 1.35; }
   .mast-meta b { color: var(--ink-2); font-weight: 600; }
   .kicker { font-size: 7.5pt; letter-spacing: .12em; text-transform: uppercase; color: var(--lime-ink); font-weight: 700; margin-bottom: 2pt; }
@@ -155,7 +164,7 @@ export function printShell({ title, kicker = '', facts = [], owner = '', date, b
 ${css}</style></head>
 <body><div class="doc">
   <header class="mast keep">
-    <div class="mast-top"><div class="brand">${LOGO_SVG}<span translate="no">Gym<span class="g">Bro</span></span></div><div class="mast-meta">${meta}</div></div>
+    <div class="mast-top"><div class="brand">${LOGO_SVG}${LOGO_NAME}</div><div class="mast-meta">${meta}</div></div>
     ${kicker ? `<div class="kicker">${esc(kicker)}</div>` : ''}
     <h1>${esc(title)}</h1>
     ${factLine ? `<div class="facts">${factLine}</div>` : ''}

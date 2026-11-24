@@ -1,6 +1,6 @@
 // The shared printout shell (lib/print-doc.js).
 import { afterEach, describe, expect, it } from 'vitest'
-import { esc, paperFor, pageNumberContent, printShell, probeMarks, LOGO_SVG } from './print-doc.js'
+import { esc, paperFor, pageNumberContent, printShell, probeMarks, LOGO_SVG, LOGO_NAME } from './print-doc.js'
 import { _setLangState } from './i18n-core.js'
 
 afterEach(() => _setLangState('en', {}, null, null))
@@ -29,9 +29,13 @@ describe('print-doc', () => {
   it('a page: logo, title, facts, owner and date, right to left in Arabic', () => {
     const html = printShell({ title: 'Leg <day>', kicker: 'Routine', facts: ['3 exercises', '', 'x'], owner: 'Ana', date: '2026-10-15', body: '<p>b</p>' })
     expect(html).toContain(LOGO_SVG)
-    // The name beside the mark, split across two spans the way the web lockup is: a search for it
-    // as one string never matches, which is how the rename left this printing the old one.
-    expect(html).toContain('<span translate="no">Gym<span class="g">Bro</span></span>')
+    // The name under the mark, as geometry rather than text: a browser translator rewrites DOM
+    // text, and this page is handed to someone else with the brand intact.
+    expect(html).toContain(LOGO_NAME)
+    expect(html).toContain('aria-label="GymBro"')
+    expect(html).toContain('translate="no"')
+    // No live text spelling the name either - the old two-span run is gone with it.
+    expect(html).not.toContain('<span translate="no">Gym')
     expect(html).not.toContain('<span>open')
     // No site of its own either: the PDF is handed to someone else, and opengym.ch is not ours.
     expect(html).not.toContain('opengym.ch')

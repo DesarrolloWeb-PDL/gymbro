@@ -4655,11 +4655,13 @@ button.wl-summary{width:100%;padding:0 0 10px;text-align:start;border-radius:var
    type 700 with tight tracking, the mark 1.07em high with its middle 0.36em over the baseline. */
 /* The lockup stacks: mark on top, name under it. The plate is a circle, so the mark is as
    wide as it is tall and the two-tone name sits below rather than beside it. */
-.brand-lockup{display:inline-flex;flex-direction:column;align-items:center;font-weight:700;letter-spacing:-.036em;line-height:1.1;white-space:nowrap;unicode-bidi:isolate;direction:ltr}
+.brand-lockup{display:inline-flex;flex-direction:column;align-items:center;font-weight:700;letter-spacing:-.036em;line-height:1.1;white-space:nowrap;unicode-bidi:isolate;direction:ltr;color:#eef1f6}
 .brand-lockup-mark{display:block;height:1.9em;width:1.9em;margin-bottom:.14em}
-.brand-lockup-lead{color:#eef1f6}
-.brand-lockup-accent{color:#ff9f0a}
-:root[data-theme="light"] .brand-lockup-lead{color:#12151b}
+/* The name is geometry, so its "Gym" inherits this rather than a class of its own: the
+   wordmark paints the lead with currentColor and keeps Bro on brand orange. The element
+   sizes itself (BrandWordmark sets width/height from the box ratio) - only display here. */
+.brand-lockup-name{display:block}
+:root[data-theme="light"] .brand-lockup{color:#12151b}
 
 /* Add set / Warm-up / Remove: 44px tall, the leading glyph on the card's content edge; wrapped siblings share the same edge */
 .wk-add{min-height:44px;margin-inline-start:-14px}

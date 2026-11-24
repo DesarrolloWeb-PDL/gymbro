@@ -6,6 +6,13 @@
 // rather than two that have to be kept in step. It replaced the barbell that used to sit here:
 // the bar survives only where a single colour is forced - the recolourable icon variants and
 // Android's monochrome layer - because a plate needs its bands to read as a plate.
+//
+// The name beside it is geometry too (lib/wordmark.js): a browser translator rewrites DOM text
+// and "GymBro" is the one string that must never change, so it is drawn as strokes rather than
+// set in a font. Rendered from the shared data here rather than via the markup helper, which
+// returns a string for print-doc.js.
+
+import { WORDMARK, WORDMARK_OFFSETS, WORDMARK_STROKE, WORDMARK_RATIO, WORDMARK_TOP, WORDMARK_BOX_H, WORDMARK_WIDTH } from '../lib/wordmark.js'
 
 const PLATE = [
   { r: 196, fill: '#c26a00' },   // marked rim
@@ -29,10 +36,42 @@ export function BrandMark({ height = 24, color, className, style }) {
   )
 }
 
+// Gym is glyphs 0-2, Bro 3-5 - the same split the live text used.
+const SPLIT = 3
+
 /**
- * The lockup at `size` px type: mark 1.07× the type high, a gap of 0.2×, the mark's middle at
- * 0.36× above the baseline. "Gym" follows the theme (index.css .brand-lockup), "Bro" is brand
- * orange.
+ * GymBro as strokes. The viewBox is the whole drawing box (`WORDMARK_TOP` … bottom), so the
+ * `y` descender is inside the frame instead of clipped off it - cut at the baseline it reads
+ * "GvmBro". `h` is the box height in em; the width follows from the box's aspect ratio, so
+ * CSS never has to restate the numbers.
+ */
+export function BrandWordmark({ h = 1, lead = 'currentColor', accent = '#ff9f0a', className, style }) {
+  const shapes = (from, to, color) => WORDMARK.slice(from, to).map((g, n) => {
+    const i = from + n, ox = WORDMARK_OFFSETS[i]
+    return [
+      ...g.lines.map((line, l) => (
+        <polyline key={`${i}-${l}`} data-glyph={i} points={line.map(([x, y]) => `${ox + x},${y}`).join(' ')}
+          fill="none" stroke={color} strokeWidth={WORDMARK_STROKE}
+          strokeLinecap="round" strokeLinejoin="round" />
+      )),
+      ...(g.circles || []).map(([cx, cy, r], c) => (
+        <circle key={`${i}-c${c}`} data-glyph={i} cx={ox + cx} cy={cy} r={r} fill="none"
+          stroke={color} strokeWidth={WORDMARK_STROKE} />
+      )),
+    ]
+  })
+  return (
+    <svg className={className} viewBox={`0 ${WORDMARK_TOP} ${WORDMARK_WIDTH} ${WORDMARK_BOX_H}`}
+      width={`${(h * WORDMARK_RATIO).toFixed(4)}em`} height={`${h}em`} role="img" aria-label="GymBro"
+      translate="no" focusable="false" style={{ flex: 'none', display: 'block', ...style }}>
+      {shapes(0, SPLIT, lead)}{shapes(SPLIT, WORDMARK.length, accent)}
+    </svg>
+  )
+}
+
+/**
+ * The lockup at `size` px type: mark on top, the name under it, both centred. "Gym" is the
+ * theme's ink and "Bro" brand orange, drawn as geometry so no translator can reach them.
  */
 export default function BrandLogo({ size = 34, as: Tag = 'span', className = '', style }) {
   return (
@@ -40,7 +79,7 @@ export default function BrandLogo({ size = 34, as: Tag = 'span', className = '',
       <svg className="brand-lockup-mark" viewBox="0 0 512 512" aria-hidden="true" focusable="false">
         {discs()}
       </svg>
-      <span className="brand-lockup-lead" translate="no">Gym</span><span className="brand-lockup-accent" translate="no">Bro</span>
+      <BrandWordmark className="brand-lockup-name" h={0.72} />
     </Tag>
   )
 }

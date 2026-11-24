@@ -7,9 +7,9 @@ import BrandLogo from './BrandLogo.jsx'
 globalThis.IS_REACT_ACT_ENVIRONMENT = true
 
 /* The lockup on the sign-in screen and the mobile onboarding (views/Login.jsx,
-   views/MobileOnboarding.jsx). The brand was renamed in comments, styles and locale packs while
-   this line kept painting the name the fork came from, and no test read it - so nothing failed.
-   The text is split across two spans, which is why a search for the old name never matched it. */
+   views/MobileOnboarding.jsx). The name used to be live text split across two spans, which a
+   browser translator is free to rewrite; it is geometry now (lib/wordmark.js), so these tests
+   read the shapes rather than a string. */
 
 let host, root
 afterEach(() => {
@@ -27,27 +27,41 @@ function render(node) {
 }
 
 describe('BrandLogo', () => {
-  it('writes the brand as GymBro, not the name the fork came from', () => {
+  it('names itself GymBro for assistive tech, never the name the fork came from', () => {
     const el = render(<BrandLogo />)
-    expect(el.textContent).toBe('GymBro')
-    expect(el.textContent).not.toMatch(/open/i)
+    const name = el.querySelector('.brand-lockup-name')
+    expect(name.getAttribute('aria-label')).toBe('GymBro')
+    // No live text at all: a translator has nothing to rewrite.
+    expect(el.textContent).toBe('')
+    expect(el.innerHTML).not.toMatch(/open/i)
     // Capital G and B, per the brand: gymbro lowercase is the machine form, GymBro is the
     // written one - the tab title, the manifest and the locale keys keep the former.
-    expect(el.textContent).toMatch(/^GymBro$/)
+    expect(name.getAttribute('aria-label')).toMatch(/^GymBro$/)
   })
 
   it('tells the translator to leave the name alone', () => {
     const el = render(<BrandLogo />)
-    for (const half of el.querySelectorAll('.brand-lockup-lead, .brand-lockup-accent')) {
-      expect(half.getAttribute('translate'), half.textContent).toBe('no')
-    }
+    expect(el.querySelector('.brand-lockup-name').getAttribute('translate')).toBe('no')
   })
 
-  it('keeps the two-tone split: the lead follows the theme, the accent is brand green', () => {
+  it('keeps the two-tone split: the lead follows the theme, the accent is brand orange', () => {
     const el = render(<BrandLogo />)
-    expect(el.querySelector('.brand-lockup-lead')?.textContent).toBe('Gym')
-    expect(el.querySelector('.brand-lockup-accent')?.textContent).toBe('Bro')
+    const name = el.querySelector('.brand-lockup-name')
+    // Shapes carry which glyph they belong to, so the split is asserted by letter rather than
+    // by counting strokes - a glyph may be one polyline or several.
+    const byGlyph = new Map()
+    for (const s of name.querySelectorAll('polyline, circle')) {
+      const g = s.getAttribute('data-glyph')
+      if (!byGlyph.has(g)) byGlyph.set(g, new Set())
+      byGlyph.get(g).add(s.getAttribute('stroke'))
+    }
+    expect([...byGlyph.keys()].map(Number)).toEqual([0, 1, 2, 3, 4, 5])
+    // Gym (G y m) inherits the theme's ink, Bro (B r o) is brand orange.
+    for (const g of ['0', '1', '2']) expect([...byGlyph.get(g)]).toEqual(['currentColor'])
+    for (const g of ['3', '4', '5']) expect([...byGlyph.get(g)]).toEqual(['#ff9f0a'])
     // The old class names must be gone: a stale one would silently drop the colour.
+    expect(el.querySelector('.brand-lockup-lead')).toBeNull()
+    expect(el.querySelector('.brand-lockup-accent')).toBeNull()
     expect(el.querySelector('.brand-lockup-open')).toBeNull()
     expect(el.querySelector('.brand-lockup-gym')).toBeNull()
   })
