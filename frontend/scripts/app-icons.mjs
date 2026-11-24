@@ -303,6 +303,13 @@ export function files(rects = glyph()) {
     colors.push(`    <color name="ic_launcher_${v.id}_background">${v.bg}</color>`)
   }
   out.push([`${RES}/drawable/ic_launcher_monochrome.xml`, () => monochrome(rects)])
+  // The two icons index.html and manifest.json point at by name. Nothing else in this pipeline
+  // wrote them, so while every other icon was regenerated they stayed on the artwork the project
+  // was forked with - the PWA, the home-screen shortcut and the browser tab all showed the old
+  // mark while the launcher icons showed the new one. Drawn here so they cannot drift again.
+  const def = APP_ICON_VARIANTS.find(v => v.id === 'default')
+  out.push(['public/icon-512.png', () => draw(def, 512, { rects })])
+  out.push(['public/icon-180.png', () => draw(def, 180, { rects })])
   out.push([`${RES}/values/app_icons.xml`, () => `<?xml version="1.0" encoding="utf-8"?>
 <!-- Written by scripts/app-icons.mjs: behind each alternate launcher icon. -->
 <resources>
