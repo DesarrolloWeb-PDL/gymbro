@@ -31,9 +31,13 @@ describe('the icon source and the mark source', () => {
     }
   })
 
-  it('the default variant renders the plate as art, not as a recoloured glyph', () => {
+  it('the default variant renders the logo as art, not as a recoloured glyph', () => {
     const def = APP_ICON_VARIANTS.find(v => v.id === 'default')
-    expect(def.art).toBe('resources/icon.svg')
+    // The whole lockup now - plate, bar and the eight glyphs - not the plate alone. It is
+    // still art because it is multi-colour: a glyph is one fill every variant recolours.
+    expect(def.art).toBe('resources/logo.svg')
+    const shapes = scene(readFileSync(new URL(`../${def.art}`, import.meta.url), 'utf8'))
+    expect(shapes.length, 'the logo must parse into shapes').toBeGreaterThan(10)
   })
 
   it('the glyph source is the mark, and it is rectangles the variants can recolour', () => {
