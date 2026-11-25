@@ -54,9 +54,9 @@ export function BrandWordmark({ h = 1, lead = 'currentColor', accent = '#ff9f0a'
           fill="none" stroke={color} strokeWidth={WORDMARK_STROKE}
           strokeLinecap="round" strokeLinejoin="round" />
       )),
-      ...(g.circles || []).map(([cx, cy, r], c) => (
+      ...(g.circles || []).map(([cx, cy, r, w], c) => (
         <circle key={`${i}-c${c}`} data-glyph={i} cx={ox + cx} cy={cy} r={r} fill="none"
-          stroke={color} strokeWidth={WORDMARK_STROKE} />
+          stroke={color} strokeWidth={w ?? WORDMARK_STROKE} />
       )),
     ]
   })

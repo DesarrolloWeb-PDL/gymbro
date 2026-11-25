@@ -22,6 +22,24 @@ export const WORDMARK_TRACK = 0.10    // gap between glyphs, in em
  *  than the sum. */
 export const WORDMARK_WIDTH = 6.10
 
+/**
+ * The o's of Brooo are the brand sheet's bullseye, not a letter: a hollow centre, a hairline
+ * inner ring, a thick middle band and an outer ring. Measured off the reference by averaging
+ * orange coverage over every direction from the shape's centre, because one scanline crosses
+ * the rings at arbitrary offsets and makes a target look like a disc: bands at 0.18..0.23,
+ * 0.37..0.68 and 0.80..0.94 of the radius.
+ *
+ * Radii are scaled so the outer edge of the outer ring lands where the plain o's edge was, so
+ * the wordmark keeps its width and every layout built on it stays put. Each entry is
+ * [cx, cy, radius, strokeWidth]; without the fourth it falls back to WORDMARK_STROKE. Declared
+ * before WORDMARK, which points at it.
+ */
+const BULLSEYE = [
+  [0.32, -0.25, 0.2315, 0.0372],         // outer ring
+  [0.32, -0.25, 0.1397, 0.0825],         // thick middle band
+  [0.32, -0.25, 0.0545, 0.0133],         // hairline inner ring, hollow centre inside it
+]
+
 /* The drawing box, in em with the baseline at y = 0. Cap height reaches -0.70 and the round
    caps add half a stroke, so the top is -0.78; the `y` descends to 0.26, +0.08 with its cap.
    The frame has to cover both ends: clipping at y = 0 cuts the `y`'s tail off and the name
@@ -51,9 +69,9 @@ export const WORDMARK = [
   { w: 0.50, lines: [
     [[0.06, 0.00], [0.06, -0.50], [0.24, -0.50], [0.44, -0.34]],
   ] },
-  { w: 0.64, lines: [], circles: [[0.32, -0.25, 0.25]] },
-  { w: 0.64, lines: [], circles: [[0.32, -0.25, 0.25]] },
-  { w: 0.64, lines: [], circles: [[0.32, -0.25, 0.25]] },
+  { w: 0.64, lines: [], circles: BULLSEYE },
+  { w: 0.64, lines: [], circles: BULLSEYE },
+  { w: 0.64, lines: [], circles: BULLSEYE },
 ]
 
 /** Where each glyph starts, in em, from the left edge of the wordmark. */
@@ -73,17 +91,18 @@ export const WORDMARK_OFFSETS = (() => {
  * follows from the box's aspect ratio. Pass `em: false` with `size` to get px instead.
  */
 export function wordmarkSvg({ lead = '#eef1f6', accent = '#ff9f0a', cls = '', h = 1, size, em = true } = {}) {
-  const sw = WORDMARK_STROKE
   const parts = []
   WORDMARK.forEach((g, i) => {
     const ox = WORDMARK_OFFSETS[i]
     const color = i < 3 ? lead : accent
     for (const line of g.lines) {
       const pts = line.map(([x, y]) => `${(ox + x).toFixed(3)},${y.toFixed(3)}`).join(' ')
-      parts.push(`<polyline points="${pts}" fill="none" stroke="${color}" stroke-width="${sw}" stroke-linecap="round" stroke-linejoin="round"/>`)
+      parts.push(`<polyline points="${pts}" fill="none" stroke="${color}" stroke-width="${WORDMARK_STROKE}" stroke-linecap="round" stroke-linejoin="round"/>`)
     }
-    for (const [cx, cy, r] of g.circles || []) {
-      parts.push(`<circle cx="${(ox + cx).toFixed(3)}" cy="${cy.toFixed(3)}" r="${r.toFixed(3)}" fill="none" stroke="${color}" stroke-width="${sw}"/>`)
+    // A circle carries its own stroke width: the bullseye's rings are deliberately finer than
+    // the letters, and forcing them all to WORDMARK_STROKE would weld the three into one disc.
+    for (const [cx, cy, r, w] of g.circles || []) {
+      parts.push(`<circle cx="${(ox + cx).toFixed(3)}" cy="${cy.toFixed(3)}" r="${r.toFixed(3)}" fill="none" stroke="${color}" stroke-width="${w ?? WORDMARK_STROKE}"/>`)
     }
   })
   const w = em ? `${(h * WORDMARK_RATIO).toFixed(4)}em` : (h * WORDMARK_RATIO * size).toFixed(2)
