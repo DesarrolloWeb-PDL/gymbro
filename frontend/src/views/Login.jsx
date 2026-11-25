@@ -118,13 +118,29 @@ export default function Login() {
     </div>
   )
 
+  // TEMPORARY, until we decide how to manage sign-in: one way in, and it is not a sign-in at
+  // all - Continue without account, a local profile on this device. This returns before any
+  // other branch, so no configuration can put a passkey, a password or a provider button back
+  // on this screen: it used to be a condition inside each branch, and a server configured for
+  // OIDC-only would still have offered its own sign-in beside it. Everything below is the
+  // path for a server that forbids guests, where an account really is the only way in.
+  if (canGuest) return (
+    <div className="narrow" style={wrap}>
+      {head}
+      <div className="muted" style={{ marginBottom: 34 }}>{t('Your workouts. Your weights. Your profile.')}</div>
+      {/* Not an entrance: only the reason a return from the provider was refused. Swallowing it
+          would leave someone redirected back here with no idea what happened. */}
+      {ssoNote}
+      <Button variant="primary" onClick={() => setGuest(true)}>{t('Continue without account')}</Button>
+    </div>
+  )
+
   if (ssoOnly) return (
     <div className="narrow" style={wrap}>
       {head}
       <div className="muted" style={{ marginBottom: 34 }}>{t('Your workouts. Your weights. Your profile.')}</div>
       {ssoNote}
       {ssoButton}
-      {canGuest && <Button variant="ghost" className="dim" onClick={() => setGuest(true)}>{t('Continue without account')}</Button>}
       <div className="dim small" style={{ marginTop: 26, lineHeight: 1.5 }}>{t('This server signs everyone in with {0}. New here? Signing in makes your profile.', label)}</div>
       {/* The break-glass way: an admin's passkey still works when the provider is down. */}
       {webauthnOK() && (adminWay
@@ -138,21 +154,12 @@ export default function Login() {
       {head}
       <div className="muted" style={{ marginBottom: 34 }}>{t('Your workouts. Your weights. Your profile.')}</div>
       {ssoNote}
-      {/* TEMPORARY, until we decide how to manage sign-in: the screen offers one way in and
-          it is not a sign-in at all - Continue without account, a local profile on this
-          device. The passkey button is off, and with it the password, the SSO provider, the
-          device-link code and the recovery path; every one of those flows is still in the
-          code and in its sheet, hidden rather than removed, and comes back by deleting this
-          branch.
-
-          The exception is a server that forbids guests: there an account is the only way in,
-          so hiding the buttons would leave an empty screen and lock everyone out. There the
-          sign-in paths below stay exactly as they were. */}
-      {canGuest ? (
-        <Button variant="primary" onClick={() => setGuest(true)}>{t('Continue without account')}</Button>
-      ) : <>
-        {!webauthnOK() && ssoButton}
-        {webauthnOK() ? (
+      {/* Only a server that forbids guests gets here - the guest path returned above - so
+          every sign-in route is offered rather than leaving an empty screen. Hidden, not
+          removed: the flows and their sheets are untouched and come back by deleting the
+          early return. */}
+      {!webauthnOK() && ssoButton}
+      {webauthnOK() ? (
           <Button variant={sso ? undefined : 'primary'} icon="fingerprint" onClick={signIn}>{t('Sign in with passkey')}</Button>
         ) : pwOn ? <>
           {sso && <div style={{ height: 4 }} />}
@@ -165,9 +172,8 @@ export default function Login() {
           <Button variant="ghost" className="dim" onClick={openLostAccess}>{t('Lost access?')}</Button>
         </> : sso ? null : <div className="card small muted" style={{ textAlign: 'start' }}>
           {t("This browser doesn't support passkeys, and this instance requires an account. Try a browser or device with passkey support.")}</div>}
-      </>}
       {/* The passkey line only makes sense where a passkey is on offer. */}
-      {!canGuest && <div className="dim small" style={{ marginTop: 26, lineHeight: 1.5 }}>{pwOn ? t('Passkeys use {0}. A password works too, where passkeys do not.', bio()) : t('Passkeys use {0}. No passwords to remember.', bio())}<br />{t('Each profile keeps its own plan, workouts & body weight.')}</div>}
+      <div className="dim small" style={{ marginTop: 26, lineHeight: 1.5 }}>{pwOn ? t('Passkeys use {0}. A password works too, where passkeys do not.', bio()) : t('Passkeys use {0}. No passwords to remember.', bio())}<br />{t('Each profile keeps its own plan, workouts & body weight.')}</div>
     </div>
   )
 }
