@@ -1,4 +1,4 @@
-// The gymbro mark: an Olympic bumper plate on the 512 grid - marked rim, face, marked inner
+// The gymbrooo mark: an Olympic bumper plate on the 512 grid - marked rim, face, marked inner
 // ring, metal collar and sleeve hole, the structure the reference plates have. Brand colours,
 // not the accent: the accent is the user's, the logo is not. Never mirrored in RTL.
 //
@@ -8,7 +8,7 @@
 // Android's monochrome layer - because a plate needs its bands to read as a plate.
 //
 // The name beside it is geometry too (lib/wordmark.js): a browser translator rewrites DOM text
-// and "GymBro" is the one string that must never change, so it is drawn as strokes rather than
+// and "GymBrooo" is the one string that must never change, so it is drawn as strokes rather than
 // set in a font. Rendered from the shared data here rather than via the markup helper, which
 // returns a string for print-doc.js.
 
@@ -40,7 +40,7 @@ export function BrandMark({ height = 24, color, className, style }) {
 const SPLIT = 3
 
 /**
- * GymBro as strokes. The viewBox is the whole drawing box (`WORDMARK_TOP` … bottom), so the
+ * GymBrooo as strokes. The viewBox is the whole drawing box (`WORDMARK_TOP` … bottom), so the
  * `y` descender is inside the frame instead of clipped off it - cut at the baseline it reads
  * "GvmBro". `h` is the box height in em; the width follows from the box's aspect ratio, so
  * CSS never has to restate the numbers.
@@ -62,7 +62,7 @@ export function BrandWordmark({ h = 1, lead = 'currentColor', accent = '#ff9f0a'
   })
   return (
     <svg className={className} viewBox={`0 ${WORDMARK_TOP} ${WORDMARK_WIDTH} ${WORDMARK_BOX_H}`}
-      width={`${(h * WORDMARK_RATIO).toFixed(4)}em`} height={`${h}em`} role="img" aria-label="GymBro"
+      width={`${(h * WORDMARK_RATIO).toFixed(4)}em`} height={`${h}em`} role="img" aria-label="GymBrooo"
       translate="no" focusable="false" style={{ flex: 'none', display: 'block', ...style }}>
       {shapes(0, SPLIT, lead)}{shapes(SPLIT, WORDMARK.length, accent)}
     </svg>
@@ -71,7 +71,7 @@ export function BrandWordmark({ h = 1, lead = 'currentColor', accent = '#ff9f0a'
 
 /**
  * The lockup at `size` px type: mark on top, the name under it, both centred. "Gym" is the
- * theme's ink and "Bro" brand orange, drawn as geometry so no translator can reach them.
+ * theme's ink and "Brooo" brand orange, drawn as geometry so no translator can reach them.
  */
 export default function BrandLogo({ size = 34, as: Tag = 'span', className = '', style }) {
   return (

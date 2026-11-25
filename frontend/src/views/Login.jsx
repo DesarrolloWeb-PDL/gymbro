@@ -110,7 +110,7 @@ export default function Login() {
       <div className="muted" style={{ marginBottom: 30 }}>{t('Live demo. Everything stays in this browser.')}</div>
       <Button variant="primary" icon="play" onClick={() => setGuest(true)}>{t('Start the demo')}</Button>
       <div className="card small muted" style={{ textAlign: 'start', marginTop: 16 }}>
-        {t('This demo runs entirely in your browser on example data. Nothing is sent anywhere. Passkey sign-in and sync across your devices come with the gymbro server, which you get by self-hosting it.')}
+        {t('This demo runs entirely in your browser on example data. Nothing is sent anywhere. Passkey sign-in and sync across your devices come with the gymbrooo server, which you get by self-hosting it.')}
       </div>
       <div className="dim small" style={{ marginTop: 22, lineHeight: 1.6 }}>
         <a href={REPO} target="_blank" rel="noopener">{t('Self-host it in a minute →')}</a>
@@ -138,34 +138,36 @@ export default function Login() {
       {head}
       <div className="muted" style={{ marginBottom: 34 }}>{t('Your workouts. Your weights. Your profile.')}</div>
       {ssoNote}
-      {/* TEMPORARY, until we decide how to manage sign-in: with passkey support there is one
-          button and nothing else - no password, no SSO, no device-link code, no recovery path,
-          and no way to create a profile or enter as a guest from here either. Every one of
-          those flows is still in the code and in its sheet; they are hidden, not removed.
-          Without passkeys it is different: there the password and the provider are the only
-          ways in, so they stay - hiding them would leave a browser with an empty screen. */}
-      {!webauthnOK() && ssoButton}
-      {webauthnOK() ? (
-        <Button variant={sso ? undefined : 'primary'} icon="fingerprint" onClick={signIn}>{t('Sign in with passkey')}</Button>
-      ) : pwOn ? <>
-        {sso && <div style={{ height: 4 }} />}
-        {/* Plain http on a LAN address, or a browser without passkey support: the password is
-            the way in, and the only way to create a profile from here. */}
-        <div className="card small muted" style={{ textAlign: 'start', marginBottom: 14 }}>{t("This browser doesn't support passkeys. Sign in with your name and password instead.")}</div>
-        <Button variant="primary" icon="key" onClick={() => openPasswordSignIn()}>{t('Sign in with password')}</Button>
-        <div style={{ height: 10 }} />
-        <Button icon="plusCircle" onClick={register}>{t('Create new profile')}</Button>
-        <Button variant="ghost" className="dim" onClick={openLostAccess}>{t('Lost access?')}</Button>
-        {canGuest && <div style={{ height: 10 }} />}
-      </> : sso ? null : <div className="card small muted" style={{ textAlign: 'start' }}>{canGuest
-        ? t("This browser doesn't do passkeys, but you can still use gymbro locally on this device.")
-        // Without passkeys and without the guest entrance there is no way in from this browser,
-        // so say that plainly instead of offering a local profile that cannot be created.
-        : t("This browser doesn't support passkeys, and this instance requires an account. Try a browser or device with passkey support.")}</div>}
-      {/* TEMPORARY: only the passkey button. The guest entrance is a sibling of the branch
-          above, not a child of it, so it has to be switched off here as well. */}
-      {false && canGuest && <Button variant="ghost" className="dim" onClick={() => setGuest(true)}>{t('Continue without account')}</Button>}
-      <div className="dim small" style={{ marginTop: 26, lineHeight: 1.5 }}>{pwOn ? t('Passkeys use {0}. A password works too, where passkeys do not.', bio()) : t('Passkeys use {0}. No passwords to remember.', bio())}<br />{t('Each profile keeps its own plan, workouts & body weight.')}</div>
+      {/* TEMPORARY, until we decide how to manage sign-in: the screen offers one way in and
+          it is not a sign-in at all - Continue without account, a local profile on this
+          device. The passkey button is off, and with it the password, the SSO provider, the
+          device-link code and the recovery path; every one of those flows is still in the
+          code and in its sheet, hidden rather than removed, and comes back by deleting this
+          branch.
+
+          The exception is a server that forbids guests: there an account is the only way in,
+          so hiding the buttons would leave an empty screen and lock everyone out. There the
+          sign-in paths below stay exactly as they were. */}
+      {canGuest ? (
+        <Button variant="primary" onClick={() => setGuest(true)}>{t('Continue without account')}</Button>
+      ) : <>
+        {!webauthnOK() && ssoButton}
+        {webauthnOK() ? (
+          <Button variant={sso ? undefined : 'primary'} icon="fingerprint" onClick={signIn}>{t('Sign in with passkey')}</Button>
+        ) : pwOn ? <>
+          {sso && <div style={{ height: 4 }} />}
+          {/* Plain http on a LAN address, or a browser without passkey support: the password is
+              the way in, and the only way to create a profile from here. */}
+          <div className="card small muted" style={{ textAlign: 'start', marginBottom: 14 }}>{t("This browser doesn't support passkeys. Sign in with your name and password instead.")}</div>
+          <Button variant="primary" icon="key" onClick={() => openPasswordSignIn()}>{t('Sign in with password')}</Button>
+          <div style={{ height: 10 }} />
+          <Button icon="plusCircle" onClick={register}>{t('Create new profile')}</Button>
+          <Button variant="ghost" className="dim" onClick={openLostAccess}>{t('Lost access?')}</Button>
+        </> : sso ? null : <div className="card small muted" style={{ textAlign: 'start' }}>
+          {t("This browser doesn't support passkeys, and this instance requires an account. Try a browser or device with passkey support.")}</div>}
+      </>}
+      {/* The passkey line only makes sense where a passkey is on offer. */}
+      {!canGuest && <div className="dim small" style={{ marginTop: 26, lineHeight: 1.5 }}>{pwOn ? t('Passkeys use {0}. A password works too, where passkeys do not.', bio()) : t('Passkeys use {0}. No passwords to remember.', bio())}<br />{t('Each profile keeps its own plan, workouts & body weight.')}</div>}
     </div>
   )
 }

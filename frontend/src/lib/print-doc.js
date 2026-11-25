@@ -1,8 +1,8 @@
-// The paper side of gymbro: one page shell every printout shares (the weekly plan, one routine,
+// The paper side of gymbrooo: one page shell every printout shares (the weekly plan, one routine,
 // one workout, the performance report), and the one way to send it to a printer or a PDF.
 //
 // What every printout gets from here:
-//  - the gymbro logo top left, the title, a line of facts, and who it is for and when;
+//  - the gymbrooo logo top left, the title, a line of facts, and who it is for and when;
 //  - page numbers in the bottom margin (CSS @page margin boxes: Chrome, Android's
 //    WebView, desktop Chrome/Edge; the iOS app draws the same line natively, PrintPlugin.swift).
 //    Desktop Firefox (checked with 158) and Safari drop margin boxes, so there the line is left
@@ -44,7 +44,7 @@ export function probeMarks(probe) {
   return { s: id => mark('s', id), e: id => mark('e', id), h: id => mark('h', id) }
 }
 
-// The logo's mark: the Olympic bumper plate, with GymBro drawn under it as geometry rather
+// The logo's mark: the Olympic bumper plate, with GymBrooo drawn under it as geometry rather
 // than set in a font (lib/wordmark.js) - a browser translator rewrites DOM text and the brand
 // name is the one string that must never change. Same artwork as resources/icon.svg and
 // BrandLogo.jsx. On paper the lead is the ink, not the screen's white.
@@ -170,7 +170,7 @@ ${css}</style></head>
     ${factLine ? `<div class="facts">${factLine}</div>` : ''}
   </header>
   ${body}
-  <div class="end keep">${esc(t('Made with gymbro'))}${credit ? `<div class="credit" lang="en" dir="ltr">${esc(credit)}</div>` : ''}</div>
+  <div class="end keep">${esc(t('Made with gymbrooo'))}${credit ? `<div class="credit" lang="en" dir="ltr">${esc(credit)}</div>` : ''}</div>
 </div></body></html>`
 }
 

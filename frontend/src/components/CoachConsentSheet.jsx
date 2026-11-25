@@ -45,8 +45,8 @@ function ConsentSheet({ target, onAnswer }) {
     <h3>{t('Send your training to {0}?', target.name)}</h3>
     <p className="muted" style={{ lineHeight: 1.5, margin: '6px 0 12px' }}>
       {server
-        ? t('To answer, the Coach sends this through your gymbro server to {0}, an AI service outside gymbro that your server’s admin picked:', target.name)
-        : t('To answer, this device sends this straight to {0}, an AI service outside gymbro, with your API key:', target.name)}
+        ? t('To answer, the Coach sends this through your gymbrooo server to {0}, an AI service outside gymbrooo that your server’s admin picked:', target.name)
+        : t('To answer, this device sends this straight to {0}, an AI service outside gymbrooo, with your API key:', target.name)}
     </p>
     <div className="ob-consent">
       {sharedLines().map(line => <div key={line} className="ob-consent-row"><Icon name="check" /><div><span>{line}</span></div></div>)}

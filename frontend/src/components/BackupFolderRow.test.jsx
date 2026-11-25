@@ -60,7 +60,7 @@ describe('BackupFolderRow', () => {
     await mount()
     expect(host.querySelector('.backup-lost')).toBeNull()
     await act(async () => { m.listeners.forEach(fn => fn({ lost: true, lostLabel: 'Sync' })) })
-    expect(host.querySelector('.backup-lost').textContent).toContain('gymbro can no longer write to “Sync”')
+    expect(host.querySelector('.backup-lost').textContent).toContain('gymbrooo can no longer write to “Sync”')
     expect(rowWith('Backup folder').textContent).toContain('Documents/gymbro')
     await tap(rowWith('Use default folder'))
     expect(host.querySelector('.backup-lost')).toBeNull()

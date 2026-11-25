@@ -24,7 +24,7 @@ export async function handleScannedText(text, { indexAddress: at } = {}) {
   if (route.kind === 'routine-link') await openRoutinePayload(route.payload)
   else if (route.kind === 'library') await openLibraryLink(route.link)
   else if (route.kind === 'tag') handleTagLink(route.url)
-  else ui().toast(t('That’s not a gymbro code: {0}', shownText(route.text) || '?'))
+  else ui().toast(t('That’s not a gymbrooo code: {0}', shownText(route.text) || '?'))
   return route
 }
 

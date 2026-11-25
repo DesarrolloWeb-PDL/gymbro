@@ -117,10 +117,10 @@ describe('CoachSetup — where it runs at all', () => {
   })
 })
 
-describe('CoachSetup — "use my self-hosted gymbro"', () => {
+describe('CoachSetup — "use my self-hosted gymbrooo"', () => {
   it('hands the Coach to the server and leaves for the conversation', async () => {
     await mount()
-    await click(rowTitled('Use my self-hosted gymbro'))
+    await click(rowTitled('Use my self-hosted gymbrooo'))
     await settle()
     expect(mocks.setCoachLocal).toHaveBeenCalledWith({ mode: 'server' })
     expect(mocks.toast).toHaveBeenCalledWith('The Coach is on')
@@ -130,8 +130,8 @@ describe('CoachSetup — "use my self-hosted gymbro"', () => {
   it('an unpaired phone is asked to connect first, and nothing is written', async () => {
     mocks.user = null; mocks.config = null
     await mount()
-    expect(rowTitled('Use my self-hosted gymbro').textContent).toContain('Connect to my server')
-    await click(rowTitled('Use my self-hosted gymbro'))
+    expect(rowTitled('Use my self-hosted gymbrooo').textContent).toContain('Connect to my server')
+    await click(rowTitled('Use my self-hosted gymbrooo'))
     expect(mocks.openSheet).toHaveBeenCalledTimes(1)
     expect(mocks.setCoachLocal).not.toHaveBeenCalled()
     expect(mocks.nav).not.toHaveBeenCalled()
@@ -140,7 +140,7 @@ describe('CoachSetup — "use my self-hosted gymbro"', () => {
   it('a paired server with no Coach on it refuses, explains, and writes nothing', async () => {
     mocks.config = { coach: { enabled: false } }
     await mount()
-    const row = rowTitled('Use my self-hosted gymbro')
+    const row = rowTitled('Use my self-hosted gymbrooo')
     expect(row.textContent).toContain('Your server has no Coach enabled')
     await click(row)
     expect(mocks.setCoachLocal).not.toHaveBeenCalled()
@@ -151,7 +151,7 @@ describe('CoachSetup — "use my self-hosted gymbro"', () => {
   it('says it is still asking while the server has not answered yet', async () => {
     mocks.config = null
     await mount()
-    expect(rowTitled('Use my self-hosted gymbro').textContent).toContain('Loading…')
+    expect(rowTitled('Use my self-hosted gymbrooo').textContent).toContain('Loading…')
   })
 
   it('Back returns to Settings', async () => {
@@ -447,7 +447,7 @@ describe('CoachSetup — turning it off', () => {
   it('says which way it is running now', async () => {
     mocks.coachLocal = { mode: 'server' }
     await mount()
-    expect(host.textContent).toContain('Runs on your gymbro server')
+    expect(host.textContent).toContain('Runs on your gymbrooo server')
     expect(rowTitled('Turn the Coach off on this phone')).toBeTruthy()
   })
 

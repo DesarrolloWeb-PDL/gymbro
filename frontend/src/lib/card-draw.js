@@ -1,4 +1,4 @@
-// What every shared picture of gymbro has in common: the two formats, the light and dark looks
+// What every shared picture of gymbrooo has in common: the two formats, the light and dark looks
 // and the logo in the corner. Pure drawing, no DOM: the workout card (lib/workout-card.js, after a
 // workout and in History) and Your year (lib/wrapped-cards.js) both paint with it, and
 // lib/share-image.js gets the picture out of the app. No exercise picture or clip is ever drawn
@@ -62,7 +62,7 @@ export function cardPalette(style, acc = BRAND.green) {
     : { bg: '#000000', surface: '#1c1c1e', tile: '#2c2c2e', label: '#ffffff', label2: '#98989f', acc: a, accText: a, sep: '#38383a', light: false }
 }
 
-// The gymbro mark, centred on 0,0: the Olympic bumper plate on the 512 grid - marked rim, face,
+// The gymbrooo mark, centred on 0,0: the Olympic bumper plate on the 512 grid - marked rim, face,
 // marked inner ring, metal collar, sleeve hole - sized by its own diameter (2 x 196). Square
 // corners and these exact proportions: the logo is not ours to restyle per card. The bar that
 // used to live here survives only where a single colour is forced: the recolourable icon
@@ -112,7 +112,7 @@ export function brandNeedsBadge(bg) {
 
 /**
  * The footer every card ends with: the official lockup (brand-green mark, "Gym" in the theme's ink
- * plus "Bro" in brand green, as in assets/logo). `y` is the text's baseline. Drawn left to right
+ * plus "Brooo" in brand green, as in assets/logo). `y` is the text's baseline. Drawn left to right
  * whatever the language: it is a logo, and a logo does not mirror.
  */
 // `badge`: the lockup on its dark badge whatever the paper, for a card that has no paper of its
@@ -128,7 +128,7 @@ export function drawBrand(ctx, { x, y, colors, family, size = 40, badge: forceBa
   ctx.textAlign = 'left'
   ctx.font = `700 ${size}px ${family}`
   if ('letterSpacing' in ctx) ctx.letterSpacing = `${(-size * 0.036).toFixed(2)}px`
-  const textW = ctx.measureText('GymBro').width
+  const textW = ctx.measureText('GymBrooo').width
   const lockW = markH * MARK_ASPECT + gap + textW
   let lx = x
   if (badge) {
@@ -144,7 +144,7 @@ export function drawBrand(ctx, { x, y, colors, family, size = 40, badge: forceBa
   ctx.fillText('Gym', tx, y)
   tx += ctx.measureText('Gym').width
   ctx.fillStyle = BRAND.green
-  ctx.fillText('Bro', tx, y)
+  ctx.fillText('Brooo', tx, y)
   if ('letterSpacing' in ctx) ctx.letterSpacing = '0px'
 }
 

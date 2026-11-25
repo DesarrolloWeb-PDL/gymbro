@@ -1,4 +1,4 @@
-// gymbro Offline (lib/build-caps.js): the build without the INTERNET permission hides everything
+// gymbrooo Offline (lib/build-caps.js): the build without the INTERNET permission hides everything
 // that needs a network, and the modules that are nothing but network are off whatever S says.
 import { afterEach, describe, expect, it } from 'vitest'
 import { setOfflineBuild, offlineBuild, networkBuilt, subscribeBuildCaps, OFFLINE_OFF_CARDS } from './build-caps.js'
@@ -10,7 +10,7 @@ import { findPlaces, addressAt } from './gym-places.js'
 
 afterEach(() => setOfflineBuild(false))
 
-describe('gymbro Offline', () => {
+describe('gymbrooo Offline', () => {
   it('is off by default and says so to listeners once', () => {
     expect(offlineBuild()).toBe(false)
     expect(networkBuilt()).toBe(true)

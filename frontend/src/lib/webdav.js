@@ -1,7 +1,7 @@
 // Backup to WebDAV (#582, idea by @Mahaveer1013): the JSON backup of Settings → Data & backup,
 // written to a folder on a WebDAV server of your own (Nextcloud, ownCloud, a NAS, Apache or nginx
 // with WebDAV, Koofr, …) once a day and whenever you tap Back up now, and read back from there
-// on a new phone. No account with anyone, no server of gymbro's in between: this device talks to
+// on a new phone. No account with anyone, no server of gymbrooo's in between: this device talks to
 // your WebDAV server directly.
 //
 // What is kept where:
@@ -146,12 +146,12 @@ export class DavError extends Error {
 export function errorText(e) {
   switch (e?.code) {
     case 'auth': return 'The server did not take that name and password. An app password usually works best.'
-    case 'missing': return 'That folder is not there, and gymbro could not make it. Make it on the server first.'
+    case 'missing': return 'That folder is not there, and gymbrooo could not make it. Make it on the server first.'
     case 'forbidden': return 'The server says this account may not write there.'
     case 'full': return 'The server is out of space for this account.'
     case 'network': return 'Could not reach the server. In a browser it also has to allow this site (CORS), see the guide.'
     case 'no-password': return 'Type the password again: this device does not have it.'
-    case 'not-backup': return 'That file is not a gymbro backup.'
+    case 'not-backup': return 'That file is not a gymbrooo backup.'
     case 'empty': return 'Nothing to back up yet: log a workout first.'
     case 'foreign': return 'This backup belongs to another account'
     default: return 'The server answered with an error.'

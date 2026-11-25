@@ -1,7 +1,7 @@
 // @vitest-environment happy-dom
 // Own icons instead of system emoji ("is there any plan to replace system emojis like 🔥, medals
 // and ❄️ with custom icons that match the rest of the app?"): every picture the app uses as UI is
-// gymbro's icon, and Settings → Icons → Emoji brings the emoji back for those who want them.
+// gymbrooo's icon, and Settings → Icons → Emoji brings the emoji back for those who want them.
 import React, { act } from 'react'
 import { createRoot } from 'react-dom/client'
 import { describe, expect, it } from 'vitest'
@@ -36,7 +36,7 @@ describe('Glyph', () => {
   })
 
   it('takes an emoji off the end of a translated line', () => {
-    expect(splitEmoji('Your 2026 in gymbro is ready 🎉')).toEqual({ text: 'Your 2026 in gymbro is ready', emoji: '🎉' })
+    expect(splitEmoji('Your 2026 in gymbrooo is ready 🎉')).toEqual({ text: 'Your 2026 in gymbrooo is ready', emoji: '🎉' })
     expect(splitEmoji('No peeking 👀')).toEqual({ text: 'No peeking', emoji: '👀' })
     expect(splitEmoji('🎄 Advent')).toEqual({ text: 'Advent', emoji: '🎄' })
     expect(splitEmoji('Plain')).toEqual({ text: 'Plain', emoji: '' })

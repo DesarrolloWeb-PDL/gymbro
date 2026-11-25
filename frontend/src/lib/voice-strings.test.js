@@ -45,7 +45,7 @@ describe('VoiceIntents.swift and its strings', () => {
 })
 
 describe('Settings → Siri & Shortcuts', () => {
-  const rows = { '“Start my workout in gymbro”': 'Start my workout in {app}', '“Log my weight in gymbro”': 'Log my weight in {app}', '“What’s my workout today in gymbro”': "What's my workout today in {app}", '“How’s my streak in gymbro”': "How's my streak in {app}" }
+  const rows = { '“Start my workout in gymbrooo”': 'Start my workout in {app}', '“Log my weight in gymbrooo”': 'Log my weight in {app}', '“What’s my workout today in gymbrooo”': "What's my workout today in {app}", '“How’s my streak in gymbrooo”': "How's my streak in {app}" }
   const bare = s => s.replace(/^[“„«「”]\s?|\s?[”“»」]$/g, '')
 
   // Loads every locale pack: a few seconds on a busy machine, so its own time limit (as the
@@ -55,7 +55,7 @@ describe('Settings → Siri & Shortcuts', () => {
       const loc = PAGE_LOCALE[lang] || lang
       const { default: pack } = await import(`../locales/${loc}.js`)
       for (const [key, phrase] of Object.entries(rows)) {
-        expect(bare(pack[key]), `${loc} ${key}`).toBe(PHRASES[phrase][lang].replace('{app}', 'gymbro'))
+        expect(bare(pack[key]), `${loc} ${key}`).toBe(PHRASES[phrase][lang].replace('{app}', 'gymbrooo'))
       }
     }
   }, 30000)

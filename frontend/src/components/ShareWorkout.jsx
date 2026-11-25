@@ -52,9 +52,9 @@ export function readSharePref() {
 const BG_NAMED = { brand: BRAND.ink, black: '#000000', white: '#ffffff' }
 const INK_NAMED = { white: '#ffffff', black: '#000000', brand: BRAND.green }
 const HI_NAMED = { brand: BRAND.green, white: '#ffffff', black: '#000000' }
-const SWATCH_LABEL = () => ({ auto: t('Auto'), brand: t('gymbro dark'), black: t('Black'), white: t('White'), accent: t('Accent'), clear: t('See-through') })
-const INK_LABEL = () => ({ auto: t('Auto'), white: t('White'), black: t('Black'), brand: t('gymbro') })
-const HI_LABEL = () => ({ auto: t('Accent'), brand: t('gymbro'), white: t('White'), black: t('Black') })
+const SWATCH_LABEL = () => ({ auto: t('Auto'), brand: t('gymbrooo dark'), black: t('Black'), white: t('White'), accent: t('Accent'), clear: t('See-through') })
+const INK_LABEL = () => ({ auto: t('Auto'), white: t('White'), black: t('Black'), brand: t('gymbrooo') })
+const HI_LABEL = () => ({ auto: t('Accent'), brand: t('gymbrooo'), white: t('White'), black: t('Black') })
 
 /** One row of colour swatches, with a custom colour at its end. Each swatch carries its name, not
  *  only its colour, so the row reads without colour vision. */

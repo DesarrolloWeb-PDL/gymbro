@@ -8,13 +8,13 @@
 // The guide (building and sideloading the watch app).
 export const GARMIN_DOCS = 'https://github.com/DesarrolloWeb-PDL/gymbro/blob/main/docs/GARMIN.md'
 // The watch app's page in the Connect IQ Store (the same id as GarminLink.STORE_ID / storeId):
-// where "Get gymbro for Garmin" goes when Garmin Connect cannot open it itself.
+// where "Get gymbrooo for Garmin" goes when Garmin Connect cannot open it itself.
 export const GARMIN_STORE_ID = '62e66310-66de-4bdd-8e40-5d2c0d853a08'
 export const GARMIN_STORE = 'https://apps.garmin.com/apps/' + GARMIN_STORE_ID
 
 /**
  * The page's one line about the link, as an English key for t(), and what it offers:
- * `pick` (choose or look for watches), `getApp` (put gymbro on the watch).
+ * `pick` (choose or look for watches), `getApp` (put gymbrooo on the watch).
  */
 export function garminView (status) {
   if (!status) return { key: 'checking', pick: false, getApp: false, devices: [] }
@@ -36,7 +36,7 @@ export function garminView (status) {
   return { ...base, key: 'get-app', pick: true, getApp: true }
 }
 
-/** A watch's line: connected or not, and whether gymbro is on it (when that is known). */
+/** A watch's line: connected or not, and whether gymbrooo is on it (when that is known). */
 export function garminDeviceLine (d) {
   if (d?.installed === false) return 'not-installed'
   return d?.connected ? 'connected' : 'away'

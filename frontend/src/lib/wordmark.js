@@ -1,5 +1,5 @@
 /**
- * The wordmark GymBro as geometry, not as text.
+ * The wordmark GymBrooo as geometry, not as text.
  *
  * A browser translator rewrites DOM text, and the brand name is the one string that must never
  * change; `translate="no"` says so but still depends on a font being present, so the lockup
@@ -17,9 +17,10 @@
 export const WORDMARK_STROKE = 0.16   // in em, so the letters stay bold at any size
 export const WORDMARK_TRACK = 0.10    // gap between glyphs, in em
 
-/** Advance width of each glyph in em: G y m B r o. The box adds half a stroke past the last
- *  glyph's edge (the `o` reaches 4.59 with its round cap), so it is wider than the sum. */
-export const WORDMARK_WIDTH = 4.62
+/** Advance width of each glyph in em: G y m B r o o o. The box adds half a stroke past the last
+ *  glyph's edge (the final `o` reaches its own right edge with its round cap), so it is wider
+ *  than the sum. */
+export const WORDMARK_WIDTH = 6.10
 
 /* The drawing box, in em with the baseline at y = 0. Cap height reaches -0.70 and the round
    caps add half a stroke, so the top is -0.78; the `y` descends to 0.26, +0.08 with its cap.
@@ -50,6 +51,8 @@ export const WORDMARK = [
   { w: 0.50, lines: [
     [[0.06, 0.00], [0.06, -0.50], [0.24, -0.50], [0.44, -0.34]],
   ] },
+  { w: 0.64, lines: [], circles: [[0.32, -0.25, 0.25]] },
+  { w: 0.64, lines: [], circles: [[0.32, -0.25, 0.25]] },
   { w: 0.64, lines: [], circles: [[0.32, -0.25, 0.25]] },
 ]
 
@@ -86,5 +89,5 @@ export function wordmarkSvg({ lead = '#eef1f6', accent = '#ff9f0a', cls = '', h 
   const w = em ? `${(h * WORDMARK_RATIO).toFixed(4)}em` : (h * WORDMARK_RATIO * size).toFixed(2)
   const ht = em ? `${h}em` : (h * size).toFixed(2)
   return `<svg class="${cls}" viewBox="0 ${WORDMARK_TOP} ${WORDMARK_WIDTH} ${WORDMARK_BOX_H}" `
-    + `width="${w}" height="${ht}" aria-label="GymBro" role="img" translate="no">${parts.join('')}</svg>`
+    + `width="${w}" height="${ht}" aria-label="GymBrooo" role="img" translate="no">${parts.join('')}</svg>`
 }

@@ -10,7 +10,7 @@
 //   watch <--message--- Garmin Connect <--sendMessage-- GarminLink <--sendSnapshot({garmin})-- page
 //
 // What can go wrong in between is switched on per test: the watch out of range (transmit fails),
-// gymbro's process dead (Garmin Connect takes the message, nobody hears it), a transmit that
+// gymbrooo's process dead (Garmin Connect takes the message, nobody hears it), a transmit that
 // never calls back, an ack that never arrives, a restart of either side mid-queue.
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
@@ -49,7 +49,7 @@ const S0 = () => ({ unit: 'kg', restSec: 90, workouts: [], routines: clone(ROUTI
 function world (S = S0()) {
   const w = {
     inRange: true,        // Bluetooth between the watch and the phone
-    alive: false,         // gymbro's process on the phone: GarminLink only hears while it lives
+    alive: false,         // gymbrooo's process on the phone: GarminLink only hears while it lives
     swallow: 0,           // transmits that never call back at all
     ackFails: 0,          // the page's ack to the queue file fails (the app died right then)
     queue: [],            // the queue file: survives the process
@@ -126,7 +126,7 @@ function world (S = S0()) {
       setTimeout(() => {
         if (!w.inRange) return l.onError()
         l.onComplete()                 // Garmin Connect took it …
-        if (w.alive) onMessage(copy)   // … and only a living gymbro hears it
+        if (w.alive) onMessage(copy)   // … and only a living gymbrooo hears it
       }, 300)
     },
   }
@@ -177,7 +177,7 @@ function world (S = S0()) {
   Object.assign(w, {
     S: () => st.S,
     update,
-    /** gymbro starts on the phone (and its page with it). */
+    /** gymbrooo starts on the phone (and its page with it). */
     async launch () {
       _resetWatchSync()
       _setWatchPluginForTest(bridge, () => store.getState())
@@ -206,7 +206,7 @@ beforeEach(() => { localStorage.clear(); _resetWatchSync(); vi.useFakeTimers(); 
 afterEach(() => { _resetWatchSync(); vi.useRealTimers() })
 
 describe('pairing: the first hello', () => {
-  it('a watch app opened next to a running gymbro gets today\'s routine at once', async () => {
+  it('a watch app opened next to a running gymbrooo gets today\'s routine at once', async () => {
     const w = world()
     expect(w.watch.s.sy).toBe(false)
     await w.launch()
@@ -223,7 +223,7 @@ describe('pairing: the first hello', () => {
     expect(w.queue).toEqual([])
   })
 
-  it('gymbro not running: the hello goes nowhere, and the watch asks again until it is heard', async () => {
+  it('gymbrooo not running: the hello goes nowhere, and the watch asks again until it is heard', async () => {
     const w = world()
     await w.run(5)
     expect(w.watch.s.sy).toBe(false)
@@ -243,7 +243,7 @@ describe('pairing: the first hello', () => {
     expect(w.transmits.length).toBe(3)   // answered: no more asking
   })
 
-  it('a phone that never answers (no gymbro with the Garmin link on it) does not cost the watch its battery', async () => {
+  it('a phone that never answers (no gymbrooo with the Garmin link on it) does not cost the watch its battery', async () => {
     const w = world()
     // a workout's worth of sets that Garmin Connect took and nobody heard
     for (let i = 0; i < 20; i++) w.watch.send({ id: 'x' + i, type: 'setDone', wid: 'w', exId: 'e' + i, setIdx: 0, at: Date.now() })
@@ -255,7 +255,7 @@ describe('pairing: the first hello', () => {
     // (every minute, it was 300 messages an hour for these 20 sets)
     expect(w.transmits.length - before).toBeLessThan(60)
     expect(w.watch.s.ob).toHaveLength(20)   // and nothing was let go of
-    // the day gymbro answers, everything goes at once
+    // the day gymbrooo answers, everything goes at once
     await w.launch()
     await w.run(5)
     expect(w.watch.s.ob).toEqual([])
@@ -434,7 +434,7 @@ describe('either side restarting', () => {
     expect(w.watch.s.ob).toEqual([])
   })
 
-  it('gymbro killed on the phone while the watch logs: Garmin Connect takes the sets, nobody hears, they come again', async () => {
+  it('gymbrooo killed on the phone while the watch logs: Garmin Connect takes the sets, nobody hears, they come again', async () => {
     const w = world()
     await w.launch()
     w.startOnPhone()
@@ -450,7 +450,7 @@ describe('either side restarting', () => {
     // the lifter sees it: two sets waiting
     expect(w.watch.waiting()).toBe(2)
     await w.run(10)
-    // gymbro is opened again: its first snapshot tells the watch it is there, and what the watch
+    // gymbrooo is opened again: its first snapshot tells the watch it is there, and what the watch
     // had "sent" to nobody goes again at once, not at the next minute
     await w.launch()
     await w.run(4)
@@ -458,7 +458,7 @@ describe('either side restarting', () => {
     expect(w.watch.s.ob).toEqual([])
   })
 
-  it('gymbro killed mid-drain, after applying and before the queue file heard: not applied a second time', async () => {
+  it('gymbrooo killed mid-drain, after applying and before the queue file heard: not applied a second time', async () => {
     const w = world()
     await w.launch()
     w.startOnPhone()
@@ -629,7 +629,7 @@ describe('limits', () => {
     const w = world()
     await w.launch()
     await w.run(2)
-    // gymbro gone for good (uninstalled, or a phone app without the Garmin link): Garmin Connect
+    // gymbrooo gone for good (uninstalled, or a phone app without the Garmin link): Garmin Connect
     // takes every message, so they count as sent and the oldest go first
     w.kill()
     w.watch.start(w.watch.s.rd.today)

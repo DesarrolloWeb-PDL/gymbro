@@ -27,16 +27,16 @@ function render(node) {
 }
 
 describe('BrandLogo', () => {
-  it('names itself GymBro for assistive tech, never the name the fork came from', () => {
+  it('names itself GymBrooo for assistive tech, never the name the fork came from', () => {
     const el = render(<BrandLogo />)
     const name = el.querySelector('.brand-lockup-name')
-    expect(name.getAttribute('aria-label')).toBe('GymBro')
+    expect(name.getAttribute('aria-label')).toBe('GymBrooo')
     // No live text at all: a translator has nothing to rewrite.
     expect(el.textContent).toBe('')
     expect(el.innerHTML).not.toMatch(/open/i)
-    // Capital G and B, per the brand: gymbro lowercase is the machine form, GymBro is the
+    // Capital G and B, per the brand: gymbrooo lowercase is the machine form, GymBrooo is the
     // written one - the tab title, the manifest and the locale keys keep the former.
-    expect(name.getAttribute('aria-label')).toMatch(/^GymBro$/)
+    expect(name.getAttribute('aria-label')).toMatch(/^GymBrooo$/)
   })
 
   it('tells the translator to leave the name alone', () => {
@@ -55,10 +55,11 @@ describe('BrandLogo', () => {
       if (!byGlyph.has(g)) byGlyph.set(g, new Set())
       byGlyph.get(g).add(s.getAttribute('stroke'))
     }
-    expect([...byGlyph.keys()].map(Number)).toEqual([0, 1, 2, 3, 4, 5])
-    // Gym (G y m) inherits the theme's ink, Bro (B r o) is brand orange.
+    expect([...byGlyph.keys()].map(Number)).toEqual([0, 1, 2, 3, 4, 5, 6, 7])
+    // Gym (G y m) inherits the theme's ink, Brooo (B r o o o) is brand orange. The split is
+    // still at glyph 3: three lead glyphs, five accent ones.
     for (const g of ['0', '1', '2']) expect([...byGlyph.get(g)]).toEqual(['currentColor'])
-    for (const g of ['3', '4', '5']) expect([...byGlyph.get(g)]).toEqual(['#ff9f0a'])
+    for (const g of ['3', '4', '5', '6', '7']) expect([...byGlyph.get(g)]).toEqual(['#ff9f0a'])
     // The old class names must be gone: a stale one would silently drop the colour.
     expect(el.querySelector('.brand-lockup-lead')).toBeNull()
     expect(el.querySelector('.brand-lockup-accent')).toBeNull()

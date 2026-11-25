@@ -1,4 +1,4 @@
-// Your month in gymbro (lib/month-story.js): the year's story engine for one month.
+// Your month in gymbrooo (lib/month-story.js): the year's story engine for one month.
 import { describe, it, expect } from 'vitest'
 import { monthStats, monthCards, storyMonths, offeredMonth, prevMonth, funLine } from './month-story.js'
 

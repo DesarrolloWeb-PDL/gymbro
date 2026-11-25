@@ -32,7 +32,7 @@ describe('print-doc', () => {
     // The name under the mark, as geometry rather than text: a browser translator rewrites DOM
     // text, and this page is handed to someone else with the brand intact.
     expect(html).toContain(LOGO_NAME)
-    expect(html).toContain('aria-label="GymBro"')
+    expect(html).toContain('aria-label="GymBrooo"')
     expect(html).toContain('translate="no"')
     // No live text spelling the name either - the old two-span run is gone with it.
     expect(html).not.toContain('<span translate="no">Gym')
