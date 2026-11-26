@@ -11,11 +11,11 @@ import WatchKit
  * screen is updated rarely then and every lit pixel costs.
  */
 enum Theme {
-    /// The brand's green (#ff9f0a, the logo's and a new profile's accent since 1.4.5), until the
+    /// The brand's green (#ff7622, the logo's and a new profile's accent since 1.4.5), until the
     /// phone has said which accent it wears. It is light, so the ink on it is near-black (onAccent).
     static let green = Color(red: 0xa3 / 255, green: 0xe6 / 255, blue: 0x35 / 255)
     static let accent = green
-    /// The brand's near-black (#0c0e12): what reads on the green.
+    /// The brand's near-black (#121212): what reads on the green.
     static let onGreen = Color(red: 0x0c / 255, green: 0x0e / 255, blue: 0x12 / 255)
     static let orange = Color(red: 1, green: 0x9f / 255, blue: 0x0a / 255)
     static let red = Color(red: 1, green: 0x45 / 255, blue: 0x3a / 255)
@@ -55,7 +55,7 @@ extension EnvironmentValues {
 }
 
 extension Color {
-    /// "#ff9f0a" as a colour, nil for anything else (WatchCore's Hex).
+    /// "#ff7622" as a colour, nil for anything else (WatchCore's Hex).
     init?(hex: String?) {
         guard let c = Hex.rgb(hex) else { return nil }
         self.init(red: c.r, green: c.g, blue: c.b)

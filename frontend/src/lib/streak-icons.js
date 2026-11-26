@@ -28,7 +28,7 @@ export const FLAME_CHOICES = [
   { v: 'rocket', c: '#0a84ff' },
   { v: 'crown', c: '#f5b301' },
   { v: 'trophy', c: '#ffb020' },
-  { v: 'sun', c: '#ff9f0a' },
+  { v: 'sun', c: '#ff7622' },
   { v: 'dumbbell', c: '#30d158' },
   { v: 'kettlebell', c: '#bf5af2' },
   // The festive flame, the advent calendar's present (door 24, in the Christmas chunk). Always a

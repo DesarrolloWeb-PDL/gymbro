@@ -9,7 +9,7 @@ import { t } from './i18n-core.js'
 
 export const SET_TAGS = [
   { id: 'red', color: '#ff453a', shape: '●' },
-  { id: 'orange', color: '#ff9f0a', shape: '▲' },
+  { id: 'orange', color: '#ff7622', shape: '▲' },
   { id: 'yellow', color: '#ffd60a', shape: '■' },
   { id: 'green', color: '#30d158', shape: '◆' },
   { id: 'blue', color: '#0a84ff', shape: '★' },

@@ -31,7 +31,7 @@ const longDay = n => Array.from({ length: Math.ceil(n / 4) }, (_, i) => ({
 }))
 const out = {
   ...snap,
-  settings: { ...snap.settings, accent: '#ff9f0a', onAccent: '#000000', effort: 'rir' },
+  settings: { ...snap.settings, accent: '#ff7622', onAccent: '#000000', effort: 'rir' },
   active: null,
   streak: { weeks: 12, thisWeekDone: true },
   ready: {

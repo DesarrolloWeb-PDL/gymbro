@@ -44,7 +44,7 @@
   --hair:      .5px;
 
   /* system palette (iOS dark values) */
-  --blue:#0a84ff; --green:#30d158; --red:#ff453a; --orange:#ff9f0a;
+  --blue:#0a84ff; --green:#30d158; --red:#ff453a; --orange:#ff7622;
   --yellow:#ffd60a; --teal:#40c8e0; --indigo:#5e5ce6; --pink:#ff375f;
   --purple:#bf5af2; --mint:#63e6e2; --brown:#ac8e68; --grey:#8e8e93;
 
@@ -140,14 +140,14 @@
   --on-acc:#ffffff;
 }
 
-/* The brand's own green, the logo's #ff9f0a (1.4.5, the default for a new profile). Far lighter than
-   the system colours, so everything filled with it carries the brand's near-black (#0c0e12, 12.8:1)
+/* The brand's own green, the logo's #ff7622 (1.4.5, the default for a new profile). Far lighter than
+   the system colours, so everything filled with it carries the brand's near-black (#121212, 12.8:1)
    and a switch's white knob gets its hairline ring. With this accent the status green (a done day,
    a tick, the green settings tiles) is the same green, so the screen shows one green, not two; a
    glyph on a green tile turns dark with it (--on-green, below). In the light theme the fill steps to
    #e07f00, the next shade of the same lime, which still reads on white, and text takes #4a7a0e
    (4.6:1 on the page, 5.2:1 on a card). */
-:root[data-accent="brand"] { --acc:#ff9f0a; --acc-2:#e07f00; --on-acc:#0c0e12; --knob-ring:rgba(0,0,0,.28); --green:#ff9f0a; --on-green:#0c0e12 }
+:root[data-accent="brand"] { --acc:#ff7622; --acc-2:#e07f00; --on-acc:#121212; --knob-ring:rgba(0,0,0,.28); --green:#ff7622; --on-green:#121212 }
 :root[data-theme="light"][data-accent="brand"] { --acc:#e07f00; --acc-2:#65a30d; --green:#e07f00; --green-ink:#4a7a0e; --win-ink:#4a7a0e }
 /* the other accents: Apple's system colours, so a recolour never looks off-system */
 :root[data-accent="lime"]  { --acc:var(--green);  --acc-2:#248a3d; --on-acc:#000 }
@@ -178,7 +178,7 @@
    passes and matches the platform convention. */
 :root[data-theme="light"][data-accent="lime"],
 :root[data-theme="light"][data-accent="teal"]  { --on-acc:#000 }
-:root[data-theme="light"][data-accent="brand"] { --on-acc:#0c0e12 }
+:root[data-theme="light"][data-accent="brand"] { --on-acc:#121212 }
 :root[data-theme="light"][data-accent="sky"],
 :root[data-theme="light"][data-accent="violet"],
 :root[data-theme="light"][data-accent="pink"],
@@ -3125,7 +3125,7 @@ button.cal-wk:active{background:var(--press-fill)}
 .swatch-own{display:inline-flex;align-items:center;justify-content:center;font-size:var(--fs-subhead);--icon-stroke:2.4}
 .swatch-own.unset{
   background:radial-gradient(circle,var(--surface) 0 52%,transparent 54%),
-    conic-gradient(#ff453a,#ff9f0a,#ffd60a,#30d158,#40c8e0,#0a84ff,#bf5af2,#ff375f,#ff453a);
+    conic-gradient(#ff453a,#ff7622,#ffd60a,#30d158,#40c8e0,#0a84ff,#bf5af2,#ff375f,#ff453a);
   color:var(--label-2);
 }
 .swatch-input{position:absolute;inset:0;width:100%;height:100%;opacity:0;border:0;padding:0;margin:0;border-radius:50%;cursor:pointer;-webkit-appearance:none;appearance:none}
@@ -4521,7 +4521,7 @@ button.wl-summary{width:100%;padding:0 0 10px;text-align:start;border-radius:var
 .gl-look .seg{width:100%}
 
 /* The stage: a Lock Screen's wallpaper, the top of the screen for the island, the shade. */
-.gl-stage{--gl-wall:#e4e7ed;--gl-mat:rgba(255,255,255,.82);--gl-ink:#0c0e12;--gl-ink-2:rgba(12,14,18,.62);--gl-btn:rgba(12,14,18,.08);
+.gl-stage{--gl-wall:#e4e7ed;--gl-mat:rgba(255,255,255,.82);--gl-ink:#121212;--gl-ink-2:rgba(12,14,18,.62);--gl-btn:rgba(12,14,18,.08);
   border-radius:var(--r-xl);padding:14px 6px 8px;background:var(--gl-wall);display:flex;flex-direction:column;align-items:stretch;gap:10px;
   font-family:-apple-system,system-ui,sans-serif;min-height:228px;justify-content:flex-end;position:relative}
 /* The card in its place: at the foot of the wallpaper, under the top of the screen for the island.
@@ -4655,13 +4655,13 @@ button.wl-summary{width:100%;padding:0 0 10px;text-align:start;border-radius:var
    type 700 with tight tracking, the mark 1.07em high with its middle 0.36em over the baseline. */
 /* The lockup stacks: mark on top, name under it. The plate is a circle, so the mark is as
    wide as it is tall and the two-tone name sits below rather than beside it. */
-.brand-lockup{display:inline-flex;flex-direction:column;align-items:center;font-weight:700;letter-spacing:-.036em;line-height:1.1;white-space:nowrap;unicode-bidi:isolate;direction:ltr;color:#eef1f6}
+.brand-lockup{display:inline-flex;flex-direction:column;align-items:center;font-weight:700;letter-spacing:-.036em;line-height:1.1;white-space:nowrap;unicode-bidi:isolate;direction:ltr;color:#ffffff}
 .brand-lockup-mark{display:block;height:1.9em;width:1.9em;margin-bottom:.14em}
 /* The name is geometry, so its "Gym" inherits this rather than a class of its own: the
    wordmark paints the lead with currentColor and keeps Bro on brand orange. The element
    sizes itself (BrandWordmark sets width/height from the box ratio) - only display here. */
 .brand-lockup-name{display:block}
-:root[data-theme="light"] .brand-lockup{color:#12151b}
+:root[data-theme="light"] .brand-lockup{color:#121212}
 
 /* Add set / Warm-up / Remove: 44px tall, the leading glyph on the card's content edge; wrapped siblings share the same edge */
 .wk-add{min-height:44px;margin-inline-start:-14px}

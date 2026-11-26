@@ -90,7 +90,7 @@ export const WORDMARK_OFFSETS = (() => {
  * `h` is the element's height in em (default: the box at 1em, i.e. unscaled); the width
  * follows from the box's aspect ratio. Pass `em: false` with `size` to get px instead.
  */
-export function wordmarkSvg({ lead = '#eef1f6', accent = '#ff9f0a', cls = '', h = 1, size, em = true } = {}) {
+export function wordmarkSvg({ lead = '#ffffff', accent = '#ff7622', cls = '', h = 1, size, em = true } = {}) {
   const parts = []
   WORDMARK.forEach((g, i) => {
     const ox = WORDMARK_OFFSETS[i]

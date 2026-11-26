@@ -59,7 +59,7 @@ describe('BrandLogo', () => {
     // Gym (G y m) inherits the theme's ink, Brooo (B r o o o) is brand orange. The split is
     // still at glyph 3: three lead glyphs, five accent ones.
     for (const g of ['0', '1', '2']) expect([...byGlyph.get(g)]).toEqual(['currentColor'])
-    for (const g of ['3', '4', '5', '6', '7']) expect([...byGlyph.get(g)]).toEqual(['#ff9f0a'])
+    for (const g of ['3', '4', '5', '6', '7']) expect([...byGlyph.get(g)]).toEqual(['#ff7622'])
     // The old class names must be gone: a stale one would silently drop the colour.
     expect(el.querySelector('.brand-lockup-lead')).toBeNull()
     expect(el.querySelector('.brand-lockup-accent')).toBeNull()

@@ -46,7 +46,7 @@ describe('the icon source and the mark source', () => {
     // A rect quad is [x, y, w, h]; the plate's circles would never match this shape.
     for (const q of rects) expect(q).toHaveLength(4)
     const svg = readFileSync(new URL('../resources/mark.svg', import.meta.url), 'utf8')
-    expect(svg).toContain('<g fill="#ff9f0a">')
+    expect(svg).toContain('<g fill="#ff7622">')
     expect(svg).not.toContain('<circle')
   })
 

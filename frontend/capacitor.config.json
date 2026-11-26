@@ -2,7 +2,7 @@
   "appId": "ch.duartesantos.opengym",
   "appName": "gymbro",
   "webDir": "dist",
-  "backgroundColor": "#0c0e12",
+  "backgroundColor": "#121212",
   "android": {
     "allowMixedContent": true
   },
@@ -14,7 +14,7 @@
       "launchShowDuration": 8000,
       "launchAutoHide": true,
       "launchFadeOutDuration": 180,
-      "backgroundColor": "#0c0e12",
+      "backgroundColor": "#121212",
       "showSpinner": false
     }
   }

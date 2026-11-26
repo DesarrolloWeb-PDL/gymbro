@@ -44,7 +44,7 @@ export function mixColor(a, b, p) {
 }
 
 // The accent as words on a light card: the accent darkened by 38 %, as before, while that reads at
-// 4.5:1 on the card's page and tiles; a lighter accent (the brand's #ff9f0a, a yellow, a pastel of
+// 4.5:1 on the card's page and tiles; a lighter accent (the brand's #ff7622, a yellow, a pastel of
 // the user's own) keeps going down its own hue until it does (lib/accent.js inkIn, 1.4.5).
 export function accTextOnLight(a) {
   const mixed = mixColor(a, '#000000', 0.62)
@@ -69,7 +69,7 @@ export function cardPalette(style, acc = BRAND.green) {
 // variants and Android's monochrome layer.
 const PLATE = [[196, 'rim'], [174, 'face'], [84, 'rim'], [68, 'light'], [40, 'ink']]
 export const MARK_ASPECT = 1   // a circle: width equals height
-export const BRAND = { green: '#ff9f0a', ink: '#0c0e12', light: '#eef1f6', dark: '#12151b', rim: '#c26a00' }
+export const BRAND = { green: '#ff7622', ink: '#121212', light: '#ffffff', dark: '#121212', rim: '#c26a00' }
 
 /** The logo mark, `h` high, its left edge at x, centred on y. `color` tints the face. */
 export function drawMark(ctx, x, y, h, color = BRAND.green) {

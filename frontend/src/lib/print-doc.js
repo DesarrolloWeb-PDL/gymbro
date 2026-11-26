@@ -49,13 +49,13 @@ export function probeMarks(probe) {
 // name is the one string that must never change. Same artwork as resources/icon.svg and
 // BrandLogo.jsx. On paper the lead is the ink, not the screen's white.
 export const LOGO_SVG = '<svg class="logo-mark" viewBox="0 0 512 512" aria-hidden="true">'
-  + '<circle cx="256" cy="256" r="196" fill="#c26a00"/><circle cx="256" cy="256" r="174" fill="#ff9f0a"/>'
-  + '<circle cx="256" cy="256" r="84" fill="#c26a00"/><circle cx="256" cy="256" r="68" fill="#eef1f6"/>'
-  + '<circle cx="256" cy="256" r="40" fill="#0c0e12"/></svg>'
+  + '<circle cx="256" cy="256" r="196" fill="#c26a00"/><circle cx="256" cy="256" r="174" fill="#ff7622"/>'
+  + '<circle cx="256" cy="256" r="84" fill="#c26a00"/><circle cx="256" cy="256" r="68" fill="#ffffff"/>'
+  + '<circle cx="256" cy="256" r="40" fill="#121212"/></svg>'
 
 // The name beside the mark, two-tone, as strokes. `h` is the box height in em: at 1.15 the
 // cap height lands where 12pt type's would, so the plate and the name read as one line.
-export const LOGO_NAME = wordmarkSvg({ lead: '#12151b', accent: '#ff9f0a', cls: 'logo-name', h: 1.15 })
+export const LOGO_NAME = wordmarkSvg({ lead: '#121212', accent: '#ff7622', cls: 'logo-name', h: 1.15 })
 
 // "Page {0} of {1}" in the reader's language, as the content of an @page margin box: the text
 // around the two numbers comes from the translation, the numbers from CSS counters.
@@ -86,7 +86,7 @@ export const PRINT_CSS = `
   :root {
     --ink: #15171c; --ink-2: #3b404b; --muted: #6b7180; --faint: #9aa0ad;
     --rule: #e3e6ec; --rule-soft: #eff1f5; --tint: #f6f7f9;
-    --lime: #ff9f0a; --lime-ink: #a35a00; --lime-soft: #fff4e5;
+    --lime: #ff7622; --lime-ink: #a35a00; --lime-soft: #fff4e5;
   }
   * { box-sizing: border-box; }
   html { color-scheme: light; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
@@ -108,7 +108,7 @@ export const PRINT_CSS = `
   .mast-top { display: flex; align-items: center; justify-content: space-between; gap: 12pt; margin-bottom: 11pt; }
   /* On paper the name sits beside the mark: a masthead is a horizontal band and stacking
      would spend a second line on it. The web lockup above the fold stacks instead. */
-  .brand { display: flex; align-items: center; gap: .22em; font-weight: 700; font-size: 12pt; letter-spacing: -.036em; color: #12151b; white-space: nowrap; direction: ltr; unicode-bidi: isolate; }
+  .brand { display: flex; align-items: center; gap: .22em; font-weight: 700; font-size: 12pt; letter-spacing: -.036em; color: #121212; white-space: nowrap; direction: ltr; unicode-bidi: isolate; }
   .logo-mark { height: 1.7em; width: 1.7em; flex: none; }
   .logo-name { display: block; flex: none; }
   .mast-meta { font-size: 8pt; color: var(--muted); text-align: end; line-height: 1.35; }

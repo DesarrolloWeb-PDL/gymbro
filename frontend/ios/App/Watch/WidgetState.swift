@@ -75,7 +75,7 @@ extension WidgetState {
 /// gymbro's mark (assets/logo/opengym-mark.svg): five plain rectangles on a 352 x 174 grid, square
 /// corners. One shape, so it takes the watch face's tint and stays sharp at every complication size.
 struct OpenGymLogo: Shape {
-    /// The brand green (#ff9f0a): the logo's colour wherever it is not tinted by the face.
+    /// The brand green (#ff7622): the logo's colour wherever it is not tinted by the face.
     static let green = Color(red: 163 / 255, green: 230 / 255, blue: 53 / 255)
 
     func path(in rect: CGRect) -> Path {

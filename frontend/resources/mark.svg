@@ -3,8 +3,8 @@
        y 169..343), square corners, brand orange. This is what glyph() reads and what every
        colour variant recolours - NOT the app icon, which is the multi-colour plate in
        resources/icon.svg and goes through drawArt as an `art` variant. -->
-  <rect width="512" height="512" fill="#0c0e12"/>
-  <g fill="#ff9f0a">
+  <rect width="512" height="512" fill="#121212"/>
+  <g fill="#ff7622">
     <rect x="80" y="248" width="352" height="16"/>
     <rect x="85" y="223" width="19" height="66"/>
     <rect x="107" y="199" width="20" height="114"/>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- The long-press shortcut Log weight (res/xml/shortcuts.xml): the app's own icon on the brand's green disc (#ff9f0a, near-black glyph). -->
+<!-- The long-press shortcut Log weight (res/xml/shortcuts.xml): the app's own icon on the brand's green disc (#ff7622, near-black glyph). -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="48dp"
     android:height="48dp"

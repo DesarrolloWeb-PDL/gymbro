@@ -16,10 +16,10 @@ import { WORDMARK, WORDMARK_OFFSETS, WORDMARK_STROKE, WORDMARK_RATIO, WORDMARK_T
 
 const PLATE = [
   { r: 196, fill: '#c26a00' },   // marked rim
-  { r: 174, fill: '#ff9f0a' },   // face: inherits `color` in the one-colour mark below
+  { r: 174, fill: '#ff7622' },   // face: inherits `color` in the one-colour mark below
   { r: 84, fill: '#c26a00' },    // marked inner ring
-  { r: 68, fill: '#eef1f6' },    // metal collar
-  { r: 40, fill: '#0c0e12' },    // sleeve hole
+  { r: 68, fill: '#ffffff' },    // metal collar
+  { r: 40, fill: '#121212' },    // sleeve hole
 ]
 
 const discs = tint => PLATE.map((d, i) => (
@@ -45,7 +45,7 @@ const SPLIT = 3
  * "GvmBro". `h` is the box height in em; the width follows from the box's aspect ratio, so
  * CSS never has to restate the numbers.
  */
-export function BrandWordmark({ h = 1, lead = 'currentColor', accent = '#ff9f0a', className, style }) {
+export function BrandWordmark({ h = 1, lead = 'currentColor', accent = '#ff7622', className, style }) {
   const shapes = (from, to, color) => WORDMARK.slice(from, to).map((g, n) => {
     const i = from + n, ox = WORDMARK_OFFSETS[i]
     return [

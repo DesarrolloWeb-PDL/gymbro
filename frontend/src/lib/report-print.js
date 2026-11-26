@@ -173,7 +173,7 @@ const CHART_CSS = `
   svg .bar.hot { fill: #a35a00; }
   svg .line { fill: none; stroke: #3b404b; stroke-width: 1.6; stroke-linejoin: round; stroke-linecap: round; }
   svg .dot { fill: #3b404b; stroke: #fff; stroke-width: 1.2; }
-  svg .dot.hot { fill: #ff9f0a; stroke: #7c3d00; stroke-width: 1.4; }
+  svg .dot.hot { fill: #ff7622; stroke: #7c3d00; stroke-width: 1.4; }
   svg.cal { display: block; }
   svg.cal .l0 { fill: #f0f1f4; } svg.cal .l1 { fill: #e2f5bd; } svg.cal .l2 { fill: #bfe57a; }
   svg.cal .l3 { fill: #e07f00; } svg.cal .l4 { fill: #7c3d00; }

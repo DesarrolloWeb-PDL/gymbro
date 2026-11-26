@@ -1,5 +1,5 @@
 // @vitest-environment happy-dom
-// 1.4.5: the app takes on the logo's green (#ff9f0a). A profile started from nothing wears it; a
+// 1.4.5: the app takes on the logo's green (#ff7622). A profile started from nothing wears it; a
 // profile that already exists keeps exactly the accent it had, whichever way its copy reaches the
 // app: the browser's saved copy, the phone's file mirror, a server pull, a sign-in, a backup, a
 // merge with another device, an older app on the other end. The rule is the one weighIn and
@@ -25,7 +25,7 @@ describe('the two defaults', () => {
   it('a new profile gets the brand green, everything that never picked keeps the old one', () => {
     expect(NEW_ACCENT).toBe('brand')
     expect(DEFAULT_ACCENT).toBe('lime')
-    expect(ACCENTS.brand).toBe('#ff9f0a')
+    expect(ACCENTS.brand).toBe('#ff7622')
     expect(ACCENTS.lime).toBe('#30d158')
     expect(DEF.accent).toBe('lime')
   })
@@ -146,16 +146,16 @@ describe('another account on this device', () => {
 
 describe('the brand orange everywhere it is drawn', () => {
   it('carries the brand’s near-black, readable well past the 4.5:1 text bar', () => {
-    expect(accentPair('brand')).toEqual({ accent: '#ff9f0a', ink: '#0c0e12' })
+    expect(accentPair('brand')).toEqual({ accent: '#ff7622', ink: '#121212' })
     // Orange is inherently less luminous than the lime it replaced, so this bar moved with the
     // colour: 12 was what lime scored, orange scores 9.4. It is still above WCAG AAA (7:1) for
     // normal text, which is the bar this assertion exists to hold.
-    expect(contrast('#ff9f0a', '#0c0e12')).toBeGreaterThan(7)
+    expect(contrast('#ff7622', '#121212')).toBeGreaterThan(7)
   })
   it('goes to the watches as it is, with its ink', () => {
-    expect(watchAccent({ accent: 'brand' })).toEqual({ accent: '#ff9f0a', onAccent: '#0c0e12' })
+    expect(watchAccent({ accent: 'brand' })).toEqual({ accent: '#ff7622', onAccent: '#121212' })
     expect(watchAccent({ accent: 'lime' })).toEqual({ accent: '#30d158', onAccent: '#000000' })
-    expect(garminLook(watchAccent({ accent: 'brand' }))).toMatchObject({ accent: '#ff9f0a', onAccent: '#0c0e12' })
+    expect(garminLook(watchAccent({ accent: 'brand' }))).toMatchObject({ accent: '#ff7622', onAccent: '#121212' })
   })
   it('the ink of every preset reads at 3:1 (button text, large) or better on its swatch', () => {
     for (const [k, c] of Object.entries(ACCENTS)) expect(contrast(c, ACCENT_INK[k]), k).toBeGreaterThanOrEqual(3)

@@ -29,10 +29,10 @@
     <!-- The accent laid over the theme at start and on every change (AccentTheme.java, #980):
          selection handles, the native caret and a native field's highlight. -->
     <style name="Accent.Brand" parent="">
-        <item name="colorAccent">#ff9f0a</item>
-        <item name="colorControlActivated">#ff9f0a</item>
-        <item name="android:colorAccent">#ff9f0a</item>
-        <item name="android:colorControlActivated">#ff9f0a</item>
+        <item name="colorAccent">#ff7622</item>
+        <item name="colorControlActivated">#ff7622</item>
+        <item name="android:colorAccent">#ff7622</item>
+        <item name="android:colorControlActivated">#ff7622</item>
         <item name="android:textColorHighlight">#66a3e635</item>
     </style>
     <style name="Accent.Lime" parent="">
@@ -50,10 +50,10 @@
         <item name="android:textColorHighlight">#660a84ff</item>
     </style>
     <style name="Accent.Orange" parent="">
-        <item name="colorAccent">#ff9f0a</item>
-        <item name="colorControlActivated">#ff9f0a</item>
-        <item name="android:colorAccent">#ff9f0a</item>
-        <item name="android:colorControlActivated">#ff9f0a</item>
+        <item name="colorAccent">#ff7622</item>
+        <item name="colorControlActivated">#ff7622</item>
+        <item name="android:colorAccent">#ff7622</item>
+        <item name="android:colorControlActivated">#ff7622</item>
         <item name="android:textColorHighlight">#66ff9f0a</item>
     </style>
     <style name="Accent.Violet" parent="">
