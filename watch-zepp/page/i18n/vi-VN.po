@@ -1,0 +1,5 @@
+msgid "lang"
+msgstr "vi"
+
+msgid "appName"
+msgstr "gymbro"

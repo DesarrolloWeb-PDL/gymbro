@@ -1,0 +1,26 @@
+msgid "server"
+msgstr "Serveradresse"
+
+msgid "code"
+msgstr "Pairingskode"
+
+msgid "how"
+msgstr "I gymbro åbn Indstillinger, Zepp OS-ur, Par et ur, og skriv adressen og koden, den viser, her."
+
+msgid "pair"
+msgstr "Par"
+
+msgid "pairing"
+msgstr "Parer…"
+
+msgid "paired"
+msgstr "Parret med {0}. Åbn gymbro på dit ur."
+
+msgid "failed"
+msgstr "Det virkede ikke. Tjek adressen og koden, en kode gælder ti minutter."
+
+msgid "unpair"
+msgstr "Afbryd par"
+
+msgid "not_paired_yet"
+msgstr "Endnu ikke parret."

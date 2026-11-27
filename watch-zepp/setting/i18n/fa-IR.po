@@ -1,0 +1,26 @@
+msgid "server"
+msgstr "آدرس سرور"
+
+msgid "code"
+msgstr "کد جفت‌سازی"
+
+msgid "how"
+msgstr "در gymbro، تنظیمات، ساعت Zepp OS، جفت کردن ساعت را باز کنید و آدرس و کدی را که نشان می‌دهد اینجا بنویسید."
+
+msgid "pair"
+msgstr "جفت کردن"
+
+msgid "pairing"
+msgstr "در حال جفت‌سازی…"
+
+msgid "paired"
+msgstr "با {0} جفت شد. gymbro را در ساعت خود باز کنید."
+
+msgid "failed"
+msgstr "جواب نداد. آدرس و کد را بررسی کنید، کد ده دقیقه معتبر است."
+
+msgid "unpair"
+msgstr "قطع جفت"
+
+msgid "not_paired_yet"
+msgstr "هنوز جفت نشده است."

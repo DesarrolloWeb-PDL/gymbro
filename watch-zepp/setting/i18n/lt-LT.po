@@ -1,0 +1,26 @@
+msgid "server"
+msgstr "Serverio adresas"
+
+msgid "code"
+msgstr "Susiejimo kodas"
+
+msgid "how"
+msgstr "Atidarykite gymbro nustatymus, „Zepp OS“ laikrodį, Susieti laikrodį ir įrašykite čia rodomą adresą bei kodą."
+
+msgid "pair"
+msgstr "Susieti"
+
+msgid "pairing"
+msgstr "Siejiama…"
+
+msgid "paired"
+msgstr "Susietas su {0}. Atidarykite gymbro laikrodyje."
+
+msgid "failed"
+msgstr "Nepavyko. Patikrinkite adresą ir kodą, kodas galioja dešimt minučių."
+
+msgid "unpair"
+msgstr "Atsieiti"
+
+msgid "not_paired_yet"
+msgstr "Dar nesusieta."

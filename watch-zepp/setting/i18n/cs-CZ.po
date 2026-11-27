@@ -1,0 +1,26 @@
+msgid "server"
+msgstr "Adresa serveru"
+
+msgid "code"
+msgstr "Kód párování"
+
+msgid "how"
+msgstr "V gymbro otevři Nastavení, hodinky Zepp OS, Spárovat hodinky a sem napiš adresu a kód, které ukazuje."
+
+msgid "pair"
+msgstr "Spárovat"
+
+msgid "pairing"
+msgstr "Párování…"
+
+msgid "paired"
+msgstr "Spárováno s {0}. Otevři gymbro na hodinkách."
+
+msgid "failed"
+msgstr "To nevyšlo. Zkontroluj adresu a kód, kód platí deset minut."
+
+msgid "unpair"
+msgstr "Odpojit"
+
+msgid "not_paired_yet"
+msgstr "Zatím nespárováno."

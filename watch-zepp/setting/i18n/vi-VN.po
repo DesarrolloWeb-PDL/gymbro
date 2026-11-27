@@ -1,0 +1,26 @@
+msgid "server"
+msgstr "Địa chỉ máy chủ"
+
+msgid "code"
+msgstr "Mã ghép nối"
+
+msgid "how"
+msgstr "Trong gymbro, mở Cài đặt, đồng hồ Zepp OS, Ghép nối đồng hồ, rồi nhập địa chỉ và mã hiển thị ở đây."
+
+msgid "pair"
+msgstr "Ghép nối"
+
+msgid "pairing"
+msgstr "Đang ghép nối…"
+
+msgid "paired"
+msgstr "Đã ghép với {0}. Mở gymbro trên đồng hồ của bạn."
+
+msgid "failed"
+msgstr "Không được. Kiểm tra địa chỉ và mã, mã có hiệu lực mười phút."
+
+msgid "unpair"
+msgstr "Bỏ ghép"
+
+msgid "not_paired_yet"
+msgstr "Chưa ghép nối."

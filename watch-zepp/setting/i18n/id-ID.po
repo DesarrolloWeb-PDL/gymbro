@@ -1,0 +1,26 @@
+msgid "server"
+msgstr "Alamat server"
+
+msgid "code"
+msgstr "Kode pemasangan"
+
+msgid "how"
+msgstr "Buka gymbro, Pengaturan, jam Zepp OS, Pasangkan jam, lalu ketik alamat dan kode yang ditampilkan di sini."
+
+msgid "pair"
+msgstr "Pasangkan"
+
+msgid "pairing"
+msgstr "Memasangkan…"
+
+msgid "paired"
+msgstr "Terpasang dengan {0}. Buka gymbro di jam Anda."
+
+msgid "failed"
+msgstr "Itu tidak berhasil. Periksa alamat dan kodenya, kode berlaku sepuluh menit."
+
+msgid "unpair"
+msgstr "Lepaskan"
+
+msgid "not_paired_yet"
+msgstr "Belum terpasang."
