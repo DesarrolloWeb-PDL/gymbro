@@ -648,7 +648,7 @@ h4.sec{
 }
 .lrow-c{color:var(--label);font-size:var(--fs-subhead);flex:none;--icon-stroke:2.4}
 .lrow-k{color:var(--acc-ink);font-size:var(--fs-body);flex:none;--icon-stroke:2.4}
-.lrow.danger,.lrow.danger .lrow-t{color:var(--red)}
+.lrow.danger,.lrow.danger .lrow-t{color:var(--red-ink)}
 /* A routine slot's backup (#978): the name and plan open its own settings, the cross beside it
    removes it. Two buttons side by side, since a button may not hold another. */
 .backup-row{padding-block:0;gap:4px}
@@ -691,7 +691,7 @@ h4.sec{
 .btn.primary{background:var(--acc);color:var(--on-acc)}
 .btn.primary:active{background:var(--acc-2)}
 .btn.tinted{background:var(--acc-soft);color:var(--acc-ink)}
-.btn.danger{background:rgba(255,69,58,0.15);background:color-mix(in srgb,var(--red) 15%,transparent);color:var(--red)}
+.btn.danger{background:rgba(255,69,58,0.15);background:color-mix(in srgb,var(--red) 15%,transparent);color:var(--red-ink)}
 .btn.ghost,.btn.plain{background:none;color:var(--acc-ink);font-weight:400}
 /* a ghost or plain button is a control: it scales like the others, no fill flash (P13) */
 /* The quiet text button: Cancel and Done under a sheet's main button, "Lost access?" and "Continue
@@ -851,7 +851,7 @@ h4.sec{
 .re-acts{margin-top:14px}
 .re-acts+.re-acts{margin-top:22px}
 .re-act-i{flex:none;font-size:var(--fs-title3);color:var(--acc-ink)}
-.re-danger .re-act-i{color:var(--red)}
+.re-danger .re-act-i{color:var(--red-ink)}
 .re-acts .lrow+.lrow::before{inset-inline-start:46px}
 .lrow:disabled{opacity:.45;cursor:default}
 /* the exercise sheet's Delete (P6): its own group at the end of the sheet */
@@ -2071,7 +2071,7 @@ button.whdr-gym{color:var(--acc-ink);cursor:pointer}
 /* --- menu sheet (the workout's "more" menus) --- */
 .menu-list .menu-item{min-height:52px;padding:8px 12px}
 .menu-list .menu-item .lrow-i{width:32px;height:32px;font-size:var(--fs-callout);background:var(--surface-2);color:var(--label)}
-.menu-list .menu-item.danger .tt,.menu-list .menu-item.danger .lrow-i{color:var(--red)}
+.menu-list .menu-item.danger .tt,.menu-list .menu-item.danger .lrow-i{color:var(--red-ink)}
 .menu-list .menu-item.disabled{opacity:.4;pointer-events:none}
 .menu-on{color:transparent;font-size:var(--fs-callout);flex:none}
 .menu-on.is-on{color:var(--acc-ink)}
@@ -3417,7 +3417,7 @@ button.wl-summary{width:100%;padding:0 0 10px;text-align:start;border-radius:var
 .ci-typed-row .sect-t{margin:0}
 .ci-typed-in{font:600 var(--fs-title3)/1.2 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.06em;font-variant-numeric:tabular-nums}
 .ci-typed-hint{min-height:1.3em;font-size:var(--fs-footnote);color:var(--label-2);line-height:var(--lh-small)}
-.ci-typed-hint.bad{color:var(--red)}
+.ci-typed-hint.bad{color:var(--red-ink)}
 .ci-typed-big{align-self:center;max-width:100%;box-sizing:border-box}
 .ci-typed-big canvas{max-width:100%;height:auto}
 .ci-typed-v{font:600 var(--fs-title2)/1.2 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.08em;text-align:center;color:var(--label);overflow-wrap:anywhere}
@@ -4053,8 +4053,8 @@ button.wl-summary{width:100%;padding:0 0 10px;text-align:start;border-radius:var
 .tr-line+.tr-line{border-top:var(--hair) solid var(--sep)}
 .tr-line-t{flex:1 1 55%;min-width:0;font-size:var(--fs-callout);display:flex;align-items:center;gap:6px;flex-wrap:wrap}
 .tr-line-v{font-size:var(--fs-subhead);font-variant-numeric:tabular-nums;text-align:end}
-.tr-line-v b.up{color:var(--green);font-weight:600}
-.tr-line-v b.down{color:var(--red);font-weight:600}
+.tr-line-v b.up{color:var(--green-ink);font-weight:600}
+.tr-line-v b.down{color:var(--red-ink);font-weight:600}
 .tr-line-i{color:var(--label-2);font-size:var(--fs-footnote)}
 .tr-pr{color:var(--yellow);font-size:var(--fs-footnote)}
 .tr-note{flex-basis:100%;font-size:var(--fs-footnote);color:var(--label-2);font-style:italic}
@@ -4154,7 +4154,7 @@ button.wl-summary{width:100%;padding:0 0 10px;text-align:start;border-radius:var
 .tr-tabs button{font-size:var(--fs-footnote)}
 .tr-wo .tr-wo-a{padding:0 8px 8px;margin-top:-6px}
 .tr-wo .tr-comment+.tr-wo-a{margin-top:0}
-.btn.tr-danger{color:var(--red)}
+.btn.tr-danger{color:var(--red-ink)}
 .tr-foot-a{display:flex;justify-content:flex-start}
 
 /* Stats: the all-time sums under "Lifted in total", and the cardio week card (1.4.5, Q9/Q13). */
@@ -4344,7 +4344,7 @@ button.wl-summary{width:100%;padding:0 0 10px;text-align:start;border-radius:var
 .cp-side{background:var(--surface);color:var(--label)}
 .cp-main{background:var(--cp-phase);color:var(--on-acc);font-size:var(--fs-callout)!important}
 .cp-run.is-rest .cp-main,.cp-run.is-prep .cp-main{color:#fff}
-.cp-stop{min-height:44px;padding:0 16px;color:var(--red);font-size:var(--fs-subhead);font-weight:500}
+.cp-stop{min-height:44px;padding:0 16px;color:var(--red-ink);font-size:var(--fs-subhead);font-weight:500}
 .cp-ready-h{margin:12px 0 0;font-size:var(--fs-large);line-height:var(--lh-tight);letter-spacing:var(--ls-large);text-align:center}
 .cp-ready-s{margin:0;color:var(--label-2,var(--label-dim));font-size:var(--fs-subhead);text-align:center;display:flex;gap:6px;align-items:center;justify-content:center}
 .cp-stations{list-style:none;margin:6px 0 0;padding:0;width:100%;display:flex;flex-direction:column;gap:2px;background:var(--surface);border-radius:var(--r-card);overflow:hidden}
@@ -4389,7 +4389,7 @@ button.wl-summary{width:100%;padding:0 0 10px;text-align:start;border-radius:var
 .ladder-next .grow{display:grid;gap:1px;min-width:0}
 .ladder-next b{font-weight:600;font-size:var(--fs-callout);overflow-wrap:anywhere}
 .ladder-next-i{flex:none;color:var(--acc-ink);font-size:var(--fs-title3)}
-.ladder-next-ok{flex:none;color:var(--green)}
+.ladder-next-ok{flex:none;color:var(--green-ink)}
 /* The session builder (components/SessionBuilder.jsx): a duration switch, the picks as a plain
    list with why each is there, the total, then Start and the two quieter actions. */
 .mx-build{margin-top:12px}
@@ -4420,7 +4420,7 @@ button.wl-summary{width:100%;padding:0 0 10px;text-align:start;border-radius:var
 
 /* Settings → About & updates → Network log (views/NetworkLog.jsx): the count first, big, then who. */
 .netlog-hero{display:flex;flex-direction:column;align-items:center;text-align:center;gap:6px;padding:8px 16px 22px}
-.netlog-ico{display:grid;place-items:center;width:52px;height:52px;border-radius:16px;background:rgba(48,209,88,.16);background:color-mix(in srgb, var(--green) 16%, transparent);color:var(--green);font-size:1.625rem}
+.netlog-ico{display:grid;place-items:center;width:52px;height:52px;border-radius:16px;background:rgba(48,209,88,.16);background:color-mix(in srgb, var(--green) 16%, transparent);color:var(--green-ink);font-size:1.625rem}
 .netlog-n{font-size:var(--fs-title2);font-weight:700;letter-spacing:-.01em;font-variant-numeric:tabular-nums;margin-top:6px}
 .netlog-lead{margin:0;max-width:34ch;font-size:var(--fs-subhead);color:var(--label-2);line-height:1.4;text-wrap:pretty}
 .netlog-url{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:var(--fs-footnote);word-break:break-all}
