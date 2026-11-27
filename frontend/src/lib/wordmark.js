@@ -96,8 +96,10 @@ export function wordmarkSvg({ lead = '#ffffff', accent = '#ff7622', cls = '', h 
     const ox = WORDMARK_OFFSETS[i]
     const color = i < 3 ? lead : accent
     // A glyph carries straight `lines` (polylines) or a curved `path`; both are stroked.
+    // The path is glyph-local and needs the glyph's own offset, which the polylines add per
+    // point - without it every curved glyph draws at x=0, on top of the others.
     if (g.path) {
-      parts.push(`<path d="${g.path}" fill="none" stroke="${color}" stroke-width="${WORDMARK_STROKE}" stroke-linecap="round" stroke-linejoin="round"/>`)
+      parts.push(`<g transform="translate(${ox.toFixed(3)} 0)"><path d="${g.path}" fill="none" stroke="${color}" stroke-width="${WORDMARK_STROKE}" stroke-linecap="round" stroke-linejoin="round"/></g>`)
     }
     for (const line of g.lines || []) {
       const pts = line.map(([x, y]) => `${(ox + x).toFixed(3)},${y.toFixed(3)}`).join(' ')

@@ -50,9 +50,14 @@ export function BrandWordmark({ h = 1, lead = 'currentColor', accent = '#ff7622'
     const i = from + n, ox = WORDMARK_OFFSETS[i]
     return [
       // A curved glyph carries an SVG path with arcs; a straight one carries point lists.
+      // The path is glyph-local, so it is translated by the glyph's own offset - the polylines
+      // below add ox to every point instead, and without this the three curved glyphs all drew
+      // on top of each other at x=0.
       ...(g.path ? [
-        <path key={`${i}-p`} data-glyph={i} d={g.path} fill="none" stroke={color}
-          strokeWidth={WORDMARK_STROKE} strokeLinecap="round" strokeLinejoin="round" />,
+        <g key={`${i}-p`} transform={`translate(${ox} 0)`}>
+          <path data-glyph={i} d={g.path} fill="none" stroke={color}
+            strokeWidth={WORDMARK_STROKE} strokeLinecap="round" strokeLinejoin="round" />
+        </g>,
       ] : []),
       ...(g.lines || []).map((line, l) => (
         <polyline key={`${i}-${l}`} data-glyph={i} points={line.map(([x, y]) => `${ox + x},${y}`).join(' ')}

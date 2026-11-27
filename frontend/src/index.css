@@ -243,6 +243,20 @@ html{
   src:url('./fonts/inter-latin.woff2') format('woff2');
   unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
 }
+/* The display face: geometric, a little urban, for titles and lead lines. Inter stays on
+   everything small - it is the more legible of the two at 15px and below, which is most of the
+   app. Both are Google Fonts under the SIL Open Font License, so they can ship with the app;
+   the sheet's Uber Move cannot. Same latin subset, same reasoning: scripts Montserrat does not
+   carry fall through to the system stack rather than to Inter, because the two are not
+   interchangeable at a glance. */
+@font-face{
+  font-family:'Montserrat';
+  font-style:normal;
+  font-weight:400 700;
+  font-display:swap;
+  src:url('./fonts/montserrat-latin.woff2') format('woff2');
+  unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
+}
 body{
   background:var(--bg);color:var(--label);
   font-family:'Inter',-apple-system,BlinkMacSystemFont,'SF Pro Text','SF Pro Display','Segoe UI',Roboto,system-ui,sans-serif;
@@ -302,9 +316,9 @@ button,.chip,.tile,.item,.wday,.cal-d,.swatch,.hm-c,.lrow,.seg button,.stp butto
 .t-footnote{font-size:var(--fs-footnote);line-height:var(--lh-small);letter-spacing:var(--ls-small)}
 .t-subhead{font-size:var(--fs-subhead);line-height:1.33;letter-spacing:var(--ls-body)}
 .t-body{font-size:var(--fs-body);line-height:var(--lh-body);letter-spacing:var(--ls-body)}
-.t-title3{font-size:var(--fs-title3);line-height:var(--lh-title);letter-spacing:var(--ls-title)}
-.t-title2{font-size:var(--fs-title2);line-height:var(--lh-title);letter-spacing:var(--ls-title)}
-.t-large{font-size:var(--fs-large);line-height:var(--lh-tight);letter-spacing:var(--ls-large)}
+.t-title3{font-family:'Montserrat',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;font-size:var(--fs-title3);line-height:var(--lh-title);letter-spacing:var(--ls-title)}
+.t-title2{font-family:'Montserrat',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;font-size:var(--fs-title2);line-height:var(--lh-title);letter-spacing:var(--ls-title)}
+.t-large{font-family:'Montserrat',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;font-size:var(--fs-large);line-height:var(--lh-tight);letter-spacing:var(--ls-large)}
 
 /* .dim is the quiet text (footnotes, "average effort", dates in a list): --label-dim, which holds
    4.5:1 on a card. It was --label-3, the system's tertiary grey, 2.4:1 to 2.7:1, and over 200 lines
@@ -427,7 +441,7 @@ button.conn:active{filter:brightness(1.12)}
 .hdr>div{min-width:0}
 .hdr>.btn{flex:none}
 .hdr>.hdr-actions{display:flex;align-items:center;gap:8px;flex:none}
-.hdr h1{font-size:var(--fs-large);line-height:var(--lh-tight);font-weight:700;letter-spacing:var(--ls-large);overflow-wrap:break-word}
+.hdr h1{font-family:'Montserrat',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;font-size:var(--fs-large);line-height:var(--lh-tight);font-weight:700;letter-spacing:var(--ls-large);overflow-wrap:break-word}
 /* the page title drops a step on phone widths (the Library's header leaves it the least room) */
 @media (max-width:420px){:root{--fs-large:1.875rem}}
 .hdr .sub{color:var(--label-2);font-size:var(--fs-subhead);letter-spacing:-.006em;margin-top:4px}
