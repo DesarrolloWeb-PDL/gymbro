@@ -49,7 +49,12 @@ export function BrandWordmark({ h = 1, lead = 'currentColor', accent = '#ff7622'
   const shapes = (from, to, color) => WORDMARK.slice(from, to).map((g, n) => {
     const i = from + n, ox = WORDMARK_OFFSETS[i]
     return [
-      ...g.lines.map((line, l) => (
+      // A curved glyph carries an SVG path with arcs; a straight one carries point lists.
+      ...(g.path ? [
+        <path key={`${i}-p`} data-glyph={i} d={g.path} fill="none" stroke={color}
+          strokeWidth={WORDMARK_STROKE} strokeLinecap="round" strokeLinejoin="round" />,
+      ] : []),
+      ...(g.lines || []).map((line, l) => (
         <polyline key={`${i}-${l}`} data-glyph={i} points={line.map(([x, y]) => `${ox + x},${y}`).join(' ')}
           fill="none" stroke={color} strokeWidth={WORDMARK_STROKE}
           strokeLinecap="round" strokeLinejoin="round" />

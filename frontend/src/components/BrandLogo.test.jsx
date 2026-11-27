@@ -50,7 +50,7 @@ describe('BrandLogo', () => {
     // Shapes carry which glyph they belong to, so the split is asserted by letter rather than
     // by counting strokes - a glyph may be one polyline or several.
     const byGlyph = new Map()
-    for (const s of name.querySelectorAll('polyline, circle')) {
+    for (const s of name.querySelectorAll('path, polyline, circle')) {
       const g = s.getAttribute('data-glyph')
       if (!byGlyph.has(g)) byGlyph.set(g, new Set())
       byGlyph.get(g).add(s.getAttribute('stroke'))

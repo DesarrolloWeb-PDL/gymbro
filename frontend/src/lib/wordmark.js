@@ -49,23 +49,23 @@ export const WORDMARK_BOTTOM = 0.36
 export const WORDMARK_BOX_H = WORDMARK_BOTTOM - WORDMARK_TOP   // 1.16
 export const WORDMARK_RATIO = WORDMARK_WIDTH / WORDMARK_BOX_H  // width per unit of height
 
+/* The glyphs carry either straight `lines` (polylines) or a `path` (an SVG d with arcs). The
+   curved ones use paths: the first version drew every curve as a chain of straight segments,
+   and at boot size the G read as an octagon - a circle sampled at eight points looks like a
+   circle only when it is small. Arcs cost nothing and stay smooth at any size. */
 export const WORDMARK = [
-  { w: 0.74, lines: [
-    [[0.72, -0.62], [0.32, -0.70], [0.08, -0.48], [0.08, -0.22], [0.32, 0.00],
-     [0.72, -0.06], [0.72, -0.34], [0.48, -0.34]],
-  ] },
+  // G: an elliptical C, open on the right, with the bar across the opening.
+  { w: 0.74, path: 'M0.645,-0.575 A0.32,0.35 0 1 0 0.645,-0.125 M0.72,-0.35 L0.48,-0.35' },
+  // y: two diagonals - nothing to smooth.
   { w: 0.56, lines: [
     [[0.06, -0.50], [0.28, -0.14]],
     [[0.52, -0.50], [0.14, 0.26]],
   ] },
-  { w: 0.94, lines: [
-    [[0.06, 0.00], [0.06, -0.36], [0.16, -0.50], [0.32, -0.50], [0.42, -0.36], [0.42, 0.00]],
-    [[0.42, -0.36], [0.52, -0.50], [0.68, -0.50], [0.80, -0.36], [0.80, 0.00]],
-  ] },
-  { w: 0.70, lines: [
-    [[0.06, 0.00], [0.06, -0.70], [0.44, -0.70], [0.60, -0.54], [0.44, -0.36], [0.06, -0.36]],
-    [[0.06, -0.36], [0.48, -0.36], [0.66, -0.18], [0.48, 0.00], [0.06, 0.00]],
-  ] },
+  // m: two shoulders, apex at the x-height, ends at -0.36 where the stems take over.
+  { w: 0.94, path: 'M0.06,0 L0.06,-0.36 A0.186,0.186 0 0 1 0.42,-0.36 L0.42,0 M0.42,-0.36 A0.186,0.186 0 0 1 0.80,-0.36 L0.80,0' },
+  // B: stem, waist and the two bowls - the bowls were two straight chords before.
+  { w: 0.70, path: 'M0.06,0 L0.06,-0.70 L0.44,-0.70 A0.1703,0.1703 0 0 1 0.44,-0.36 L0.06,-0.36 L0.48,-0.36 A0.18,0.18 0 0 1 0.48,0 L0.06,0' },
+  // r: a stem with a straight arm - the arm is straight by design, not sampled.
   { w: 0.50, lines: [
     [[0.06, 0.00], [0.06, -0.50], [0.24, -0.50], [0.44, -0.34]],
   ] },
@@ -95,7 +95,11 @@ export function wordmarkSvg({ lead = '#ffffff', accent = '#ff7622', cls = '', h 
   WORDMARK.forEach((g, i) => {
     const ox = WORDMARK_OFFSETS[i]
     const color = i < 3 ? lead : accent
-    for (const line of g.lines) {
+    // A glyph carries straight `lines` (polylines) or a curved `path`; both are stroked.
+    if (g.path) {
+      parts.push(`<path d="${g.path}" fill="none" stroke="${color}" stroke-width="${WORDMARK_STROKE}" stroke-linecap="round" stroke-linejoin="round"/>`)
+    }
+    for (const line of g.lines || []) {
       const pts = line.map(([x, y]) => `${(ox + x).toFixed(3)},${y.toFixed(3)}`).join(' ')
       parts.push(`<polyline points="${pts}" fill="none" stroke="${color}" stroke-width="${WORDMARK_STROKE}" stroke-linecap="round" stroke-linejoin="round"/>`)
     }
