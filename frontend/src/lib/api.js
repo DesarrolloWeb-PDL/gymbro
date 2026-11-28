@@ -52,9 +52,12 @@ const failure = (message, code, status) => Object.assign(new Error(message), { c
 // origin check refused (or a passkey made at another address): a self-hoster whose ORIGIN is not
 // the address they opened only ever saw "cross-origin request refused", and nobody could tell
 // what to change. The answer names ORIGIN, so the sentence can too (api/verify-error.js).
+// Everything else goes through t() with the server's own words as the key, which is how the packs
+// key everything else: a line for that sentence translates it, and with no line t() returns it
+// unchanged, so this is the server's English until someone translates it and nothing after.
 function refusal(status, body) {
   if (body && body.code === 'origin-mismatch') return t('This server only takes changes made at {0}. If you opened gymbrooo at another address, whoever runs the server can set ORIGIN and RP_ID to match it (the self-hosting guide shows how).', String(body.expected || '?'))
-  return (body && body.error) || ('HTTP ' + status)
+  return (body && t(body.error)) || ('HTTP ' + status)
 }
 
 export async function api(path, opts) {
